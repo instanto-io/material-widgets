@@ -1,0 +1,64 @@
+GWT Material compatibility audit after host browser-service additions, 9 September 2026
+Command: mvn -Pcompatibility-audit -Dgwt-user-compat.version=0.1.0-material-SNAPSHOT clean compile
+Result: FAIL, 25 compiler diagnostics (not independent defects or a coverage percentage)
+Sources: 604 original core + 72 original jQuery/JSCore Java files
+Shared compatibility commit: c12d2c0496396e7552c77e75b7941d1cabc83402
+Locally installed gwt-user-compat version: 0.1.0-material-SNAPSHOT
+Compatibility jar SHA-256: 0f0ad81d107a0be4a47f05ee523acbeabb5edf9a02617e1e8eab50636c5350e4
+Locally installed teavm-classlib-compat version: 0.1.0-SNAPSHOT
+Class-library plugin jar SHA-256: dfcf96c226ee1afbba789c96bb622e89dc13012c537a2ed8ae95ed3b30c6f488
+No native GWT runtime on the audit classpath.
+
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/js/Navigator.java:[22,41] package com.google.gwt.geolocation.client does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/js/Navigator.java:[34,19] cannot find symbol
+  symbol:   class Geolocation
+  location: class gwt.material.design.client.js.Navigator
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/ServiceWorkerLifecycle.java:[22,52] package com.google.web.bindery.requestfactory.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/js/PushSubscriptionOptions.java:[22,41] package com.google.gwt.typedarrays.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/js/PushSubscriptionOptions.java:[34,12] cannot find symbol
+  symbol:   class Uint8Array
+  location: class gwt.material.design.client.pwa.push.js.PushSubscriptionOptions
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/HasPushNotificationFeatures.java:[22,41] package com.google.gwt.typedarrays.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/helper/PushCryptoHelper.java:[22,41] package com.google.gwt.typedarrays.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/helper/PushCryptoHelper.java:[27,26] cannot find symbol
+  symbol:   class Uint8Array
+  location: class gwt.material.design.client.pwa.push.helper.PushCryptoHelper
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialVideo.java:[23,37] cannot find symbol
+  symbol:   class Frame
+  location: package com.google.gwt.user.client.ui
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialVideo.java:[51,13] cannot find symbol
+  symbol:   class Frame
+  location: class gwt.material.design.client.ui.MaterialVideo
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Video.java:[23,33] cannot find symbol
+  symbol:   class VideoElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Video.java:[28,15] cannot find symbol
+  symbol:   class VideoElement
+  location: class gwt.material.design.client.ui.html.Video
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/accessibility/AccessibilityControl.java:[152,43] no suitable method found for $(com.google.gwt.core.client.JavaScriptObject)
+    method gwt.material.design.client.js.JsMaterialElement.$(java.lang.String) is not applicable
+      (argument mismatch; inference variable T has incompatible upper bounds java.lang.String,com.google.gwt.core.client.JavaScriptObject)
+    method gwt.material.design.client.js.JsMaterialElement.$(com.google.gwt.dom.client.Element) is not applicable
+      (argument mismatch; inference variable T has incompatible upper bounds com.google.gwt.dom.client.Element,com.google.gwt.core.client.JavaScriptObject)
+    method gwt.material.design.client.js.JsMaterialElement.$(gwt.material.design.jquery.client.api.JQueryElement) is not applicable
+      (argument mismatch; inference variable T has incompatible upper bounds gwt.material.design.jquery.client.api.JQueryElement,com.google.gwt.core.client.JavaScriptObject)
+[ERROR] target/intake/jquery/src/main/java/gwt/material/design/jquery/client/api/JQuery.java:[61,46] incompatible types: inference variable T has incompatible upper bounds com.google.gwt.dom.client.Element,com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/TruncateMixin.java:[48,54] incompatible types: com.google.gwt.dom.client.Element cannot be converted to com.google.gwt.user.client.Element
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/api/ApiRegistry.java:[71,34] incompatible types: com.google.gwt.core.client.JavaScriptObject cannot be converted to com.google.gwt.dom.client.Element
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/api/ApiRegistry.java:[72,58] incompatible types: inference variable T has incompatible upper bounds com.google.gwt.dom.client.Element,com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/ImageMixin.java:[53,37] cannot find symbol
+  symbol:   method asString()
+  location: class java.lang.String
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[38,32] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[39,48] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[57,32] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[58,48] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[260,37] cannot find symbol
+  symbol:   method setPropertyObject(java.lang.String,boolean)
+  location: class com.google.gwt.user.client.Element
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialVideo.java:[51,31] cannot find symbol
+  symbol:   class Frame
+  location: class gwt.material.design.client.ui.MaterialVideo
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Video.java:[39,29] cannot find symbol
+  symbol:   method createVideoElement()
+  location: class com.google.gwt.dom.client.Document

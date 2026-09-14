@@ -1,0 +1,4 @@
+<module>
+  <inherits name="gwt.material.design.GwtMaterialWithJQuery"/>
+  <source path="client"/>
+</module>

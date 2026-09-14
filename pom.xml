@@ -1,0 +1,258 @@
+<project xmlns='http://maven.apache.org/POM/4.0.0'>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.instanto</groupId>
+    <artifactId>instanto-org-pom</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath/>
+  </parent>
+  <groupId>io.instanto</groupId>
+  <artifactId>gwt-material-widgets-parent</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Material Widgets for TeaVM</name>
+  <description>Independent TeaVM adaptation of GWT Material Design</description>
+  <url>https://github.com/Instanto-io/material-widgets</url><scm>
+    <url>https://github.com/instanto-io/material-widgets</url>
+    <connection>scm:git:https://github.com/instanto-io/material-widgets.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/instanto-io/material-widgets.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.outputTimestamp>2026-09-08T10:00:00Z</project.build.outputTimestamp>
+    <teavm-compat.version>0.1.0-SNAPSHOT</teavm-compat.version><jsinterop-binding-generator.version>${teavm-compat.version}</jsinterop-binding-generator.version>
+    <gwt-uibinder-processor.version>${teavm-compat.version}</gwt-uibinder-processor.version>
+    <gwt-user-compat.version>${teavm-compat.version}</gwt-user-compat.version>
+    <teavm.version>0.15.0</teavm.version>
+    <teavm.optimization>SIMPLE</teavm.optimization>
+    <teavm.minify>false</teavm.minify>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <material-addins.revision>568eb3f92aa4317504887994cfb5dacebf850931</material-addins.revision>
+    <material-addins.sha256>2f02d107c9cf37bc8716f40f897a47013e16e5c2fb6cdd0af407ee65515b3fc4</material-addins.sha256>
+  <material-table.revision>7cbce43861de205d7fc7f4bd742b88b0eb13934b</material-table.revision>
+  <material-table.sha256>bb36e3f58f831a493783aa1721acf2cd64ee9dde80da778306769db5e52dc6d6</material-table.sha256>
+  <material-table-demo.revision>d5b7288cd7061f923a3d38469a4d69cb9505f58a</material-table-demo.revision>
+  <material-patterns.revision>08f63dd686f72c27b06d2c7ef3abcb25b82308e1</material-patterns.revision>
+  <material-patterns.sha256>3e54eb08516ed641a7ad3f573ebb7406761791cd7c6f94c1fa951fe97067e10c</material-patterns.sha256>
+  <material-table-demo.sha256>c4bbb8aff58423fd24b742582d21494060f50a89c924652ecdf83d183d497721</material-table-demo.sha256>
+</properties>
+
+  <modules>
+    <module>material-build</module>
+    <module>material-assets</module>
+    <module>jquery-teavm</module>
+    <module>core-teavm</module>
+    <module>addins-teavm</module>
+    <module>table-teavm</module>
+    <module>interop-teavm</module>
+    <module>showcase-examples-teavm</module>
+    <module>showcase-teavm</module>
+  </modules>
+  <repositories>
+    <repository>
+      <id>github-teavm-compat</id>
+      <url>https://maven.pkg.github.com/instanto-io/teavm-compat</url>
+    </repository>
+  </repositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.43.0</version>
+        <inherited>false</inherited>
+        <configuration>
+          <java>
+            <includes>
+              <include>*/src/main/java/**/*.java</include>
+              <include>*/src/test/java/**/*.java</include>
+              <include>examples/*/src/main/java/**/*.java</include>
+            </includes>
+            <googleJavaFormat>
+              <version>1.35.0</version>
+            </googleJavaFormat>
+            <removeUnusedImports/>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.github.download-maven-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>2.0.0</version>
+        <inherited>false</inherited>
+        <executions><execution>
+          <id>fetch-pinned-addins</id><phase>initialize</phase><goals><goal>wget</goal></goals>
+          <configuration>
+            <uri>https://codeload.github.com/GwtMaterialDesign/gwt-material-addins/zip/${material-addins.revision}</uri>
+            <outputDirectory>${project.build.directory}/upstream</outputDirectory>
+            <outputFileName>gwt-material-addins.zip</outputFileName>
+            <sha256>${material-addins.sha256}</sha256>
+            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
+            <readTimeOut>30000</readTimeOut>
+          </configuration>
+        </execution>
+<execution>
+          <id>fetch-pinned-table</id><phase>initialize</phase><goals><goal>wget</goal></goals>
+          <configuration>
+            <uri>https://codeload.github.com/GwtMaterialDesign/gwt-material-table/zip/${material-table.revision}</uri>
+            <outputDirectory>${project.build.directory}/upstream</outputDirectory>
+            <outputFileName>gwt-material-table.zip</outputFileName>
+            <sha256>${material-table.sha256}</sha256>
+            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
+            <readTimeOut>30000</readTimeOut>
+          </configuration>
+        </execution>
+<execution>
+          <id>fetch-pinned-table-demo</id><phase>initialize</phase><goals><goal>wget</goal></goals>
+          <configuration>
+            <uri>https://codeload.github.com/GwtMaterialDesign/gmd-table-demo/zip/${material-table-demo.revision}</uri>
+            <outputDirectory>${project.build.directory}/upstream</outputDirectory>
+            <outputFileName>gmd-table-demo.zip</outputFileName>
+            <sha256>${material-table-demo.sha256}</sha256>
+            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
+            <readTimeOut>30000</readTimeOut>
+          </configuration>
+        </execution><execution><id>fetch-pinned-patterns</id><phase>initialize</phase><goals><goal>wget</goal></goals>
+<configuration>
+<uri>https://codeload.github.com/GwtMaterialDesign/gwt-material-patterns/zip/${material-patterns.revision}</uri>
+<outputDirectory>${project.build.directory}/upstream</outputDirectory>
+<outputFileName>gwt-material-patterns.zip</outputFileName>
+<sha256>${material-patterns.sha256}</sha256><alwaysVerifyChecksum>true</alwaysVerifyChecksum><readTimeOut>30000</readTimeOut>
+</configuration></execution>
+</executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.2.0</version>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>verified-source-intake</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <condition property='intake.valid'>
+                  <checksum algorithm='SHA-256' fileext='.sha256'>
+                    <fileset dir='${project.basedir}/upstream/archives' includes='*.zip'/>
+                  </checksum>
+                </condition>
+                <fail unless='intake.valid' message='Pinned upstream archive checksum mismatch'/>
+<delete dir='${project.build.directory}/intake'/>
+<unzip src='${project.build.directory}/upstream/gwt-material-table.zip' dest='${project.build.directory}/intake/table'>
+  <mapper type='glob' from='gwt-material-table-${material-table.revision}/*' to='*'/>
+</unzip>
+<unzip src='${project.build.directory}/upstream/gmd-table-demo.zip' dest='${project.build.directory}/intake/table-demo'>
+  <mapper type='glob' from='gmd-table-demo-${material-table-demo.revision}/*' to='*'/>
+</unzip>
+
+<unzip src='${project.build.directory}/upstream/gwt-material-patterns.zip' dest='${project.build.directory}/intake/patterns'>
+<mapper type='glob' from='gwt-material-patterns-${material-patterns.revision}/*' to='*'/>
+</unzip>
+                <unzip src='${project.basedir}/upstream/archives/gwt-material.zip' dest='${project.build.directory}/intake/core'/>
+                <unzip src='${project.basedir}/upstream/archives/gwt-material-jquery.zip' dest='${project.build.directory}/intake/jquery'/>
+                <unzip src='${project.basedir}/upstream/archives/gmd-core-demo.zip' dest='${project.build.directory}/intake/showcase'/>
+                <unzip src='${project.build.directory}/upstream/gwt-material-addins.zip' dest='${project.build.directory}/intake/addins'>
+                  <mapper type='glob' from='gwt-material-addins-${material-addins.revision}/*' to='*'/>
+                </unzip>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.1</version>
+        <configuration>
+          <proc>none</proc>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.4.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.6.3</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[21,22)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>showcase-tests</id>
+      <modules><module>showcase-tests</module></modules>
+    </profile>
+    <profile>
+      <id>production</id>
+      <properties>
+        <teavm.optimization>ADVANCED</teavm.optimization>
+        <teavm.minify>true</teavm.minify>
+      </properties>
+    </profile>
+    <profile>
+      <id>compatibility-audit</id>
+      <modules>
+        <module>compatibility-audit</module>
+      </modules>
+    </profile>
+  </profiles>
+</project>

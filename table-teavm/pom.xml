@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent><groupId>io.instanto</groupId><artifactId>gwt-material-widgets-parent</artifactId><version>0.1.0-SNAPSHOT</version></parent>
+  <artifactId>gwt-material-table-teavm</artifactId>
+  <dependencies>
+    <dependency><groupId>io.instanto</groupId><artifactId>gwt-material-widgets-teavm</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>io.instanto</groupId><artifactId>elemental2-compat</artifactId><version>1.2.3-SNAPSHOT</version></dependency>
+    <dependency><groupId>javax.annotation</groupId><artifactId>javax.annotation-api</artifactId><version>1.3.2</version></dependency>
+  </dependencies>
+  <build>
+    <resources><resource><directory>../target/intake/table</directory><targetPath>META-INF/upstream</targetPath><includes><include>LICENSE*</include></includes></resource><resource><directory>..</directory><targetPath>META-INF</targetPath><includes><include>LICENSE</include><include>NOTICE</include><include>upstream/assessment-lock.json</include></includes></resource><resource><directory>${project.build.directory}</directory><targetPath>META-INF</targetPath><includes><include>teavm-inputs.sha256</include></includes></resource>
+      <resource><directory>src/main/resources</directory></resource>
+      <resource><directory>${project.build.directory}/generated-resources/material</directory></resource>
+    </resources>
+    <plugins>
+      <plugin><groupId>io.instanto</groupId><artifactId>gwt-material-build-maven-plugin</artifactId><version>${project.version}</version>
+        <executions><execution><goals><goal>teavm-sources</goal><goal>material-resources</goal></goals></execution></executions>
+        <configuration><resourceInput>${project.basedir}/../target/intake/table/src/main/resources</resourceInput><input>${project.basedir}/../target/intake/table/src/main/java</input></configuration>
+      </plugin>
+      <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId>
+        <configuration><proc>full</proc><annotationProcessorPaths>
+          <path><groupId>io.instanto</groupId><artifactId>gwt-uibinder-processor</artifactId><version>${gwt-uibinder-processor.version}</version></path>
+        </annotationProcessorPaths></configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

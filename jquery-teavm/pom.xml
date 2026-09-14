@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent><groupId>io.instanto</groupId><artifactId>gwt-material-widgets-parent</artifactId><version>0.1.0-SNAPSHOT</version></parent>
+  <artifactId>gwt-material-jquery-teavm</artifactId>
+  <dependencies>
+    <dependency><groupId>io.instanto</groupId><artifactId>gwt-user-compat</artifactId><version>${gwt-user-compat.version}</version></dependency>
+    <dependency><groupId>io.instanto</groupId><artifactId>jsinterop-base-compat</artifactId><version>0.1.0-SNAPSHOT</version></dependency>
+    <dependency><groupId>org.teavm</groupId><artifactId>teavm-jso-apis</artifactId><version>${teavm.version}</version></dependency>
+  </dependencies>
+  <build><resources><resource><directory>..</directory><targetPath>META-INF</targetPath><includes><include>LICENSE</include><include>NOTICE</include><include>upstream/assessment-lock.json</include></includes></resource><resource><directory>${project.build.directory}</directory><targetPath>META-INF</targetPath><includes><include>teavm-inputs.sha256</include></includes></resource></resources>
+    <plugins><plugin><groupId>io.instanto</groupId><artifactId>gwt-material-build-maven-plugin</artifactId><version>${project.version}</version>
+      <executions><execution><goals><goal>teavm-sources</goal></goals></execution></executions>
+      <configuration><input>${project.basedir}/../target/intake/jquery/src/main/java</input></configuration>
+    </plugin></plugins>
+  </build>
+</project>

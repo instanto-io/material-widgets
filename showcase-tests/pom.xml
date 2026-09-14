@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.instanto</groupId><artifactId>gwt-material-widgets-parent</artifactId><version>0.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>gwt-material-showcase-tests</artifactId>
+  <properties><material.test.browser>browser-chrome</material.test.browser></properties>
+  <dependencies>
+    <!-- Rule support must precede TeaVM's JUnit runner on the classpath. -->
+    <dependency><groupId>io.instanto</groupId><artifactId>teavm-rule-support</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
+    <dependency><groupId>io.instanto</groupId><artifactId>webapp-testkit-app</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
+    <dependency><groupId>org.teavm</groupId><artifactId>teavm-junit</artifactId><version>${teavm.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>org.teavm</groupId><artifactId>teavm-classlib</artifactId><version>${teavm.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version><scope>test</scope></dependency>
+  </dependencies>
+  <build><plugins>
+    <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.6.3</version>
+      <executions><execution><id>stage-showcase</id><phase>process-test-resources</phase><goals><goal>java</goal></goals>
+        <configuration><mainClass>io.instanto.webapp.testkit.app.ApplicationFiles</mainClass><classpathScope>test</classpathScope>
+          <arguments><argument>${project.basedir}/../showcase-teavm/target/site</argument><argument>${project.build.testOutputDirectory}/applications/material</argument></arguments>
+        </configuration>
+      </execution></executions>
+    </plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId>
+      <configuration><systemPropertyVariables>
+        <teavm.junit.target>${project.build.directory}/js-tests</teavm.junit.target>
+        <teavm.junit.js.runner>${material.test.browser}</teavm.junit.js.runner>
+      </systemPropertyVariables></configuration>
+    </plugin>
+  </plugins></build>
+</project>

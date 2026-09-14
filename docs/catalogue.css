@@ -1,0 +1,102 @@
+/* Application shell derived from gmd-core-demo's ApplicationView and app.css.
+   Original widget appearance is supplied by the pinned Material resources. */
+html, body { min-height: 100%; margin: 0; background: #fff; color: #282b2e; }
+body { overflow-y: auto; touch-action: pan-y; }
+#catalogue-sidebar { position: fixed; inset: 0 auto 0 0; width: 280px; background: #fff; border-right: 1px solid #e9e9e9; overflow-y: auto; z-index: 990; overscroll-behavior: contain; }
+.catalogue-brand { display: flex; align-items: center; gap: 16px; height: 80px; padding: 16px 26px; color: #282b2e; font-size: 17px; font-weight: 600; }
+.catalogue-brand img { width: 34px; height: 34px; }
+.catalogue-brand small { display: block; font-weight: 400; font-size: 12px; color: #6d747d; margin-top: 4px; }
+#catalogue-sidebar input.catalogue-search { box-sizing: border-box; width: calc(100% - 40px); height: 38px; margin: 8px 20px 18px; padding: 0 10px; border: 1px solid #e1e4e8; border-radius: 4px; font-size: 13px; }
+#catalogue-sidebar a[data-page] { display: block; padding: 10px 28px; color: #48505a; font-size: 14px; border-left: 3px solid transparent; }
+#catalogue-sidebar a[data-page]:hover { background: #f5f8fb; }
+#catalogue-sidebar a.active-page { color: #1976d2; background: #edf5fd; border-left-color: #42a5f5; }
+#catalogue-sidebar a.pending-page::after { content: ' · pending'; color: #7f8791; font-size: 10px; }
+#catalogue-toolbar { position: fixed; left: 280px; right: 0; top: 0; height: 64px; border-bottom: 1px solid #e9e9e9; background: #fff; z-index: 995; padding: 0 40px; }
+#catalogue-toolbar > div { display: flex; align-items: center; height: 100%; gap: 16px; }
+.catalogue-backend { margin-left: auto; color: #657181; font-size: 12px; }
+.catalogue-menu { display: none; background: none; border: 0; font-size: 22px; padding: 4px 8px; cursor: pointer; }
+#catalogue-main { margin-left: 280px; padding-top: 64px; }
+#catalogue-header { padding: 38px 44px 28px; border-bottom: 1px solid #e9e9e9; }
+.catalogue-title { font-size: 36px; font-weight: 400; line-height: 1.3; margin-bottom: 14px; }
+.catalogue-description { max-width: 850px; font-size: 15px; line-height: 1.8; color: #69727d; }
+#catalogue-content { padding: 34px 44px; min-height: 50vh; }
+#catalogue-content pre { box-sizing: border-box; overflow-x: auto; padding: 30px 24px 20px; border: 1px solid #e1e7ed; border-radius: 3px; background: #f5f9fd; font-size: 12px; line-height: 1.7; white-space: pre; margin: 24px 0 36px; position: relative; }
+#catalogue-content pre.xml::before, #catalogue-content pre.java::before { position: absolute; top: 0; left: 0; padding: 1px 14px; font-size: 10px; color: #fff; background: #64b5f6; content: 'XML'; }
+#catalogue-content pre.java::before { content: 'JAVA'; }
+#catalogue-content .scrollspy { scroll-margin-top: 80px; }
+.catalogue-pending { padding: 26px; border: 1px solid #e1e7ed; background: #f8fafc; line-height: 2; }
+.catalogue-pattern-note { margin: 0 0 28px; padding: 18px 22px; border-left: 4px solid #e5b04c; background: #fff8e9; color: #59471f; line-height: 1.7; }
+#catalogue-main > footer { padding: 24px 44px; border-top: 1px solid #e9e9e9; color: #7b838d; font-size: 11px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid #1976d2 !important; outline-offset: 3px; }
+@media(max-width: 900px) {
+  #catalogue-sidebar { transform: translateX(-100%); width: 260px; transition: transform .2s; }
+  .menu-open #catalogue-sidebar { transform: translateX(0); top: 64px; }
+  #catalogue-main { margin-left: 0; }
+  #catalogue-toolbar { left: 0; padding: 0 16px; }
+  .catalogue-menu { display: block; }
+  .catalogue-backend { max-width: 170px; font-size: 10px; }
+  #catalogue-header { padding: 28px 20px 24px; }
+  #catalogue-content { padding: 24px 16px; }
+  .catalogue-title { font-size: 30px; }
+  .catalogue-source-links { gap: 16px; }
+  #catalogue-main > footer { padding: 20px; }
+}
+
+/* Full-page examples keep their own layout; this link returns to the catalogue. */
+.pattern-back {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10001;
+  padding: 10px 16px;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  box-shadow: 0 2px 10px #0003;
+}
+
+.catalogue-theme {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border: 1px solid #c5cdd6;
+  border-radius: 5px;
+  background: #fff;
+  color: #48505a;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.catalogue-theme:hover { background: #edf5fd; }
+.catalogue-theme[aria-pressed='true'] { background: #25435c; border-color: #90caf9; color: #e7f3ff; }
+.pattern-theme { position: fixed; bottom: 24px; left: 190px; z-index: 10001; }
+html[data-theme='dark'], body[data-theme='dark'] { background: #23272d; color: #e7ebf0; color-scheme: dark; }
+[data-theme='dark'] #catalogue-sidebar,
+[data-theme='dark'] #catalogue-toolbar { background: #292f36; border-color: #424b55; }
+[data-theme='dark'] .catalogue-brand { color: #e7ebf0; }
+[data-theme='dark'] .catalogue-brand small,
+[data-theme='dark'] .catalogue-description,
+[data-theme='dark'] .catalogue-backend,
+[data-theme='dark'] #catalogue-main > footer { color: #b5bec9; }
+[data-theme='dark'] #catalogue-sidebar input.catalogue-search { color: #e7ebf0; border-color: #637080; background: #23272d; }
+[data-theme='dark'] #catalogue-sidebar input.catalogue-search::placeholder { color: #b5bec9; }
+[data-theme='dark'] #catalogue-sidebar a[data-page] { color: #ced6e0; }
+[data-theme='dark'] #catalogue-sidebar a[data-page]:hover { background: #343e49; }
+[data-theme='dark'] #catalogue-sidebar a.active-page { color: #90caf9; background: #243d53; }
+[data-theme='dark'] #catalogue-header,
+[data-theme='dark'] #catalogue-main > footer { border-color: #424b55; }
+[data-theme='dark'] #catalogue-content pre { background: #1b222a; border-color: #424b55; color: #e0e7ef; }
+[data-theme='dark'] .catalogue-pending { background: #292f36; border-color: #424b55; }
+[data-theme='dark'] .catalogue-pattern-note { background: #3b3322; color: #ead7aa; }
+[data-theme='dark'] .catalogue-menu { color: #e7ebf0; }
+[data-theme='dark'] .pattern-back { background: #292f36; color: #e7ebf0; }
+[data-theme='dark'] .table-container.stretch { background: #424242; }
+[data-theme='dark'] a:focus-visible,
+[data-theme='dark'] button:focus-visible,
+[data-theme='dark'] input:focus-visible { outline-color: #90caf9 !important; }
+@media(max-width: 600px) {
+  .catalogue-backend { display: none; }
+  #showcase-theme { margin-left: auto; }
+}
+/* Keep source examples and input icons legible over the catalogue's dark surfaces. */
+[data-theme='dark'] #catalogue-content pre { background: #1b222a !important; }
+[data-theme='dark'] .input-field .prefix { color: #ced6e0 !important; }

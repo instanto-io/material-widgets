@@ -1,0 +1,512 @@
+GWT Material compatibility audit after shared API additions, 8 September 2026
+Command: mvn -Pcompatibility-audit -Dgwt-user-compat.version=0.1.0-material-SNAPSHOT clean compile
+Result: FAIL, 181 compiler diagnostics (not independent defects or a coverage percentage)
+Sources: 604 original core + 72 original jQuery/JSCore Java files
+Shared compatibility commit: a68e97d319dde3bc9540b88b1c8f51dbd83a4af5
+Locally installed gwt-user-compat version: 0.1.0-material-SNAPSHOT
+Compatibility jar SHA-256: ee8f1f82811a0f536304d0ffcdf6a8ae6675ebc04dae64239e7fe94490021aaf
+No native GWT runtime on the audit classpath.
+
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/js/JsMaterialElement.java:[23,34] cannot find symbol
+  symbol:   class JsDate
+  location: package com.google.gwt.core.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/js/JsMaterialElement.java:[182,12] cannot find symbol
+  symbol:   class JsDate
+  location: class gwt.material.design.client.js.JsMaterialElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/ValidatorMixin.java:[26,35] cannot find symbol
+  symbol:   class EventBus
+  location: package com.google.gwt.event.shared
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/ValidatorMixin.java:[29,35] cannot find symbol
+  symbol:   class SimpleEventBus
+  location: package com.google.gwt.event.shared
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[27,48] cannot find symbol
+  symbol:   class ValueBoxEditor
+  location: package com.google.gwt.editor.ui.client.adapters
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[31,34] cannot find symbol
+  symbol:   class AutoDirectionHandler
+  location: package com.google.gwt.i18n.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[39,50] cannot find symbol
+  symbol:   class TextAlignment
+  location: class com.google.gwt.user.client.ui.ValueBoxBase
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[71,57] package AutoDirectionHandler does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[71,75] cannot find symbol
+  symbol: class ValueBoxEditor
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[77,13] cannot find symbol
+  symbol:   class ValueBoxEditor
+  location: class gwt.material.design.client.ui.MaterialValueBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[323,30] cannot find symbol
+  symbol:   class Direction
+  location: class gwt.material.design.client.ui.MaterialValueBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[328,12] cannot find symbol
+  symbol:   class Direction
+  location: class gwt.material.design.client.ui.MaterialValueBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[333,12] cannot find symbol
+  symbol:   class ValueBoxEditor
+  location: class gwt.material.design.client.ui.MaterialValueBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[557,30] cannot find symbol
+  symbol:   class TextAlignment
+  location: class gwt.material.design.client.ui.MaterialValueBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/ValidatorMixin.java:[55,13] cannot find symbol
+  symbol:   class EventBus
+  location: class gwt.material.design.client.base.mixin.ValidatorMixin<W,V>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/AbstractTextWidget.java:[27,38] cannot find symbol
+  symbol:   class SimpleHtmlSanitizer
+  location: package com.google.gwt.safehtml.shared
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[23,33] cannot find symbol
+  symbol:   class ImageElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[64,9] cannot find symbol
+  symbol: class HasLoadHandlers
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[64,26] cannot find symbol
+  symbol: class HasErrorHandlers
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[222,53] cannot find symbol
+  symbol:   class LoadHandler
+  location: class gwt.material.design.client.ui.MaterialImage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[227,54] cannot find symbol
+  symbol:   class ErrorHandler
+  location: class gwt.material.design.client.ui.MaterialImage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/NumberBox.java:[25,37] cannot find symbol
+  symbol:   class ValueBox
+  location: package com.google.gwt.user.client.ui
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/NumberBox.java:[40,35] cannot find symbol
+  symbol: class ValueBox
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/EventHelper.java:[23,43] cannot find symbol
+  symbol:   class HasAttachHandlers
+  location: package com.google.gwt.event.logical.shared
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/EventHelper.java:[31,37] cannot find symbol
+  symbol:   class HasAttachHandlers
+  location: class gwt.material.design.client.base.helper.EventHelper
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[24,33] cannot find symbol
+  symbol:   class LinkElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[25,33] cannot find symbol
+  symbol:   class StyleElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/js/Navigator.java:[22,41] package com.google.gwt.geolocation.client does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/js/Navigator.java:[34,19] cannot find symbol
+  symbol:   class Geolocation
+  location: class gwt.material.design.client.js.Navigator
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/ServiceWorkerLifecycle.java:[22,52] package com.google.web.bindery.requestfactory.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/network/NetworkStatusManager.java:[23,35] cannot find symbol
+  symbol:   class SimpleEventBus
+  location: package com.google.gwt.event.shared
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/network/NetworkStatusManager.java:[34,43] cannot find symbol
+  symbol: class SimpleEventBus
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/js/PushSubscriptionOptions.java:[22,41] package com.google.gwt.typedarrays.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/js/PushSubscriptionOptions.java:[34,12] cannot find symbol
+  symbol:   class Uint8Array
+  location: class gwt.material.design.client.pwa.push.js.PushSubscriptionOptions
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/HasPushNotificationFeatures.java:[22,41] package com.google.gwt.typedarrays.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/helper/PushCryptoHelper.java:[22,41] package com.google.gwt.typedarrays.shared does not exist
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/push/helper/PushCryptoHelper.java:[27,26] cannot find symbol
+  symbol:   class Uint8Array
+  location: class gwt.material.design.client.pwa.push.helper.PushCryptoHelper
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/theme/dark/DarkThemeLoader.java:[22,33] cannot find symbol
+  symbol:   class StyleElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/theme/dark/DarkThemeLoader.java:[31,15] cannot find symbol
+  symbol:   class StyleElement
+  location: class gwt.material.design.client.theme.dark.DarkThemeLoader
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/theme/dark/DarkThemeManager.java:[23,35] cannot find symbol
+  symbol:   class SimpleEventBus
+  location: package com.google.gwt.event.shared
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/theme/dark/DarkThemeManager.java:[31,39] cannot find symbol
+  symbol: class SimpleEventBus
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[22,34] cannot find symbol
+  symbol:   class JsDate
+  location: package com.google.gwt.core.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[257,31] cannot find symbol
+  symbol:   class JsDate
+  location: class gwt.material.design.client.ui.MaterialDatePicker
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialSymbol.java:[23,33] cannot find symbol
+  symbol:   class LinkElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialSymbol.java:[35,22] cannot find symbol
+  symbol:   class LinkElement
+  location: class gwt.material.design.client.ui.MaterialSymbol
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[95,52] cannot find symbol
+  symbol:   class ValueBoxEditor
+  location: class gwt.material.design.client.ui.MaterialValueBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialVideo.java:[23,37] cannot find symbol
+  symbol:   class Frame
+  location: package com.google.gwt.user.client.ui
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialVideo.java:[51,13] cannot find symbol
+  symbol:   class Frame
+  location: class gwt.material.design.client.ui.MaterialVideo
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/OptGroup.java:[23,33] cannot find symbol
+  symbol:   class OptGroupElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/SourceVideo.java:[23,33] cannot find symbol
+  symbol:   class SourceElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/SourceVideo.java:[34,15] cannot find symbol
+  symbol:   class SourceElement
+  location: class gwt.material.design.client.ui.html.SourceVideo
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Video.java:[23,33] cannot find symbol
+  symbol:   class VideoElement
+  location: package com.google.gwt.dom.client
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Video.java:[28,15] cannot find symbol
+  symbol:   class VideoElement
+  location: class gwt.material.design.client.ui.html.Video
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[82,12] cannot find symbol
+  symbol:   class Ignore
+  location: interface com.google.gwt.editor.client.Editor
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[471,12] cannot find symbol
+  symbol:   class Ignore
+  location: interface com.google.gwt.editor.client.Editor
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[637,6] cannot find symbol
+  symbol:   class Ignore
+  location: class gwt.material.design.client.ui.MaterialValueBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialTextBox.java:[113,6] cannot find symbol
+  symbol:   class Ignore
+  location: class gwt.material.design.client.ui.MaterialTextBox
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/MaterialDesignBase.java:[112,22] method injectAtStart in class com.google.gwt.dom.client.StyleInjector cannot be applied to given types;
+  required: java.lang.String
+  found:    java.lang.String,boolean
+  reason: actual and formal argument lists differ in length
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/accessibility/AccessibilityControl.java:[76,20] incompatible types: java.lang.Object cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/accessibility/AccessibilityControl.java:[104,41] cannot find symbol
+  symbol:   method getNativeKeyCode()
+  location: variable event of type com.google.gwt.event.dom.client.KeyUpEvent
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/accessibility/AccessibilityControl.java:[152,43] no suitable method found for $(com.google.gwt.core.client.JavaScriptObject)
+    method gwt.material.design.client.js.JsMaterialElement.$(java.lang.String) is not applicable
+      (argument mismatch; inference variable T has incompatible upper bounds java.lang.String,com.google.gwt.core.client.JavaScriptObject)
+    method gwt.material.design.client.js.JsMaterialElement.$(com.google.gwt.dom.client.Element) is not applicable
+      (argument mismatch; inference variable T has incompatible upper bounds com.google.gwt.dom.client.Element,com.google.gwt.core.client.JavaScriptObject)
+    method gwt.material.design.client.js.JsMaterialElement.$(gwt.material.design.jquery.client.api.JQueryElement) is not applicable
+      (argument mismatch; inference variable T has incompatible upper bounds gwt.material.design.jquery.client.api.JQueryElement,com.google.gwt.core.client.JavaScriptObject)
+[ERROR] target/intake/jquery/src/main/java/gwt/material/design/jquery/client/api/JQuery.java:[61,41] cannot find symbol
+  symbol:   method cast()
+  location: variable TOP_WINDOW of type java.lang.Object
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/TruncateMixin.java:[48,54] incompatible types: com.google.gwt.dom.client.Element cannot be converted to com.google.gwt.user.client.Element
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/api/ApiRegistry.java:[50,21] cannot find symbol
+  symbol:   method setCallback(<anonymous com.google.gwt.core.client.Callback<java.lang.Void,java.lang.Exception>>)
+  location: class com.google.gwt.core.client.ScriptInjector.FromUrl
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/api/ApiRegistry.java:[71,34] incompatible types: com.google.gwt.core.client.JavaScriptObject cannot be converted to com.google.gwt.dom.client.Element
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/api/ApiRegistry.java:[72,58] incompatible types: inference variable T has incompatible upper bounds com.google.gwt.dom.client.Element,com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/BaseCheckBox.java:[96,30] cannot find symbol
+  symbol:   variable DEFAULT_DIRECTION_ESTIMATOR
+  location: class com.google.gwt.user.client.ui.DirectionalTextHelper
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/BaseCheckBox.java:[511,5] method does not override or implement a method from a supertype
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/ValidatorMixin.java:[74,24] cannot find symbol
+  symbol:   class SimpleEventBus
+  location: class gwt.material.design.client.base.mixin.ValidatorMixin<W,V>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/ClearOnKeyUpMixin.java:[74,26] cannot find symbol
+  symbol:   method getNativeKeyCode()
+  location: variable event of type com.google.gwt.event.dom.client.KeyUpEvent
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/StatusDisplayMixin.java:[124,22] cannot find symbol
+  symbol:   method getNativeKeyCode()
+  location: variable event of type com.google.gwt.event.dom.client.KeyUpEvent
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[103,9] method does not override or implement a method from a supertype
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[105,28] incompatible types: V cannot be converted to T
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[322,5] method does not override or implement a method from a supertype
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[327,5] method does not override or implement a method from a supertype
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[329,28] cannot find symbol
+  symbol:   method getDirection()
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[342,28] cannot find symbol
+  symbol:   method getDirectionEstimator()
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[347,21] cannot find symbol
+  symbol:   method setDirectionEstimator(boolean)
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[352,21] cannot find symbol
+  symbol:   method setDirectionEstimator(com.google.gwt.i18n.shared.DirectionEstimator)
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[512,28] cannot find symbol
+  symbol:   method getSelectedText()
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[554,21] cannot find symbol
+  symbol:   method setCursorPos(int)
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[778,28] cannot find symbol
+  symbol:   method addGestureStartHandler((event)->{[...]; } })
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[787,28] cannot find symbol
+  symbol:   method addGestureChangeHandler((event)->{[...]; } })
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[796,28] cannot find symbol
+  symbol:   method addGestureEndHandler((event)->{[...]; } })
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[877,28] cannot find symbol
+  symbol:   method addTouchStartHandler((event)->{[...]; } })
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[886,28] cannot find symbol
+  symbol:   method addTouchMoveHandler((event)->{[...]; } })
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[895,28] cannot find symbol
+  symbol:   method addTouchEndHandler((event)->{[...]; } })
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialValueBox.java:[904,28] cannot find symbol
+  symbol:   method addTouchCancelHandler((event)->{[...]; } })
+  location: variable valueBoxBase of type com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/RegexMixin.java:[56,44] cannot find symbol
+  symbol:   method getCharCode()
+  location: variable event of type com.google.gwt.event.dom.client.KeyPressEvent
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/RegexMixin.java:[59,39] cannot find symbol
+  symbol:   method cancelKey()
+  location: class com.google.gwt.user.client.ui.ValueBoxBase
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialCollapsibleBody.java:[131,28] cannot find symbol
+  symbol:   variable Location
+  location: class com.google.gwt.user.client.Window
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialCollapsibleHeader.java:[84,22] cannot find symbol
+  symbol:   method getNativeKeyCode()
+  location: variable event of type com.google.gwt.event.dom.client.KeyUpEvent
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[217,56] incompatible types: com.google.gwt.i18n.client.HasDirection.Direction cannot be converted to java.lang.String
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[305,16] no suitable method found for addItem(java.lang.String,com.google.gwt.i18n.client.HasDirection.Direction,java.lang.String)
+    method com.google.gwt.user.client.ui.ListBox.addItem(java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+    method com.google.gwt.user.client.ui.ListBox.addItem(java.lang.String,java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[340,16] method insertItem in class com.google.gwt.user.client.ui.ListBox cannot be applied to given types;
+  required: java.lang.String,java.lang.String,int
+  found:    java.lang.String,int
+  reason: actual and formal argument lists differ in length
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[340,59] incompatible types: int cannot be converted to java.lang.String
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[379,59] incompatible types: com.google.gwt.i18n.client.HasDirection.Direction cannot be converted to java.lang.String
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[465,16] method insertItem in class com.google.gwt.user.client.ui.ListBox cannot be applied to given types;
+  required: java.lang.String,java.lang.String,int
+  found:    java.lang.String,com.google.gwt.i18n.client.HasDirection.Direction,java.lang.String,int
+  reason: actual and formal argument lists differ in length
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[780,16] cannot find symbol
+  symbol:   method setItemText(int,java.lang.String)
+  location: variable listBox of type com.google.gwt.user.client.ui.ListBox
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[794,16] cannot find symbol
+  symbol:   method setItemText(int,java.lang.String,com.google.gwt.i18n.client.HasDirection.Direction)
+  location: variable listBox of type com.google.gwt.user.client.ui.ListBox
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[862,23] cannot find symbol
+  symbol:   method getSelectedItemText()
+  location: variable listBox of type com.google.gwt.user.client.ui.ListBox
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[999,20] method insertItem in class com.google.gwt.user.client.ui.ListBox cannot be applied to given types;
+  required: java.lang.String,java.lang.String,int
+  found:    java.lang.String,int
+  reason: actual and formal argument lists differ in length
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[1103,16] method insertItem in class com.google.gwt.user.client.ui.ListBox cannot be applied to given types;
+  required: java.lang.String,java.lang.String,int
+  found:    java.lang.String,int
+  reason: actual and formal argument lists differ in length
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[1105,28] cannot find symbol
+  symbol:   method setDisabled(boolean)
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListValueBox.java:[1115,31] cannot find symbol
+  symbol:   method setDisabled(boolean)
+  location: variable currentPlaceholder of type com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/AbstractSideNav.java:[451,22] cannot find symbol
+  symbol:   method getBodyElement()
+  location: class com.google.gwt.user.client.ui.RootPanel
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialChipContainer.java:[78,26] cannot find symbol
+  symbol:   method getNativeKeyCode()
+  location: variable event of type com.google.gwt.event.dom.client.KeyUpEvent
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[174,18] cannot find symbol
+  symbol:   class ImageElement
+  location: class gwt.material.design.client.ui.MaterialImage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[178,18] cannot find symbol
+  symbol:   class ImageElement
+  location: class gwt.material.design.client.ui.MaterialImage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[221,5] method does not override or implement a method from a supertype
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[223,39] cannot find symbol
+  symbol:   variable LoadEvent
+  location: class gwt.material.design.client.ui.MaterialImage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[226,5] method does not override or implement a method from a supertype
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialImage.java:[228,39] cannot find symbol
+  symbol:   variable ErrorEvent
+  location: class gwt.material.design.client.ui.MaterialImage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/mixin/ImageMixin.java:[53,37] cannot find symbol
+  symbol:   method asString()
+  location: class java.lang.String
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/NumberBox.java:[45,9] cannot find symbol
+  symbol:   method addStyleName(java.lang.String)
+  location: class gwt.material.design.client.base.NumberBox<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialNumberBox.java:[42,28] incompatible types: cannot infer type arguments for gwt.material.design.client.base.NumberBox<>
+    reason: no instance(s) of type variable(s) T,T exist so that gwt.material.design.client.base.NumberBox<T> conforms to com.google.gwt.user.client.ui.ValueBoxBase<T>
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/Suggestion.java:[22,25] constructor MultiWordSuggestion in class com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion cannot be applied to given types;
+  required: java.lang.String,java.lang.String
+  found:    no arguments
+  reason: actual and formal argument lists differ in length
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/Suggestion.java:[25,58] constructor MultiWordSuggestion in class com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion cannot be applied to given types;
+  required: java.lang.String,java.lang.String
+  found:    no arguments
+  reason: actual and formal argument lists differ in length
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/density/DisplayDensityStorage.java:[32,20] cannot find symbol
+  symbol:   method isLocalStorageSupported()
+  location: class com.google.gwt.storage.client.Storage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/density/DisplayDensityStorage.java:[34,19] cannot find symbol
+  symbol:   variable Location
+  location: class com.google.gwt.user.client.Window
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/density/DisplayDensityStorage.java:[41,20] cannot find symbol
+  symbol:   method isLocalStorageSupported()
+  location: class com.google.gwt.storage.client.Storage
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[38,32] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[39,48] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[57,32] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[58,48] incompatible types: com.google.gwt.dom.client.Node cannot be converted to com.google.gwt.core.client.JavaScriptObject
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/DOMHelper.java:[84,47] cannot find symbol
+  symbol:   method getBodyElement()
+  location: class com.google.gwt.user.client.ui.RootPanel
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/base/helper/UiHelper.java:[75,49] cannot find symbol
+  symbol:   method getAbsoluteTop()
+  location: variable widget of type com.google.gwt.user.client.ui.Widget
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[42,9] cannot find symbol
+  symbol:   class StyleElement
+  location: class gwt.material.design.client.font.FontResourceInjector
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[42,51] cannot find symbol
+  symbol:   method createStyleElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[59,9] cannot find symbol
+  symbol:   class LinkElement
+  location: class gwt.material.design.client.font.FontResourceInjector
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[59,56] cannot find symbol
+  symbol:   method createLinkElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[64,9] cannot find symbol
+  symbol:   class LinkElement
+  location: class gwt.material.design.client.font.FontResourceInjector
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[64,49] cannot find symbol
+  symbol:   method createLinkElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[73,13] cannot find symbol
+  symbol:   class LinkElement
+  location: class gwt.material.design.client.font.FontResourceInjector
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[73,53] cannot find symbol
+  symbol:   method createLinkElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/font/FontResourceInjector.java:[84,41] cannot find symbol
+  symbol:   method getElementsByTagName(java.lang.String)
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/PwaManager.java:[146,41] cannot find symbol
+  symbol:   method getElementsByTagName(java.lang.String)
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/ServiceWorkerManager.java:[275,15] cannot find symbol
+  symbol:   variable Location
+  location: class com.google.gwt.user.client.Window
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/manifest/WebManifestManager.java:[41,49] cannot find symbol
+  symbol:   method createLinkElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/theme/BrowserThemeManager.java:[39,47] cannot find symbol
+  symbol:   method createMetaElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/network/NetworkStatusManager.java:[40,43] incompatible types: gwt.material.design.client.pwa.serviceworker.network.NetworkStatusManager cannot be converted to com.google.gwt.event.shared.HasHandlers
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/network/NetworkStatusManager.java:[45,43] incompatible types: gwt.material.design.client.pwa.serviceworker.network.NetworkStatusManager cannot be converted to com.google.gwt.event.shared.HasHandlers
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/pwa/serviceworker/network/NetworkStatusManager.java:[56,16] cannot find symbol
+  symbol:   method addHandler(com.google.gwt.event.shared.GwtEvent.Type<gwt.material.design.client.pwa.serviceworker.network.events.NetworkStatusChangeEvent.NetworkStatusChangeHandler>,gwt.material.design.client.pwa.serviceworker.network.events.NetworkStatusChangeEvent.NetworkStatusChangeHandler)
+  location: class gwt.material.design.client.pwa.serviceworker.network.NetworkStatusManager
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/theme/dark/DarkThemeLoader.java:[58,49] cannot find symbol
+  symbol:   method injectStylesheet(java.lang.String)
+  location: class com.google.gwt.dom.client.StyleInjector
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/theme/dark/DarkThemeManager.java:[92,37] incompatible types: gwt.material.design.client.theme.dark.DarkThemeManager cannot be converted to com.google.gwt.event.shared.HasHandlers
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/theme/dark/DarkThemeManager.java:[109,16] cannot find symbol
+  symbol:   method addHandler(com.google.gwt.event.shared.GwtEvent.Type<gwt.material.design.client.theme.dark.ColorSchemeChangeEvent.ColorSchemeChangeHandler>,gwt.material.design.client.theme.dark.ColorSchemeChangeEvent.ColorSchemeChangeHandler)
+  location: class gwt.material.design.client.theme.dark.DarkThemeManager
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialCollectionItem.java:[99,22] cannot find symbol
+  symbol:   method getNativeKeyCode()
+  location: variable event of type com.google.gwt.event.dom.client.KeyUpEvent
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[232,36] cannot find symbol
+  symbol:   variable JsDate
+  location: class gwt.material.design.client.ui.MaterialDatePicker
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[250,36] cannot find symbol
+  symbol:   variable JsDate
+  location: class gwt.material.design.client.ui.MaterialDatePicker
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[260,20] cannot find symbol
+  symbol:   method createFieldSet()
+  location: class com.google.gwt.user.client.DOM
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[272,13] cannot find symbol
+  symbol:   class JsDate
+  location: class gwt.material.design.client.ui.MaterialDatePicker
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialDatePicker.java:[433,31] cannot find symbol
+  symbol:   variable JsDate
+  location: class gwt.material.design.client.ui.MaterialDatePicker
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialListBox.java:[58,27] cannot find symbol
+  symbol:   method add(com.google.gwt.dom.client.OptionElement,<nulltype>)
+  location: class com.google.gwt.dom.client.SelectElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[53,57] cannot find symbol
+  symbol:   variable TAG
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[65,51] cannot find symbol
+  symbol:   method getIndex()
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[76,51] cannot find symbol
+  symbol:   method getLabel()
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[83,51] cannot find symbol
+  symbol:   method getText()
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[107,51] cannot find symbol
+  symbol:   method isDefaultSelected()
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[118,51] cannot find symbol
+  symbol:   method isDisabled()
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[141,44] cannot find symbol
+  symbol:   method setDefaultSelected(boolean)
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[152,44] cannot find symbol
+  symbol:   method setDisabled(boolean)
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[163,44] cannot find symbol
+  symbol:   method setLabel(java.lang.String)
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Option.java:[180,44] cannot find symbol
+  symbol:   method setText(java.lang.String)
+  location: class com.google.gwt.dom.client.OptionElement
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialNavBarShrink.java:[74,31] cannot find symbol
+  symbol:   method addWindowScrollHandler((scrollEve[...]} } })
+  location: class com.google.gwt.user.client.Window
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRadioButton.java:[64,9] no suitable constructor found for RadioButton(java.lang.String,com.google.gwt.safehtml.shared.SafeHtml,com.google.gwt.i18n.client.HasDirection.Direction)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String,java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRadioButton.java:[68,9] no suitable constructor found for RadioButton(java.lang.String,com.google.gwt.safehtml.shared.SafeHtml,com.google.gwt.i18n.shared.DirectionEstimator)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String,java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRadioButton.java:[72,21] incompatible types: com.google.gwt.safehtml.shared.SafeHtml cannot be converted to java.lang.String
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRadioButton.java:[76,9] no suitable constructor found for RadioButton(java.lang.String,java.lang.String,boolean)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String,java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRadioButton.java:[80,9] no suitable constructor found for RadioButton(java.lang.String,java.lang.String,com.google.gwt.i18n.client.HasDirection.Direction)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String,java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRadioButton.java:[84,9] no suitable constructor found for RadioButton(java.lang.String,java.lang.String,com.google.gwt.i18n.shared.DirectionEstimator)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+    constructor com.google.gwt.user.client.ui.RadioButton.RadioButton(java.lang.String,java.lang.String) is not applicable
+      (actual and formal argument lists differ in length)
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRange.java:[291,22] cannot find symbol
+  symbol:   variable Navigator
+  location: class com.google.gwt.user.client.Window
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialRange.java:[291,78] cannot find symbol
+  symbol:   variable Navigator
+  location: class com.google.gwt.user.client.Window
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialSymbol.java:[35,62] cannot find symbol
+  symbol:   method createLinkElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/MaterialVideo.java:[51,31] cannot find symbol
+  symbol:   class Frame
+  location: class gwt.material.design.client.ui.MaterialVideo
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/IFrame.java:[51,29] cannot find symbol
+  symbol:   method createIFrameElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/OptGroup.java:[48,16] cannot find symbol
+  symbol:   variable OptGroupElement
+  location: class gwt.material.design.client.ui.html.OptGroup
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/OptGroup.java:[59,16] cannot find symbol
+  symbol:   variable OptGroupElement
+  location: class gwt.material.design.client.ui.html.OptGroup
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/OptGroup.java:[70,9] cannot find symbol
+  symbol:   variable OptGroupElement
+  location: class gwt.material.design.client.ui.html.OptGroup
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/OptGroup.java:[83,9] cannot find symbol
+  symbol:   variable OptGroupElement
+  location: class gwt.material.design.client.ui.html.OptGroup
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/SourceVideo.java:[40,29] cannot find symbol
+  symbol:   method createSourceElement()
+  location: class com.google.gwt.dom.client.Document
+[ERROR] target/intake/core/gwt-material/src/main/java/gwt/material/design/client/ui/html/Video.java:[39,29] cannot find symbol
+  symbol:   method createVideoElement()
+  location: class com.google.gwt.dom.client.Document
