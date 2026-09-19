@@ -159,25 +159,49 @@ click handlers are preserved. The adapter checks each expected source fragment
 and fails if the pinned upstream shape changes. The asset JAR and ClientBundle
 resources receive the same adaptation; the original archive remains unchanged.
 
-## Selected addins
+## Addins and their original examples
 
-`gwt-material-addins-teavm` selects the original WebP image, autocomplete, combo
-box, input-mask and time-picker sources, their helpers and bundled resources. These support image and text-field examples on core showcase pages;
-the module does not claim compatibility for the complete addins library.
+`gwt-material-addins-teavm` includes all Java sources and browser resources from
+Material Addins revision `568eb3f92aa4317504887994cfb5dacebf850931`. Maven fetches
+that revision, adapts native calls and packages the original source hashes
+and licences. Including the library does not establish every public API's behaviour.
 
-Maven downloads revision `568eb3f92aa4317504887994cfb5dacebf850931` and verifies the
-SHA-256 recorded in the parent POM before extraction. The original classes then
-pass through the same shared source adapter as core widgets. The module packages
-upstream licensing and original source hashes.
+The separate addins showcase comes from `gwt-material-demo` revision
+`56687222967f45368ae5008357581d5b485cb0af`. Its 34 original views, UiBinder templates,
+models, titles and descriptions are brought in by Maven. The catalogue replaces
+GWTP routing and injection with direct view construction. Signature-pad resizing
+and carousel reloading are restored from presenter-owned setup. A small demo theme
+helper applies the catalogue's blue shades without retaining detached widgets.
+The incubator warning component in the camera example becomes a core label.
+
+Decorative images are copied from the pinned demo. Missing remote images use its
+local profile or logo images, so these are functional examples rather than exact
+visual copies. External library credits belong in the documentation, not among the
+live example controls.
+
+Native SignaturePad and Dropzone constructors receive the underlying DOM element.
+The rich editor's toolbar allocates its eight rows explicitly; Java cannot grow a
+zero-length array as the original GWT JavaScript did. Croppie discards a pending
+image result if its widget has already been destroyed, preventing errors after
+navigation. Both bundled script variants receive the same guarded change.
+
+Camera support uses `navigator.mediaDevices.getUserMedia`. The widget releases
+streams on detach, including streams returned after a permission request outlives
+the page. The demo waits for Play before requesting access. File-upload examples
+keep files in the local queue with automatic upload disabled; an application must
+supply an upload service. The document example accepts a public HTTPS URL and only
+constructs the Google Docs viewer when requested. That service must be able to
+retrieve the document; local and private files cannot be previewed this way.
 
 ## Text fields and addins
+
 
 The original `TextFieldView`, UiBinder XML, `FieldState` and contact model/oracle
 classes are retained. Its presenter contains no extra page setup. The selected
 addins load their own pinned Select2, mask and clock resources through generated
 ClientBundles. An explicit provider selects the original production `StartupState`.
-The addins dark-theme registry is reduced to the three selected theme loaders;
-this does not provide the remaining addins or claim complete dark-theme parity.
+The full addins dark-theme registry is retained. Complete visual parity still needs
+checks across each widget and colour combination.
 
 Two explicit combo-box adaptations handle native values: the selected option index
 uses `Number.intValue()` when the browser returns a number, and multiple selection
@@ -263,7 +287,7 @@ effect.
 ## Source provenance and generated output
 
 The [source lock](../upstream/assessment-lock.json) records assessed upstream
-revisions. Maven verifies the selected source archive checksums, extracts them
+revisions. Maven fetches each source archive at its pinned commit, extracts it
 under `target/intake`, and generates adaptations under each module's `target`.
 The adapters do not edit the original archives.
 
@@ -309,7 +333,7 @@ is omitted. The original resize guidance and inline tab examples remain.
 
 ## Showcase theme
 
-`ShowcaseTheme` registers upstream's core, selected-addin and table dark-theme
+`ShowcaseTheme` registers upstream's core, addin and table dark-theme
 loaders with `DarkThemeManager`. Switching off dark mode removes those injected
 stylesheets. The catalogue stylesheet supplies matching dark colours for our
 sidebar, toolbar, descriptions and code examples, and corrects the upstream dark
@@ -321,3 +345,8 @@ touch and keyboard activation. Light is the default; a choice is saved under
 or full-page demo. Storage errors are ignored so switching still works when
 persistence is unavailable. This is showcase behaviour and does not change how
 applications using the widget library choose their own theme.
+
+Upload events read file size as a number and modification time as milliseconds.
+The original declarations treated those browser properties as strings, which failed
+when a real file reached the Java event handler. The conversion accepts both native
+files and the addin's generated blobs without changing the event model.

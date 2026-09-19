@@ -52,6 +52,11 @@ public final class MaterialShowcase {
       navigation.add(link);
     }
     sidebar.add(navigation);
+    for (Component addin : OriginalAddins.components()) {
+      Anchor link = new Anchor("Addins · " + addin.getName(), "#!" + addin.getHref());
+      link.getElement().setAttribute("data-page", addin.getHref());
+      navigation.add(link);
+    }
 
     shell.add(sidebar, "catalogue-sidebar");
     FlowPanel toolbar = new FlowPanel();
@@ -113,16 +118,30 @@ public final class MaterialShowcase {
         }
       }
     }
+    if (component == null) {
+      for (Component addin : OriginalAddins.components())
+        if (addin.getHref().equals(page)) {
+          component = addin;
+          break;
+        }
+    }
     // Some original widget examples
     // have their own fragment links.
     if (component == null) return;
     content.clear();
     title.setText(component.getName());
     description.setText(component.getDescription());
-    String path = page.startsWith("table-") ? page : OriginalPages.source(page);
+    String path =
+        page.startsWith("table-")
+            ? page
+            : page.startsWith("addins-") ? OriginalAddins.source(page) : OriginalPages.source(page);
     if (path != null) {
       currentPage =
-          page.startsWith("table-") ? OriginalTables.create(page) : OriginalPages.create(page);
+          page.startsWith("table-")
+              ? OriginalTables.create(page)
+              : page.startsWith("addins-")
+                  ? OriginalAddins.create(page)
+                  : OriginalPages.create(page);
       if (page.equals("navbar") || page.equals("sidenavs")) {
         Label note =
             new Label(
@@ -161,6 +180,16 @@ public final class MaterialShowcase {
   }
 
   private void refreshPageLayout() {
+    if (currentPage
+        instanceof gwt.material.design.demo.client.application.addins.signature.SignaturePadView) {
+      ((gwt.material.design.demo.client.application.addins.signature.SignaturePadView) currentPage)
+          .resizeSignaturePad();
+    }
+    if (currentPage
+        instanceof gwt.material.design.demo.client.application.addins.carousel.CarouselView) {
+      ((gwt.material.design.demo.client.application.addins.carousel.CarouselView) currentPage)
+          .reloadCarousels();
+    }
     if (currentPage instanceof gmd.core.demo.client.application.page.tabs.TabsView) {
       gmd.core.demo.client.application.page.tabs.TabsView tabs =
           (gmd.core.demo.client.application.page.tabs.TabsView) currentPage;

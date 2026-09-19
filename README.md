@@ -150,6 +150,31 @@ Continue with the [table showcase examples](docs/SHOWCASE.md#table-examples) for
 paging, grouped rows, custom rendering and infinite loading. Their original
 Java views are built directly from the pinned table demo.
 
+### 6. Add optional widgets
+
+For rich editing, signatures, image cropping and the other addins, add:
+
+```xml
+<dependency>
+  <groupId>io.instanto</groupId>
+  <artifactId>gwt-material-addins-teavm</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+Keep the application harness and core assets from the earlier steps. Addin widgets
+load their own bundled scripts and styles when used. For example:
+
+```java
+MaterialRating rating = new MaterialRating();
+rating.setValue(4);
+RootPanel.get().add(rating);
+```
+
+Import `gwt.material.design.addins.client.rating.MaterialRating`. Explore the
+[addins examples](docs/SHOWCASE.md#addins) for larger compositions. Camera access,
+uploads and external document viewers have additional requirements described there.
+
 ## Documentation
 
 - [Build and test](docs/BUILDING.md): dependencies, local showcase and browser checks.
@@ -169,7 +194,7 @@ The original widgets and Java API are the work of
 Its [jQuery/JSCore bindings](https://github.com/GwtMaterialDesign/gwt-material-jquery)
 and [core showcase](https://github.com/GwtMaterialDesign/gmd-core-demo) supply the
 native declarations, example views, UiBinder templates and descriptions used here.
-The WebP image and selected text-field widgets come from [Material Addins](https://github.com/GwtMaterialDesign/gwt-material-addins).
+The additional widgets, including the editor, cropper, signature pad and text-field controls, come from [Material Addins](https://github.com/GwtMaterialDesign/gwt-material-addins).
 Tables come from [Material Table](https://github.com/GwtMaterialDesign/gwt-material-table),
 with original views and fixtures from its [table showcase](https://github.com/GwtMaterialDesign/gmd-table-demo).
 The browser resources include [Materialize](https://github.com/Dogfalo/materialize)

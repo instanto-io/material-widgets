@@ -2,3 +2,8 @@ target/
 __pycache__/
 *.pyc
 .DS_Store
+upstream/archives/*.zip
+upstream/archives/*.sha256
+
+# TeaVM writes compiled test pages beside the module, not under target/.
+material-compat-contracts/js/

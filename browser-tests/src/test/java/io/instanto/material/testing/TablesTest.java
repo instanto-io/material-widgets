@@ -4,6 +4,10 @@ import static org.junit.Assert.*;
 
 import com.microsoft.playwright.*;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 public class TablesTest {
@@ -35,6 +39,112 @@ public class TablesTest {
           page.locator("label[for$='-col0']").click();
           page.waitForFunction(
               "getComputedStyle(document.querySelector('tbody tr.data-row td[id=col0]')).display === 'none'");
+        });
+  }
+
+  @Test
+  public void infiniteTableSupportsRemoteSortAndCategoryFilter() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!table-infinite",
+        page -> {
+          page.waitForSelector("tbody tr.data-row");
+          page.locator("thead th[id=col1]").click();
+          page.waitForFunction(
+              "() => {const names = Array.from(document.querySelectorAll('tbody tr.data-row td[id=col1]')).map(c => c.textContent.trim()).filter(Boolean); return names.length > 1;}");
+          List<String> ascending =
+              page.locator("tbody tr.data-row td[id=col1]").allTextContents().stream()
+                  .map(String::trim)
+                  .filter(value -> !value.isEmpty())
+                  .collect(Collectors.toList());
+          List<String> expectedAscending = new ArrayList<>(ascending);
+          expectedAscending.sort(String.CASE_INSENSITIVE_ORDER);
+          assertEquals(expectedAscending, ascending);
+          page.locator("thead th[id=col1]").click();
+          page.waitForFunction(
+              "() => {const names = Array.from(document.querySelectorAll('tbody tr.data-row td[id=col1]')).map(c => c.textContent.trim()).filter(Boolean); return names.length > 1;}");
+          List<String> descending =
+              page.locator("tbody tr.data-row td[id=col1]").allTextContents().stream()
+                  .map(String::trim)
+                  .filter(value -> !value.isEmpty())
+                  .collect(Collectors.toList());
+          List<String> expectedDescending = new ArrayList<>(descending);
+          expectedDescending.sort(String.CASE_INSENSITIVE_ORDER);
+          Collections.reverse(expectedDescending);
+          assertEquals(expectedDescending, descending);
+        });
+
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/?categoryFilter=Category%201#!table-infinite",
+        page -> {
+          page.waitForSelector("tbody tr.data-row");
+          page.locator(".table-body")
+              .evaluate(
+                  "el => { el.scrollTop = Math.max(0, el.scrollHeight - el.clientHeight); el.dispatchEvent(new Event('scroll')); }");
+          page.waitForTimeout(500);
+          assertTrue(page.locator("tbody tr.data-row").count() <= 30);
+        });
+  }
+
+  @Test
+  public void frozenColumnsRemainPinnedDuringHorizontalScroll() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!table-frozen",
+        page -> {
+          page.waitForSelector("tbody tr.data-row");
+          Locator firstCell = page.locator("tbody tr.data-row").first().locator("td").first();
+          Locator midCell = page.locator("tbody tr.data-row").first().locator("td").nth(4);
+          assertTrue(firstCell.count() > 0);
+          assertTrue(midCell.count() > 0);
+          page.locator(".table-body")
+              .evaluate("el => { el.scrollLeft = 0; el.dispatchEvent(new Event('scroll')); }");
+          double firstBefore = firstCell.boundingBox().x;
+          double midBefore = midCell.boundingBox().x;
+          page.locator(".table-body")
+              .evaluate(
+                  "el => { el.scrollLeft = el.scrollWidth; el.dispatchEvent(new Event('scroll')); }");
+          page.waitForFunction("() => document.querySelector('.table-body').scrollLeft > 0");
+          page.waitForTimeout(350);
+          double firstAfter = firstCell.boundingBox().x;
+          double midAfter = midCell.boundingBox().x;
+          assertTrue(Math.abs(firstAfter - firstBefore) < 1.0);
+          assertTrue(Math.abs(midAfter - midBefore) > 20.0);
+        });
+  }
+
+  @Test
+  public void tableSelectionCanBeToggledByKeyboardAndTouch() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!table-standard",
+        page -> {
+          page.locator("#catalogue-content select").first().selectOption("MULTIPLE");
+          page.waitForSelector("tbody td.selection input");
+          Locator rowInput = page.locator("tbody td.selection input").first();
+          rowInput.focus();
+          page.keyboard().press("Space");
+          page.waitForFunction(
+              "() => document.querySelectorAll('tbody tr.data-row.selected').length === 1");
+          page.keyboard().press("Space");
+          page.waitForFunction(
+              "() => document.querySelectorAll('tbody tr.data-row.selected').length === 0");
+          rowInput.tap();
+          page.waitForFunction(
+              "() => document.querySelectorAll('tbody tr.data-row.selected').length === 1");
+        });
+  }
+
+  @Test
+  public void infiniteTableFailureModeSurfacesErrorState() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/?serviceFailure=true#!table-infinite",
+        page -> {
+          page.waitForSelector("body[data-showcase-page=table-infinite]");
+          page.waitForTimeout(900);
+          assertEquals(0, page.locator("tbody tr.data-row").count());
         });
   }
 

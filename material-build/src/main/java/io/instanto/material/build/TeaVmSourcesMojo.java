@@ -50,6 +50,9 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
         for (Path file : files.filter(p -> p.toString().endsWith(".java")).sorted().toList()) {
           String original = Files.readString(file), source = original;
           String relative = root.relativize(file).toString();
+          if (relative.equals("gwt/material/design/addins/client/rating/MaterialRating.java")) {
+            source = source.replace("import com.gargoylesoftware.htmlunit.Page;", "");
+          }
           if (relative.equals("gwt/material/design/client/ui/MaterialDatePicker.java")) {
             String before = "picker.off(\"close\");";
             if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
@@ -86,26 +89,15 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
                 """);
           }
           if (relative.equals("gwt/material/design/client/ui/table/MaterialDataTable.java")) {
-            String before = "((Double) index + colOffset)";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Changed table column index conversion");
-            source = source.replace(before, "(((Number) index).intValue() + colOffset)");
-            if (source.contains("void onUnload()"))
-              throw new IllegalArgumentException("Review changed table disposal lifecycle");
-            int end = source.lastIndexOf('}');
-            source =
-                source.substring(0, end)
-                    + """
-                @Override
-                protected void onUnload() {
-                  if ($this().hasClass(TableCssName.STRETCH)) {
-                    $this().removeClass(TableCssName.STRETCH);
-                    body().removeClass(TableCssName.OVERFLOW_HIDDEN);
-                  }
-                  super.onUnload();
-                }
-                """
-                    + source.substring(end);
+            // Both of these come from the table fork the pom pins. Check they are
+            // still there, so a revision bump that drops them is caught here rather
+            // than in a browser.
+            if (!source.contains("((Number) index).intValue() + colOffset"))
+              throw new IllegalArgumentException(
+                  "Table fork no longer fixes the column index conversion");
+            if (!source.contains("void onUnload()"))
+              throw new IllegalArgumentException(
+                  "Table fork no longer restores the scrollbar on disposal");
           }
           if (relative.equals("gwt/material/design/client/js/StickyTableOptions.java")) {
             if (!source.contains("extends JavaScriptObject")
@@ -183,29 +175,6 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
                     before,
                     "public void unload() { io.instanto.material.client.TabLifecycle.unload(getElement()); }");
           }
-          if (relative.equals(
-              "gwt/material/design/addins/client/dark/AddinsDarkThemeLoader.java")) {
-            var cu = com.github.javaparser.StaticJavaParser.parse(source);
-            var retained =
-                Set.of(
-                    "MaterialAutoCompleteDarkTheme",
-                    "MaterialComboBoxDarkTheme",
-                    "MaterialTimePickerDarkTheme");
-            cu.getImports()
-                .removeIf(
-                    i ->
-                        i.getNameAsString().startsWith("gwt.material.design.addins.client.")
-                            && !retained.contains(i.getName().getIdentifier()));
-            var calls =
-                cu.findAll(com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt.class);
-            if (calls.size() != 1 || calls.get(0).getArguments().size() != 15)
-              throw new IllegalArgumentException("Changed addins dark theme registry");
-            calls
-                .get(0)
-                .getArguments()
-                .removeIf(arg -> !retained.contains(arg.asObjectCreationExpr().getTypeAsString()));
-            source = cu.toString();
-          }
           // GWT overlays allow window to be typed as Element. This view is passed straight
           // back to native jQuery; the shared boundary unwraps it to the actual window.
           if (relative.equals("gwt/material/design/jquery/client/api/JQuery.java")) {
@@ -221,6 +190,37 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
               "gwt/material/design/client/pwa/serviceworker/ServiceWorkerLifecycle.java")) {
             source =
                 source.replace("import com.google.web.bindery.requestfactory.shared.Service;", "");
+          }
+          // Native constructors need the DOM node, rather than its GWT Java wrapper.
+          if (relative.endsWith("/camera/MaterialCameraCapture.java")) {
+            source = CameraSourceAdapter.adapt(source);
+          }
+          if (relative.endsWith("/signature/js/SignaturePad.java")
+              || relative.endsWith("/fileuploader/js/Dropzone.java")) {
+            source =
+                source
+                    .replace(
+                        "import com.google.gwt.dom.client.Element;",
+                        "import org.teavm.jso.dom.html.HTMLElement;")
+                    .replace("SignaturePad(Element element", "SignaturePad(HTMLElement element")
+                    .replace("Dropzone(Element e,", "Dropzone(HTMLElement e,");
+          }
+          if (relative.endsWith("/signature/MaterialSignaturePad.java")) {
+            source =
+                source.replace(
+                    "new SignaturePad(getElement(), options)",
+                    "new SignaturePad(getElement().unwrap(), options)");
+          }
+          if (relative.endsWith("/fileuploader/MaterialFileUploader.java")) {
+            source =
+                source.replace("new Dropzone(e, options)", "new Dropzone(e.unwrap(), options)");
+            source = UploadSourceAdapter.adapt(source);
+          }
+          if (relative.endsWith("/richeditor/base/ToolBarManager.java")) {
+            source =
+                source.replace(
+                    "Object[][] toolbar = new Object[][]{};",
+                    "Object[][] toolbar = new Object[8][];");
           }
           // Legacy GWT Element and dom.Element denote the same native element. The
           // compatibility API exposes the current dom package consistently.

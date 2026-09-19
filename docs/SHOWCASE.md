@@ -126,3 +126,22 @@ All 33 original catalogue views and the 18 navigation patterns render on TeaVM.
 **Home** is upstream’s project dashboard; this catalogue opens Buttons instead.
 Remaining addins and deeper table and navigation behaviour coverage are later
 stages of the port.
+
+## Addins
+
+The addins pages retain the original GWT Material demo views and handlers, adapted
+to TeaVM. They are included in this checkout and will appear on the published site
+after deployment. Compare their source with the
+[pinned upstream demo](https://github.com/GwtMaterialDesign/gwt-material-demo/tree/56687222967f45368ae5008357581d5b485cb0af/src/main/java/gwt/material/design/demo/client/application/addins).
+
+| Try the examples | What to explore |
+|---|---|
+| [Autocomplete](https://instanto-io.github.io/material-widgets/#!addins-autocomplete), [combo boxes](https://instanto-io.github.io/material-widgets/#!addins-combobox), [input masks](https://instanto-io.github.io/material-widgets/#!addins-inputmask), [time pickers](https://instanto-io.github.io/material-widgets/#!addins-timepickers) | Suggestions, selection and structured input. |
+| [Rich editor](https://instanto-io.github.io/material-widgets/#!addins-richeditor), [rating](https://instanto-io.github.io/material-widgets/#!addins-rating), [signature](https://instanto-io.github.io/material-widgets/#!addins-signature), [steppers](https://instanto-io.github.io/material-widgets/#!addins-steppers) | Edit HTML, change a rating, draw and export a signature, and complete a sequence of steps. |
+| [Cropper](https://instanto-io.github.io/material-widgets/#!addins-cropper), [carousel](https://instanto-io.github.io/material-widgets/#!addins-carousel), [WebP](https://instanto-io.github.io/material-widgets/#!addins-webp), [avatar](https://instanto-io.github.io/material-widgets/#!addins-avatar) | Crop local sample images, browse slides and compare image widgets. |
+| [Camera](https://instanto-io.github.io/material-widgets/#!addins-camera), [file uploader](https://instanto-io.github.io/material-widgets/#!addins-fileuploader), [document viewer](https://instanto-io.github.io/material-widgets/#!addins-docviewer) | Press Play to request camera access; queue files locally; supply a public document for Google Docs Viewer. Uploads need your own backend. |
+| [Drag and drop](https://instanto-io.github.io/material-widgets/#!addins-dnd), [masonry](https://instanto-io.github.io/material-widgets/#!addins-masonry), [split panel](https://instanto-io.github.io/material-widgets/#!addins-splitpanel), [waterfall](https://instanto-io.github.io/material-widgets/#!addins-waterfall) | Rearrange and lay out content. |
+| [Menu bar](https://instanto-io.github.io/material-widgets/#!addins-menubar), [tree view](https://instanto-io.github.io/material-widgets/#!addins-treeview), [subheaders](https://instanto-io.github.io/material-widgets/#!addins-subheaders), [window](https://instanto-io.github.io/material-widgets/#!addins-window) | Menus, hierarchical navigation, grouped content and floating windows. |
+| [Overlay](https://instanto-io.github.io/material-widgets/#!addins-overlay), [cutouts](https://instanto-io.github.io/material-widgets/#!addins-cutouts), [bubble](https://instanto-io.github.io/material-widgets/#!addins-bubble), [empty states](https://instanto-io.github.io/material-widgets/#!addins-emptystates) | Explanations, contextual panels and empty-content presentation. |
+| [Circular progress](https://instanto-io.github.io/material-widgets/#!addins-circularprogress), [count-up](https://instanto-io.github.io/material-widgets/#!addins-countup), [live timestamps](https://instanto-io.github.io/material-widgets/#!addins-livestamp) | Progress and changing values. |
+| [Icon morph](https://instanto-io.github.io/material-widgets/#!addins-iconmorph), [path animator](https://instanto-io.github.io/material-widgets/#!addins-pathanimator), [scroll fire](https://instanto-io.github.io/material-widgets/#!addins-scrollfire), [swipeable](https://instanto-io.github.io/material-widgets/#!addins-swipeable) | Animated transitions and gesture-driven behaviour; native touch coverage remains limited. |

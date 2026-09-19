@@ -23,6 +23,8 @@
  <resource><directory>../target/intake/table-demo</directory><targetPath>META-INF/upstream/table-showcase</targetPath><includes><include>LICENSE*</include></includes></resource>
  <resource><directory>${project.build.directory}</directory><targetPath>META-INF</targetPath><includes><include>table-showcase-inputs.sha256</include></includes></resource>
 
+      <resource><directory>../target/intake/addins-demo</directory><targetPath>META-INF/upstream/addins-showcase</targetPath><includes><include>LICENSE*</include></includes></resource>
+      <resource><directory>${project.build.directory}</directory><targetPath>META-INF</targetPath><includes><include>addins-showcase-inputs.sha256</include></includes></resource>
       <resource>
         <directory>src/main/resources</directory>
       </resource>
@@ -52,7 +54,7 @@
               <goal>showcase-sources</goal>
             </goals>
           </execution>
-          <execution><id>patterns</id><goals><goal>pattern-sources</goal></goals><configuration><input>${project.basedir}/../target/intake/patterns</input></configuration></execution><execution><id>table-showcase</id><goals><goal>table-showcase-sources</goal></goals><configuration><input>${project.basedir}/../target/intake/table-demo</input></configuration></execution><execution><id>teavm-shell</id><goals><goal>teavm-sources</goal></goals><configuration><input>${project.basedir}/../showcase-shared/src/main/java</input><output>${project.build.directory}/generated-sources/shell</output></configuration></execution>
+          <execution><id>addins-showcase</id><goals><goal>addins-showcase-sources</goal></goals><configuration><input>${project.basedir}/../target/intake/addins-demo</input></configuration></execution><execution><id>patterns</id><goals><goal>pattern-sources</goal></goals><configuration><input>${project.basedir}/../target/intake/patterns</input></configuration></execution><execution><id>table-showcase</id><goals><goal>table-showcase-sources</goal></goals><configuration><input>${project.basedir}/../target/intake/table-demo</input></configuration></execution><execution><id>teavm-shell</id><goals><goal>teavm-sources</goal></goals><configuration><input>${project.basedir}/../showcase-shared/src/main/java</input><output>${project.build.directory}/generated-sources/shell</output></configuration></execution>
         </executions>
         <configuration>
           <input>${project.basedir}/../target/intake/showcase</input>

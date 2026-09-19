@@ -10,23 +10,20 @@ is established, [design](docs/DESIGN.md) explains the adaptations, and the
 
 ## Simplify the repository
 
-Extend the Maven download and checksum approach used for addins to the remaining
-core, jQuery and showcase source archives, then remove those ZIPs from Git.
+Extend the Maven download approach used for addins to the remaining core, jQuery
+and showcase source archives, then remove those ZIPs from Git.
 Keep downloads cached for subsequent offline builds.
 Preserve source provenance, licences and the maintained TeaVM showcase shell.
 
-## Complete the core showcase
+## Complete application behaviour
 
-Port the original GWT Material Patterns views next: the six navbar gallery
-patterns, eleven side-navigation patterns and the combined navbar/push example
-linked from Tabs. Pin their sources, adapt presenter-owned initialisation and
-keep original handlers and templates. Their demo destinations must run locally
-on TeaVM before they appear as working examples in the showcase.
-
-Keep upstream comparisons in documentation. Distinguish successful compilation,
-rendering and tested interactions for each addition.
+The core catalogue, all eighteen navigation patterns, six table views and the
+thirty-four original addins views are available. Extend their interaction coverage
+and check examples in real applications. Keep upstream comparisons in documentation
+and distinguish successful compilation, rendering and tested interactions.
 
 ## Expand behaviour coverage
+
 
 Use Webapp Testkit and TeaVMTestRunner for application and widget scenarios,
 with Java Playwright retained for WebKit. The table showcase now uses this harness;
@@ -56,3 +53,14 @@ and create release branches when making releases.
 Migrate framework-specific template, injection and binding code separately. The
 [Verrai migration notes](docs/MIGRATION.md) describe the decisions required before
 retiring its existing wrappers.
+
+## Verification and execution backlog (verify first, implement if missing)
+
+- [ ] Verify 33 catalogue views and all 18 navbar/sidebar patterns are still rendered on TeaVM and cross-link correctly to upstream references.
+- [ ] Verify text fields, errors, date pickers, dark mode and all six table views remain green in the browser contracts.
+- [ ] Verify addins coverage beyond selected image/autocomplete/combo-box/input-mask/time-picker (for example rating, signature, steps, cropper, carousel, media upload, document viewer, etc.).
+- [ ] Verify table interactions for frozen columns, keyboard navigation, touch interaction, remote sorting/filtering, and service-failure flows.
+- [ ] Verify Chromium, Firefox and WebKit full matrix in shared TeaVMTestRunner and Webapp Testkit scenarios, including optimized-build checks.
+- [ ] Verify locale variants and less-used native callbacks/browser API paths that are still untested.
+- [ ] Verify first-release dependency chain publishing and a standalone application build from an empty Maven cache.
+- [ ] Verify upstream archives are no longer required in source control and are downloaded via Maven at their pinned revisions.

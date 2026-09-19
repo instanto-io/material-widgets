@@ -64,7 +64,7 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/site</outputDirectory>
-              <overwrite>true</overwrite><resources><resource><directory>../showcase-examples-teavm/target/pattern-site</directory></resource>
+              <overwrite>true</overwrite><resources><resource><directory>../showcase-examples-teavm/target/addins-site</directory></resource><resource><directory>../showcase-examples-teavm/target/pattern-site</directory></resource>
                 <resource><directory>../showcase-shared/src/site</directory><excludes><exclude>index.html</exclude></excludes></resource>
                 <resource><directory>../target/intake/showcase/src/main/webapp/images</directory><targetPath>images</targetPath></resource>
                 <resource><directory>../target/intake/core/gwt-material/src/main/resources/gwt/material/design/public/font</directory><targetPath>material/font</targetPath></resource>

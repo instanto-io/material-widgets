@@ -8,6 +8,27 @@ import org.junit.Test;
 
 public class MaterialResourcesTest {
   @Test
+  public void cropperCleanupGuardRejectsChangedPinnedResources() throws Exception {
+    for (String suffix : new String[] {".js", ".min.js"}) {
+      String original =
+          Files.readString(
+              Path.of(
+                  "../target/intake/addins/src/main/resources/gwt/material/design/addins/client/cropper/resources/js/croppie"
+                      + suffix));
+      boolean minified = suffix.equals(".min.js");
+      String adapted = MaterialResourcesMojo.adaptCropper(original, minified);
+      assertThrows(
+          IllegalArgumentException.class,
+          () -> MaterialResourcesMojo.adaptCropper(adapted, minified));
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              MaterialResourcesMojo.adaptCropper(
+                  original.replace(".then(", ".changedThen("), minified));
+    }
+  }
+
+  @Test
   public void datePickerAdaptationRejectsChangedInputInBothResources() throws Exception {
     for (String suffix : new String[] {".js", ".min.js"}) {
       String original =

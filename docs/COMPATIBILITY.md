@@ -15,6 +15,7 @@ For implementation decisions, including the showcase's GWTP replacement, see
 |---|---|---|
 | Core and jQuery source compatibility | All 604 core and 72 jQuery Java sources compile | TeaVM compiles reachable code; uncalled public APIs still need runtime coverage |
 | Original showcase | 33 original catalogue views and UiBinder templates render on TeaVM; WebKit opens each twice. The navbar, sidebar and combined-tab galleries also open 18 full-page TeaVM patterns | Complete behaviour of every widget on those pages |
+| Addins | All original addins sources compile; 34 original views render, load local images and survive navigation away and back in Chrome and Firefox through Webapp Testkit, and in WebKit | Every configuration, real camera hardware, external document rendering or an upload backend |
 | Tables | All 189 Material Table Java sources compile. Six original table views render and remount under Webapp Testkit in Chrome and supplementary WebKit checks | Every table API, native touch gesture or frozen-column interaction |
 | Table interactions | Testkit scenarios cover 52-row paging, sorting events, dataset replacement and clearing, paged column visibility, selection with its original model, density changes, viewport expansion/restoration and scroll cleanup, category opening/closing and loading another bounded window of infinite rows | Remote sorting/filtering, server failure/retry, every locale, keyboard navigation and all configuration combinations |
 | Selected interactions | Original button click/double-click and disabled state, checkbox check-all, dialog opening/closing and overlay removal, collection clicks, timed panel loaders, tab selection/addition/resize/reset, and text-field value events, validation, reset, sensitivity, masks, combo boxes and time picking | Every value, validation, keyboard or lifecycle path |
@@ -26,7 +27,7 @@ For implementation decisions, including the showcase's GWTP replacement, see
 | Standalone use | The Hello Material example builds from widget and asset JARs | A published release verified from an empty Maven cache |
 
 The [showcase guide](SHOWCASE.md) lists available examples with links to the port
-and upstream. It also distinguishes the remaining patterns, addins and deeper table checks.
+and upstream. It also distinguishes available addins and deeper interaction checks.
 Source-preservation checks cover selected original view members separately from
 browser behaviour. Historical lexical inventories under `reports/` are assessment
 records, not current runtime evidence.
@@ -65,10 +66,17 @@ in WebKit. WebKit also exercises drawer opening/overlay dismissal and expansion
 and collapse of the mini sidebar. These checks do not establish every responsive
 layout, keyboard path or physical touch gesture.
 
+Addins interaction checks exercise rich-editor HTML set/read handlers, rating value
+events, step completion, signature drawing/export/clear, cropper export and local file queuing with the original added-file event. Page
+checks include navigation away and back, local image decoding and browser errors.
+Camera stream cleanup uses a controlled fixture; it does not certify physical
+camera access. File uploads are deliberately queued locally in the static showcase,
+and Google Docs rendering depends on a public document and an external service.
+
 ## Remaining compatibility work
 
-- Extend the showcase to remaining addins. Presenter-owned
-  setup must be moved deliberately when adapting those pages.
+
+- Extend addins interaction coverage, including real uploads, camera capture, keyboard and touch input. Verify external document rendering separately from local page checks.
 - Expand widget behaviour coverage with Gherkin/Cucumber Tea, TeaVMTestRunner and
   mockatcha-dom. Retain Java Playwright for WebKit and verify the wider browser
   matrix. The existing checks do not resolve deferred Bootstrap step definitions.

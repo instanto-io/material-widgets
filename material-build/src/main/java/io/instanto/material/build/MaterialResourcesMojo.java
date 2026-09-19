@@ -48,6 +48,8 @@ public final class MaterialResourcesMojo extends AbstractMojo {
                     adaptMedia(adapt(Files.readString(file), minified), minified), minified));
           } else if (name.equals("timepicker.js") || name.equals("timepicker.min.js")) {
             Files.writeString(dest, adaptClock(Files.readString(file), name.endsWith(".min.js")));
+          } else if (name.equals("croppie.js") || name.equals("croppie.min.js")) {
+            Files.writeString(dest, adaptCropper(Files.readString(file), name.endsWith(".min.js")));
           } else if (root.relativize(file)
               .toString()
               .matches("gwt/material/design/client/resources/css/style(\\.min)?\\.css")) {
@@ -74,6 +76,21 @@ public final class MaterialResourcesMojo extends AbstractMojo {
     } catch (Exception e) {
       throw new MojoExecutionException("Unable to adapt Materialize resources", e);
     }
+  }
+
+  static String adaptCropper(String source, boolean minified) {
+    // Image loading may finish after the widget is detached and its elements destroyed.
+    // A disposed instance must not install the image or emit an update into a new page.
+    source = source.replace("\r\n", "\n");
+    String before =
+        minified
+            ? ".then(function(e){if(function(t){this.elements.img.parentNode"
+            : "return loadImage(url, hasExif).then(function (img) {\n            _replaceImage.call(self, img);";
+    String after =
+        minified
+            ? ".then(function(e){if(!p.elements)return;if(function(t){this.elements.img.parentNode"
+            : "return loadImage(url, hasExif).then(function (img) {\n            if (!self.elements) return;\n            _replaceImage.call(self, img);";
+    return replaceOnce(source, before, after);
   }
 
   static String adaptClock(String source, boolean minified) {

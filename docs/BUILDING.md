@@ -60,10 +60,10 @@ inheriting this repository's parent POM.
 This repository builds TeaVM widgets and showcases only. Shared comparisons with
 the original GWT APIs run in `teavm-compat`.
 
-Maven downloads the pinned addins, table and table-showcase archives and verifies their SHA-256 values before
-extracting it. Downloads are cached under Maven's local repository, allowing
-subsequent `mvn -o clean verify` builds. The core, jQuery and showcase archives
-remain checked in pending the rest of the source-intake cleanup.
+Maven downloads the pinned core, jQuery, addins, addins-showcase, table and
+table-showcase archives and verifies their SHA-256 values before extracting them.
+Downloads are cached under Maven's local repository, allowing subsequent
+`mvn -o clean verify` builds.
 
 For local production staging and GitHub Pages hosting, use the
 [publishing guide](PUBLISHING.md).

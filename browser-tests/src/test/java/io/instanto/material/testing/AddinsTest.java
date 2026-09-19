@@ -1,0 +1,99 @@
+package io.instanto.material.testing;
+
+import static org.junit.Assert.*;
+
+import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.FilePayload;
+import java.nio.file.Path;
+import org.junit.Test;
+
+/** Native browser checks supplement the TeaVM/Testkit scenarios. */
+public class AddinsTest {
+  @Test
+  public void allAddinsRenderAndRemount() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!button",
+        page -> {
+          page.waitForSelector("a[data-page=addins-cropper]");
+          var routes =
+              page.locator("a[data-page^=addins-]")
+                  .evaluateAll("links=>links.map(a=>a.getAttribute('data-page'))");
+          assertEquals(34, ((java.util.List<?>) routes).size());
+          for (Object route : (java.util.List<?>) routes) {
+            for (int pass = 0; pass < 2; pass++) {
+              page.locator("a[data-page='" + route + "']").click();
+              page.waitForSelector(
+                  "body[data-showcase-page='" + route + "'][data-showcase-state=rendered]");
+              assertFalse(page.locator("#catalogue-content").textContent().isBlank());
+              page.waitForFunction(
+                  "Array.from(document.querySelectorAll('#catalogue-content img[src]')).every(i=>!i.getAttribute('src') || (i.complete && i.naturalWidth>0))");
+              page.locator("a[data-page=button]").click();
+              page.waitForSelector("body[data-showcase-page=button]");
+            }
+          }
+        });
+  }
+
+  @Test
+  public void signatureAcceptsNativePointerInput() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!addins-signature",
+        page -> {
+          var canvas = page.locator("#catalogue-content canvas").first();
+          canvas.scrollIntoViewIfNeeded();
+          var rect = canvas.boundingBox();
+          page.mouse().move(rect.x + 20, rect.y + 20);
+          page.mouse().down();
+          page.mouse().move(rect.x + 100, rect.y + 70, new Mouse.MoveOptions().setSteps(6));
+          page.mouse().up();
+          page.waitForSelector("#catalogue-content :text('End Signature Event fired')");
+          page.getByText("Get Image Data", new Page.GetByTextOptions().setExact(true)).click();
+          page.waitForSelector(".modal img[src^='data:image/png;base64,']");
+          page.getByText("Close", new Page.GetByTextOptions().setExact(true)).click();
+        });
+  }
+
+  @Test
+  public void cropperExportsAnImage() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!addins-cropper",
+        page -> {
+          page.waitForSelector(".croppie-container");
+          page.waitForFunction("document.querySelector('.cr-image').style.opacity === '1'");
+          if (Boolean.getBoolean("material.capture"))
+            page.screenshot(
+                new Page.ScreenshotOptions()
+                    .setPath(Path.of("target/addins-cropper.png"))
+                    .setFullPage(true));
+          page.getByText("Crop", new Page.GetByTextOptions().setExact(true)).click();
+          page.waitForSelector(".modal img[src^='data:image/']");
+          page.getByText("Close", new Page.GetByTextOptions().setExact(true)).click();
+        });
+  }
+
+  @Test
+  public void uploaderQueuesWithoutSending() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!addins-fileuploader",
+        page -> {
+          page.waitForSelector(
+              "input.dz-hidden-input",
+              new Page.WaitForSelectorOptions()
+                  .setState(com.microsoft.playwright.options.WaitForSelectorState.ATTACHED));
+          page.locator("input.dz-hidden-input")
+              .first()
+              .setInputFiles(
+                  new FilePayload(
+                      "sample.txt",
+                      "text/plain",
+                      "Local sample".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+          page.waitForSelector("[data-dz-name]:has-text('sample.txt')");
+          page.waitForFunction(
+              "Dropzone.instances.some(d=>d.options.autoProcessQueue===false && d.getQueuedFiles().length===1)");
+        });
+  }
+}

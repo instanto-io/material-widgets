@@ -15,8 +15,8 @@ image.setUrl("images/card.webp");
 image.setFallbackUrl("images/card.jpg");
 ```
 
-The build downloads pinned upstream sources, verifies their checksum and adapts
-them for TeaVM. See [port design](../docs/DESIGN.md#selected-addins) and
+The build downloads upstream sources at their pinned revision and adapts them
+for TeaVM. See [port design](../docs/DESIGN.md#selected-addins) and
 [build instructions](../docs/BUILDING.md).
 
 Credit belongs to [GWT Material](https://github.com/GwtMaterialDesign/gwt-material-addins).

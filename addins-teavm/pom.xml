@@ -7,8 +7,8 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>gwt-material-addins-teavm</artifactId>
-  <name>Material Addins for TeaVM (selected widgets)</name>
-  <description>Selected original WebP, autocomplete, combo-box, input-mask and time-picker addins.</description>
+  <name>Material Addins for TeaVM</name>
+  <description>GWT Material Addins adapted for TeaVM, with their original widget packages and browser assets.</description>
   <dependencies>
     <dependency>
       <groupId>io.instanto</groupId>
@@ -23,12 +23,7 @@
       </resource>
       <resource>
         <directory>${project.build.directory}/generated-resources/material</directory>
-        <includes>
-          <include>gwt/material/design/addins/client/autocomplete/**</include>
-          <include>gwt/material/design/addins/client/combobox/**</include>
-          <include>gwt/material/design/addins/client/inputmask/**</include>
-          <include>gwt/material/design/addins/client/timepicker/**</include><include>gwt/material/design/addins/client/sideprofile/**</include>
-        </includes>
+        <includes><include>gwt/material/design/addins/**</include></includes>
       </resource>
       <resource>
         <directory>..</directory>
@@ -84,17 +79,7 @@
               <resources>
                 <resource>
                   <directory>../target/intake/addins/src/main/java</directory>
-                  <includes>
-                    <include>gwt/material/design/addins/client/webp/*.java</include>
-                    <include>gwt/material/design/addins/client/autocomplete/**/*.java</include>
-                    <include>gwt/material/design/addins/client/combobox/**/*.java</include>
-                    <include>gwt/material/design/addins/client/inputmask/**/*.java</include>
-                    <include>gwt/material/design/addins/client/timepicker/**/*.java</include><include>gwt/material/design/addins/client/sideprofile/**/*.java</include>
-                    <include>gwt/material/design/addins/client/dark/**/*.java</include>
-                    <include>gwt/material/design/addins/client/MaterialAddins.java</include>
-                    <include>gwt/material/design/addins/client/StartupState.java</include>
-                    <include>gwt/material/design/addins/client/base/constants/AddinsCssName.java</include>
-                  </includes>
+                  <includes><include>gwt/material/design/addins/**/*.java</include></includes>
                 </resource>
               </resources>
             </configuration>
