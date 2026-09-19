@@ -6,6 +6,12 @@
     <artifactId>gwt-material-widgets-parent</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
+
+  <properties>
+    <!-- Not a published library. -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <artifactId>gwt-material-showcase-examples-teavm</artifactId>
   <dependencies><dependency><groupId>io.instanto</groupId><artifactId>gwt-material-table-teavm</artifactId><version>${project.version}</version></dependency>
     <dependency><groupId>io.instanto</groupId><artifactId>gwt-material-addins-teavm</artifactId><version>${project.version}</version></dependency>

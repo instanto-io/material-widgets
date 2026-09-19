@@ -35,7 +35,9 @@
     <teavm.version>0.15.0</teavm.version>
     <teavm.optimization>SIMPLE</teavm.optimization>
     <teavm.minify>false</teavm.minify>
-    <maven.deploy.skip>true</maven.deploy.skip>
+    <!-- The libraries publish. Showcases, probes and audits set this back to
+         true in their own POMs. -->
+    <maven.deploy.skip>false</maven.deploy.skip>
     <material-core.revision>d79f6edb813b263d2d97f51814abe6f1a8c88a2a</material-core.revision>
     <material-jquery.revision>a9a3755722a9552d86d90f322948867776286b16</material-jquery.revision>
     <material-addins-demo.revision>56687222967f45368ae5008357581d5b485cb0af</material-addins-demo.revision>
@@ -67,6 +69,20 @@
       <url>https://maven.pkg.github.com/instanto-io/teavm-compat</url>
     </repository>
   </repositories>
+
+  <!-- Where this reactor publishes. The default is the organisation's GitHub
+       Packages registry; -Partifacts sends the same build to the Nexus at
+       artifacts.instanto.io instead. -->
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/instanto-io/material-widgets</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/instanto-io/material-widgets</url>
+    </snapshotRepository>
+  </distributionManagement>
   <build>
     <plugins>
       <plugin>
@@ -254,6 +270,19 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>artifacts</id>
+      <distributionManagement>
+        <repository>
+          <id>artifacts</id>
+          <url>https://artifacts.instanto.io/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+          <id>artifacts</id>
+          <url>https://artifacts.instanto.io/repository/maven-snapshots/</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
     <profile>
       <id>showcase-tests</id>
       <modules><module>showcase-tests</module></modules>

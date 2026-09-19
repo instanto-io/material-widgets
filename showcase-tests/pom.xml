@@ -4,7 +4,9 @@
     <groupId>io.instanto</groupId><artifactId>gwt-material-widgets-parent</artifactId><version>0.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>gwt-material-showcase-tests</artifactId>
-  <properties><material.test.browser>browser-chrome</material.test.browser></properties>
+  <properties>
+    <!-- Not a published library. -->
+    <maven.deploy.skip>true</maven.deploy.skip><material.test.browser>browser-chrome</material.test.browser></properties>
   <dependencies>
     <!-- Rule support must precede TeaVM's JUnit runner on the classpath. -->
     <dependency><groupId>io.instanto</groupId><artifactId>teavm-rule-support</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>

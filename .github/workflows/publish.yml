@@ -1,0 +1,59 @@
+name: Publish
+
+# Publishes the libraries to both registries: the organisation's GitHub Packages
+# and the Nexus at artifacts.instanto.io. The showcases, probes and audit modules
+# set maven.deploy.skip themselves and are not published.
+#
+# Snapshots go out on every push to main once CI has passed; a v* tag publishes a
+# release. Nexus needs ARTIFACTS_USERNAME and ARTIFACTS_TOKEN; without them that
+# job fails rather than publishing to one registry and reporting success.
+
+on:
+  workflow_run:
+    workflows: [ CI ]
+    types: [ completed ]
+    branches: [ main ]
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  packages:
+    name: GitHub Packages
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
+    with:
+      name: Deploy to GitHub Packages
+      goals: clean deploy
+      maven-args: -DskipTests
+      timeout-minutes: 30
+      parents: |
+        instanto-io/instanto-poms pom.xml
+        instanto-io/teavm-compat pom.xml
+    secrets:
+      PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+  artifacts:
+    name: artifacts.instanto.io
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
+    with:
+      name: Deploy to the Nexus at artifacts.instanto.io
+      goals: clean deploy
+      maven-args: -DskipTests -Partifacts
+      timeout-minutes: 30
+      parents: |
+        instanto-io/instanto-poms pom.xml
+        instanto-io/teavm-compat pom.xml
+    secrets:
+      PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+      ARTIFACTS_USERNAME: ${{ secrets.ARTIFACTS_USERNAME }}
+      ARTIFACTS_TOKEN: ${{ secrets.ARTIFACTS_TOKEN }}
