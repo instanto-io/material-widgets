@@ -5,8 +5,8 @@ name: Publish
 # set maven.deploy.skip themselves and are not published.
 #
 # Snapshots go out on every push to main once CI has passed; a v* tag publishes a
-# release. Nexus needs ARTIFACTS_USERNAME and ARTIFACTS_TOKEN; without them that
-# job fails rather than publishing to one registry and reporting success.
+# release. The Nexus job runs only when ARTIFACTS_USERNAME and ARTIFACTS_TOKEN
+# exist, so the repository publishes to GitHub Packages alone until they are set.
 
 on:
   workflow_run:
@@ -22,11 +22,27 @@ permissions:
   packages: write
 
 jobs:
-  packages:
-    name: GitHub Packages
+  credentials:
+    name: Check registry credentials
     if: >-
       github.event_name != 'workflow_run' ||
       github.event.workflow_run.conclusion == 'success'
+    runs-on: [self-hosted, instanto-container]
+    outputs:
+      nexus: ${{ steps.check.outputs.nexus }}
+    steps:
+      - id: check
+        env:
+          ARTIFACTS_TOKEN: ${{ secrets.ARTIFACTS_TOKEN }}
+        run: |
+          echo "nexus=${ARTIFACTS_TOKEN:+yes}" >> "$GITHUB_OUTPUT"
+          [ -n "${ARTIFACTS_TOKEN:-}" ] \
+            && echo "Nexus credentials present" \
+            || echo "No ARTIFACTS_TOKEN: publishing to GitHub Packages only"
+
+  packages:
+    name: GitHub Packages
+    needs: credentials
     uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
     with:
       name: Deploy to GitHub Packages
@@ -41,9 +57,8 @@ jobs:
 
   artifacts:
     name: artifacts.instanto.io
-    if: >-
-      github.event_name != 'workflow_run' ||
-      github.event.workflow_run.conclusion == 'success'
+    needs: credentials
+    if: needs.credentials.outputs.nexus == 'yes'
     uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
     with:
       name: Deploy to the Nexus at artifacts.instanto.io
