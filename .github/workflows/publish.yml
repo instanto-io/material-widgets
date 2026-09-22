@@ -1,20 +1,13 @@
 name: Publish
 
-# Publishes the libraries to both registries: the organisation's GitHub Packages
-# and the Nexus at artifacts.instanto.io. The showcases, probes and audit modules
-# set maven.deploy.skip themselves and are not published.
-#
-# Snapshots go out on every push to main once CI has passed; a v* tag publishes a
-# release. The Nexus job runs only when ARTIFACTS_USERNAME and ARTIFACTS_TOKEN
-# exist, so the repository publishes to GitHub Packages alone until they are set.
+# Publishes the libraries to packages.instanto.io after CI. The showcases,
+# probes and audit modules set maven.deploy.skip themselves and are not published.
 
 on:
   workflow_run:
     workflows: [ CI ]
     types: [ completed ]
     branches: [ main ]
-  push:
-    tags: [ 'v*' ]
   workflow_dispatch:
 
 permissions:
@@ -22,53 +15,15 @@ permissions:
   packages: write
 
 jobs:
-  credentials:
-    name: Check registry credentials
+  publish-snapshot:
+    name: Instanto snapshots
     if: >-
       github.event_name != 'workflow_run' ||
       github.event.workflow_run.conclusion == 'success'
-    runs-on: [self-hosted, instanto-container]
-    outputs:
-      nexus: ${{ steps.check.outputs.nexus }}
-    steps:
-      - id: check
-        env:
-          ARTIFACTS_TOKEN: ${{ secrets.ARTIFACTS_TOKEN }}
-        run: |
-          echo "nexus=${ARTIFACTS_TOKEN:+yes}" >> "$GITHUB_OUTPUT"
-          [ -n "${ARTIFACTS_TOKEN:-}" ] \
-            && echo "Nexus credentials present" \
-            || echo "No ARTIFACTS_TOKEN: publishing to GitHub Packages only"
-
-  packages:
-    name: GitHub Packages
-    needs: credentials
     uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
     with:
-      name: Deploy to GitHub Packages
+      name: Deploy to packages.instanto.io
       goals: clean deploy
       maven-args: -DskipTests
       timeout-minutes: 30
-      parents: |
-        instanto-io/instanto-poms pom.xml
-        instanto-io/teavm-compat pom.xml
-    secrets:
-      PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
-
-  artifacts:
-    name: artifacts.instanto.io
-    needs: credentials
-    if: needs.credentials.outputs.nexus == 'yes'
-    uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
-    with:
-      name: Deploy to the Nexus at artifacts.instanto.io
-      goals: clean deploy
-      maven-args: -DskipTests -Partifacts
-      timeout-minutes: 30
-      parents: |
-        instanto-io/instanto-poms pom.xml
-        instanto-io/teavm-compat pom.xml
-    secrets:
-      PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
-      ARTIFACTS_USERNAME: ${{ secrets.ARTIFACTS_USERNAME }}
-      ARTIFACTS_TOKEN: ${{ secrets.ARTIFACTS_TOKEN }}
+    secrets: inherit

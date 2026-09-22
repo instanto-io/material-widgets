@@ -65,24 +65,15 @@
   </modules>
   <repositories>
     <repository>
-      <id>github-teavm-compat</id>
-      <url>https://maven.pkg.github.com/instanto-io/teavm-compat</url>
+      <id>forgejo</id>
+      <name>Instanto snapshots</name>
+      <url>https://packages.instanto.io/api/packages/instanto-io/maven</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
     </repository>
   </repositories>
 
-  <!-- Where this reactor publishes. The default is the organisation's GitHub
-       Packages registry; -Partifacts sends the same build to the Nexus at
-       artifacts.instanto.io instead. -->
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/instanto-io/material-widgets</url>
-    </repository>
-    <snapshotRepository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/instanto-io/material-widgets</url>
-    </snapshotRepository>
-  </distributionManagement>
+
   <build>
     <plugins>
       <plugin>
@@ -270,19 +261,6 @@
     </plugins>
   </build>
   <profiles>
-    <profile>
-      <id>artifacts</id>
-      <distributionManagement>
-        <repository>
-          <id>artifacts</id>
-          <url>https://artifacts.instanto.io/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-          <id>artifacts</id>
-          <url>https://artifacts.instanto.io/repository/maven-snapshots/</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
     <profile>
       <id>showcase-tests</id>
       <modules><module>showcase-tests</module></modules>
