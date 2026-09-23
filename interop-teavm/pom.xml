@@ -55,7 +55,6 @@
           <targetFileName>probe.js</targetFileName>
           <optimizationLevel>${teavm.optimization}</optimizationLevel>
           <minifying>${teavm.minify}</minifying>
-          <sourceMapsGenerated>true</sourceMapsGenerated>
         </configuration>
       </plugin>
       <plugin>

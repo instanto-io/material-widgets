@@ -3,7 +3,7 @@
 
   <parent>
     <groupId>io.instanto</groupId>
-    <artifactId>instanto-org-pom</artifactId>
+    <artifactId>instanto-teavm-pom</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <relativePath/>
   </parent>
@@ -32,7 +32,6 @@
     <teavm-compat.version>0.1.0-SNAPSHOT</teavm-compat.version><jsinterop-binding-generator.version>${teavm-compat.version}</jsinterop-binding-generator.version>
     <gwt-uibinder-processor.version>${teavm-compat.version}</gwt-uibinder-processor.version>
     <gwt-user-compat.version>${teavm-compat.version}</gwt-user-compat.version>
-    <teavm.version>0.15.0</teavm.version>
     <teavm.optimization>SIMPLE</teavm.optimization>
     <teavm.minify>false</teavm.minify>
     <!-- The libraries publish. Showcases, probes and audits set this back to
