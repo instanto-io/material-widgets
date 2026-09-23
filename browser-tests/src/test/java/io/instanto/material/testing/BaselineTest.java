@@ -31,6 +31,12 @@ public class BaselineTest {
 
   static void verify(String module, String path, java.util.function.Consumer<Page> assertion)
       throws Exception {
+    verify(module, path, false, assertion);
+  }
+
+  static void verify(
+      String module, String path, boolean hasTouch, java.util.function.Consumer<Page> assertion)
+      throws Exception {
     Path root = Path.of("..", module, "target", "site").toAbsolutePath().normalize();
     HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
     server.createContext(
@@ -87,7 +93,9 @@ public class BaselineTest {
     server.start();
     try (Playwright playwright = Playwright.create();
         Browser browser = playwright.webkit().launch()) {
-      Page page = browser.newPage(new Browser.NewPageOptions().setViewportSize(1280, 900));
+      Page page =
+          browser.newPage(
+              new Browser.NewPageOptions().setViewportSize(1280, 900).setHasTouch(hasTouch));
       List<String> errors = new ArrayList<>();
       page.onPageError(
           error -> {

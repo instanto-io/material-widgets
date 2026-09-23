@@ -1,8 +1,8 @@
 name: CI
 
 # Builds and tests the port on the organisation's container runners, which carry
-# the browsers the TeaVM tests drive. Maven resolves the parent and compatibility
-# artifacts from packages.instanto.io.
+# the browsers the TeaVM tests drive. The shared workflow installs the parents
+# this reactor needs, because neither is published as a package.
 
 on:
   push:
@@ -21,4 +21,8 @@ jobs:
       name: Build the port and run its tests
       goals: clean verify
       timeout-minutes: 45
-    secrets: inherit
+      parents: |
+        instanto-io/instanto-poms pom.xml
+        instanto-io/teavm-compat pom.xml
+    secrets:
+      PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}

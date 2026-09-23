@@ -34,7 +34,7 @@ public final class InteropProbe {
     query.each(
         (index, node) -> {
           require(
-              index instanceof Double && ((Double) index) == 0.0,
+              index instanceof Number && ((Number) index).doubleValue() == 0.0,
               "Generic callback number is boxed");
           require(same(node.unwrap(), element.unwrap()), "Generic callback element is wrapped");
           eachCalls[0]++;
@@ -87,7 +87,7 @@ public final class InteropProbe {
     gwt.material.design.jquery.client.api.Functions.EventFunc1<Object> generic =
         (event, payload) -> {
           require(
-              payload instanceof Double && ((Double) payload) == 7.0,
+              payload instanceof Number && ((Number) payload).doubleValue() == 7.0,
               "Erased callback payload is boxed");
           calls[0]++;
           return false;

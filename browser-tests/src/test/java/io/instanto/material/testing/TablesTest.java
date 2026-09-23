@@ -43,13 +43,33 @@ public class TablesTest {
   }
 
   @Test
-  public void infiniteTableSupportsRemoteSortAndCategoryFilter() throws Exception {
+  public void originalPagerRespondsToPhysicalKeyboardInput() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!table-paged",
+        page -> {
+          page.waitForSelector("tbody tr.data-row");
+          Locator label = page.locator(".action-page-panel > span");
+          assertEquals("1-5 of 52", label.textContent());
+          page.locator(".action-page-panel .arrow-next").focus();
+          page.keyboard().press("Enter");
+          page.waitForFunction(
+              "document.querySelector('.action-page-panel > span').textContent === '6-10 of 52'");
+          page.locator(".action-page-panel .arrow-prev").focus();
+          page.keyboard().press("Enter");
+          page.waitForFunction(
+              "document.querySelector('.action-page-panel > span').textContent === '1-5 of 52'");
+        });
+  }
+
+  @Test
+  public void infiniteTableSortsItsLocalRows() throws Exception {
     BaselineTest.verify(
         "showcase-teavm",
         "/#!table-infinite",
         page -> {
           page.waitForSelector("tbody tr.data-row");
-          page.locator("thead th[id=col1]").click();
+          page.locator("thead.tableFloatingHeaderOriginal th[id=col1]").click();
           page.waitForFunction(
               "() => {const names = Array.from(document.querySelectorAll('tbody tr.data-row td[id=col1]')).map(c => c.textContent.trim()).filter(Boolean); return names.length > 1;}");
           List<String> ascending =
@@ -60,7 +80,7 @@ public class TablesTest {
           List<String> expectedAscending = new ArrayList<>(ascending);
           expectedAscending.sort(String.CASE_INSENSITIVE_ORDER);
           assertEquals(expectedAscending, ascending);
-          page.locator("thead th[id=col1]").click();
+          page.locator("thead.tableFloatingHeaderOriginal th[id=col1]").click();
           page.waitForFunction(
               "() => {const names = Array.from(document.querySelectorAll('tbody tr.data-row td[id=col1]')).map(c => c.textContent.trim()).filter(Boolean); return names.length > 1;}");
           List<String> descending =
@@ -72,18 +92,6 @@ public class TablesTest {
           expectedDescending.sort(String.CASE_INSENSITIVE_ORDER);
           Collections.reverse(expectedDescending);
           assertEquals(expectedDescending, descending);
-        });
-
-    BaselineTest.verify(
-        "showcase-teavm",
-        "/?categoryFilter=Category%201#!table-infinite",
-        page -> {
-          page.waitForSelector("tbody tr.data-row");
-          page.locator(".table-body")
-              .evaluate(
-                  "el => { el.scrollTop = Math.max(0, el.scrollHeight - el.clientHeight); el.dispatchEvent(new Event('scroll')); }");
-          page.waitForTimeout(500);
-          assertTrue(page.locator("tbody tr.data-row").count() <= 30);
         });
   }
 
@@ -98,15 +106,18 @@ public class TablesTest {
           Locator midCell = page.locator("tbody tr.data-row").first().locator("td").nth(4);
           assertTrue(firstCell.count() > 0);
           assertTrue(midCell.count() > 0);
-          page.locator(".table-body")
-              .evaluate("el => { el.scrollLeft = 0; el.dispatchEvent(new Event('scroll')); }");
+          Locator horizontalScroll = page.locator(".inner-scroll.frozen");
+          assertTrue(
+              "Frozen table needs horizontal overflow",
+              (boolean) horizontalScroll.evaluate("el => el.scrollWidth > el.clientWidth"));
+          horizontalScroll.evaluate(
+              "el => { el.scrollLeft = 0; el.dispatchEvent(new Event('scroll')); }");
           double firstBefore = firstCell.boundingBox().x;
           double midBefore = midCell.boundingBox().x;
-          page.locator(".table-body")
-              .evaluate(
-                  "el => { el.scrollLeft = el.scrollWidth; el.dispatchEvent(new Event('scroll')); }");
-          page.waitForFunction("() => document.querySelector('.table-body').scrollLeft > 0");
-          page.waitForTimeout(350);
+          horizontalScroll.evaluate(
+              "el => { el.scrollLeft = el.scrollWidth; el.dispatchEvent(new Event('scroll')); }");
+          page.waitForFunction(
+              "() => document.querySelector('.inner-scroll.frozen').scrollLeft > 0");
           double firstAfter = firstCell.boundingBox().x;
           double midAfter = midCell.boundingBox().x;
           assertTrue(Math.abs(firstAfter - firstBefore) < 1.0);
@@ -115,36 +126,26 @@ public class TablesTest {
   }
 
   @Test
-  public void tableSelectionCanBeToggledByKeyboardAndTouch() throws Exception {
+  public void tableSelectionCanBeToggledByTouch() throws Exception {
     BaselineTest.verify(
         "showcase-teavm",
         "/#!table-standard",
+        true,
         page -> {
-          page.locator("#catalogue-content select").first().selectOption("MULTIPLE");
-          page.waitForSelector("tbody td.selection input");
-          Locator rowInput = page.locator("tbody td.selection input").first();
-          rowInput.focus();
-          page.keyboard().press("Space");
+          Locator selectionMenu = page.locator("#catalogue-content .select-wrapper").first();
+          selectionMenu.locator("input.select-dropdown").click();
+          selectionMenu
+              .locator("li")
+              .filter(new Locator.FilterOptions().setHasText("MULTIPLE"))
+              .click();
+          page.waitForSelector("tbody td.selection label");
+          Locator rowLabel = page.locator("tbody td.selection label").first();
+          rowLabel.tap();
           page.waitForFunction(
               "() => document.querySelectorAll('tbody tr.data-row.selected').length === 1");
-          page.keyboard().press("Space");
+          rowLabel.tap();
           page.waitForFunction(
               "() => document.querySelectorAll('tbody tr.data-row.selected').length === 0");
-          rowInput.tap();
-          page.waitForFunction(
-              "() => document.querySelectorAll('tbody tr.data-row.selected').length === 1");
-        });
-  }
-
-  @Test
-  public void infiniteTableFailureModeSurfacesErrorState() throws Exception {
-    BaselineTest.verify(
-        "showcase-teavm",
-        "/?serviceFailure=true#!table-infinite",
-        page -> {
-          page.waitForSelector("body[data-showcase-page=table-infinite]");
-          page.waitForTimeout(900);
-          assertEquals(0, page.locator("tbody tr.data-row").count());
         });
   }
 

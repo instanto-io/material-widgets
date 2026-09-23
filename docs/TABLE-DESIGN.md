@@ -71,11 +71,11 @@ currencies, locales or time-zone behaviours.
 
 ## Browser verification
 
-`showcase-tests` uses Webapp Testkit's `ApplicationRule`, DOM interactions and
-layout assertions under `TeaVMTestRunner`. It stages the application assembled by
-Maven and exercises its normal launcher, assets and original handlers. No mocking
-is needed for these local showcase fixtures. Java Playwright remains a separate
-WebKit check, including screenshot capture.
+`showcase-tests` runs Cucumber Tea scenarios through TeaVMTestRunner and Webapp
+Testkit. Each scenario opens the application assembled by Maven, then uses DOM
+actions and layout checks against its original handlers. The local table fixture
+needs no mock service. Java Playwright provides a separate WebKit check, including
+screenshot capture.
 
 See [build commands](BUILDING.md) and [coverage and remaining limits](COMPATIBILITY.md).
 

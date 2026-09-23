@@ -25,10 +25,10 @@ and distinguish successful compilation, rendering and tested interactions.
 ## Expand behaviour coverage
 
 
-Use Webapp Testkit and TeaVMTestRunner for application and widget scenarios,
-with Java Playwright retained for WebKit. The table showcase now uses this harness;
-Gherkin/Cucumber Tea integration and migration of the older browser suites remain.
-Cover keyboard/focus, values,
+Use Webapp Testkit, Cucumber Tea and TeaVMTestRunner for application and widget
+scenarios, with Java Playwright retained for WebKit. The showcase browser suite
+now describes addins, tables, navigation, date pickers and the theme in feature
+files. Extend those scenarios to cover keyboard/focus, values,
 validation, disabled state, event disposal and repeated mounting. Run development
 and optimised builds across Chromium, Firefox and WebKit. Keep shared GWT API
 comparisons in the compatibility repository.
@@ -58,7 +58,7 @@ retiring its existing wrappers.
 
 - [ ] Verify 33 catalogue views and all 18 navbar/sidebar patterns are still rendered on TeaVM and cross-link correctly to upstream references.
 - [ ] Verify text fields, errors, date pickers, dark mode and all six table views remain green in the browser contracts.
-- [ ] Verify addins coverage beyond selected image/autocomplete/combo-box/input-mask/time-picker (for example rating, signature, steps, cropper, carousel, media upload, document viewer, etc.).
+- [ ] Extend the existing addins checks (including rating, signature, steps, cropper, carousel and window controls) to media upload, external document viewing, keyboard and touch interactions.
 - [ ] Verify table interactions for frozen columns, keyboard navigation, touch interaction, remote sorting/filtering, and service-failure flows.
 - [ ] Verify Chromium, Firefox and WebKit full matrix in shared TeaVMTestRunner and Webapp Testkit scenarios, including optimized-build checks.
 - [ ] Verify locale variants and less-used native callbacks/browser API paths that are still untested.

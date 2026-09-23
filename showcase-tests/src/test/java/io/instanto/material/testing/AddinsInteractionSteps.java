@@ -1,42 +1,27 @@
 package io.instanto.material.testing;
 
+import static io.instanto.webapp.testkit.dom.Dom.*;
 import static org.junit.Assert.*;
 
-import io.instanto.webapp.testkit.app.ApplicationRule;
-import io.instanto.webapp.testkit.dom.Dom;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.instanto.cucumber.tea.CucumberSuite;
+import io.instanto.cucumber.tea.Then;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.dom.html.HTMLElement;
-import org.teavm.junit.SkipJVM;
-import org.teavm.junit.TeaVMTestRunner;
 
-@RunWith(TeaVMTestRunner.class)
-@SkipJVM
-public class AddinsInteractionsTest {
-  @Rule
-  public ApplicationRule app =
-      new ApplicationRule("/resources/applications/material/index.html#!button")
-          .readyWhen(p -> "button".equals(p.root().getAttribute("data-showcase-page")))
-          .sized(1280, 900);
+@CucumberSuite("features/addins-interactions.feature")
+public class AddinsInteractionSteps extends MaterialSteps {
 
   private void open(String name) {
-    Dom.click(Dom.find("a[data-page=addins-" + name + "]"));
-    Dom.waitFor(
-        () ->
-            assertEquals(
-                "addins-" + name,
-                app.application().page().root().getAttribute("data-showcase-page")));
+    navigate("addins-" + name);
   }
 
-  @Test
+  @Then("the cropper exports its local image")
   public void cropperExportsItsLocalImage() {
     open("cropper");
-    Dom.waitFor(() -> assertTrue(cropperReady(Dom.find(".croppie-container"))));
-    Dom.click(Dom.findByText("Crop"));
-    Dom.waitFor(() -> assertFalse(Dom.findAll(".modal img[src^='data:image/']").isEmpty()));
-    Dom.click(Dom.findByText("Close"));
+    waitFor(() -> assertTrue(cropperReady(find(".croppie-container"))));
+    click(findByText("Crop"));
+    waitFor(() -> assertFalse(findAll(".modal img[src^='data:image/']").isEmpty()));
+    click(findByText("Close"));
   }
 
   @JSBody(
@@ -45,13 +30,12 @@ public class AddinsInteractionsTest {
           "var image=element.querySelector('.cr-image');return !!(image && image.style.opacity==='1' && image.width>0 && image.height>0);")
   private static native boolean cropperReady(HTMLElement element);
 
-  @Test
+  @Then("the selected file stays in the local queue")
   public void filesRemainInTheLocalQueue() {
     open("fileuploader");
-    queueFile(app.application().page().root());
-    Dom.waitFor(
-        () -> assertTrue(Dom.find("#catalogue-content").getTextContent().contains("sample.txt")));
-    Dom.waitFor(() -> assertTrue(localQueue(app.application().page().root())));
+    queueFile(app.page().root());
+    waitFor(() -> assertTrue(find("#catalogue-content").getTextContent().contains("sample.txt")));
+    waitFor(() -> assertTrue(localQueue(app.page().root())));
   }
 
   @JSBody(
@@ -74,17 +58,17 @@ public class AddinsInteractionsTest {
       """)
   private static native boolean localQueue(HTMLElement body);
 
-  @Test
+  @Then("a late camera stream is stopped after leaving")
   public void cameraStartsOnRequestAndDisposesALateStream() {
-    var body = app.application().page().root();
+    var body = app.page().root();
     fakeCamera(body);
     open("camera");
     assertEquals("0", body.getAttribute("data-camera-requests"));
-    Dom.click(Dom.findByText("play_arrow"));
-    Dom.waitFor(() -> assertEquals("1", body.getAttribute("data-camera-requests")));
-    Dom.click(Dom.find("a[data-page=button]"));
+    click(findByText("play_arrow"));
+    waitFor(() -> assertEquals("1", body.getAttribute("data-camera-requests")));
+    click(find("a[data-page=button]"));
     finishCamera(body);
-    Dom.waitFor(() -> assertEquals("1", body.getAttribute("data-camera-stopped")));
+    waitFor(() -> assertEquals("1", body.getAttribute("data-camera-stopped")));
   }
 
   @JSBody(
@@ -105,70 +89,87 @@ public class AddinsInteractionsTest {
   @JSBody(params = "body", script = "body.ownerDocument.defaultView.finishTestCamera();")
   private static native void finishCamera(HTMLElement body);
 
-  @Test
+  @Then("the editor sets and reads the supplied HTML")
   public void richEditorSetsAndReadsHtmlThroughOriginalHandlers() {
     open("richeditor");
-    Dom.type(Dom.find("input[placeholder='Any HTML']"), "<p>TeaVM editor sample</p>");
-    Dom.click(Dom.findByText("Set HTML"));
-    Dom.waitFor(
+    type(find("input[placeholder='Any HTML']"), "<p>TeaVM editor sample</p>");
+    click(findByText("Set HTML"));
+    waitFor(
         () ->
             assertTrue(
-                Dom.findAll(".note-editable").stream()
+                findAll(".note-editable").stream()
                     .anyMatch(e -> e.getTextContent().contains("TeaVM editor sample"))));
-    Dom.click(Dom.findByText("Get HTML"));
-    Dom.waitFor(
+    click(findByText("Get HTML"));
+    waitFor(
         () ->
             assertTrue(
-                Dom.findAll(".toast").stream()
+                findAll(".toast").stream()
                     .anyMatch(e -> e.getTextContent().contains("TeaVM editor sample"))));
   }
 
-  @Test
+  @Then("the rating publishes its value event")
   public void ratingPublishesTheOriginalValueEvent() {
     open("rating");
-    Dom.click(Dom.findByText("Set Value with Event"));
-    Dom.waitFor(
+    click(findByText("Set Value with Event"));
+    waitFor(
         () ->
             assertTrue(
-                Dom.findAll(".toast").stream()
+                findAll(".toast").stream()
                     .anyMatch(e -> e.getTextContent().contains("Value : 4"))));
   }
 
-  @Test
+  @Then("a signature can be exported and cleared")
   public void signatureCapturesExportsAndClears() {
     open("signature");
-    var canvas = Dom.find("#catalogue-content canvas");
+    var canvas = find("#catalogue-content canvas");
     stroke(canvas);
-    Dom.waitFor(
+    waitFor(
         () ->
             assertTrue(
-                Dom.find("#catalogue-content")
-                    .getTextContent()
-                    .contains("End Signature Event fired")));
-    Dom.click(Dom.findByText("Get Image Data"));
-    Dom.waitFor(
-        () -> assertFalse(Dom.findAll(".modal img[src^='data:image/png;base64,']").isEmpty()));
-    Dom.click(Dom.findByText("Close"));
-    Dom.click(Dom.findByText("Clear"));
-    Dom.waitFor(
+                find("#catalogue-content").getTextContent().contains("End Signature Event fired")));
+    click(findByText("Get Image Data"));
+    waitFor(() -> assertFalse(findAll(".modal img[src^='data:image/png;base64,']").isEmpty()));
+    click(findByText("Close"));
+    click(findByText("Clear"));
+    waitFor(
         () ->
             assertTrue(
-                Dom.find("#catalogue-content")
+                find("#catalogue-content")
                     .getTextContent()
                     .contains("Clear Signature Event fired")));
   }
 
-  @Test
+  @Then("the stepper completes")
   public void stepperCompletesAndResets() {
     open("steppers");
-    Dom.click(Dom.findAllByText("Continue to Step 2").get(0));
-    Dom.click(Dom.findAllByText("Continue to Step 3").get(0));
-    Dom.click(Dom.findAllByText("Finish").get(0));
-    Dom.waitFor(
+    click(findAllByText("Continue to Step 2").get(0));
+    click(findAllByText("Continue to Step 3").get(0));
+    click(findAllByText("Finish").get(0));
+    waitFor(
         () ->
             assertTrue(
-                Dom.findAll(".toast").stream()
-                    .anyMatch(e -> e.getTextContent().contains("All done"))));
+                findAll(".toast").stream().anyMatch(e -> e.getTextContent().contains("All done"))));
+  }
+
+  @Then("the window opens and closes through its original controls")
+  public void windowOpensAndCloses() {
+    open("window");
+    click(findByText("Open Window"));
+    waitFor(() -> assertFalse(findAll(".window.open").isEmpty()));
+    click(findAll(".window.open .window-action").get(0));
+    waitFor(() -> assertTrue(findAll(".window.open").isEmpty()));
+  }
+
+  @Then("the carousel moves to the requested slide")
+  public void carouselMovesToRequestedSlide() {
+    open("carousel");
+    click(findByText("Go to 2nd slide"));
+    click(findByText("Get Current Slide Index"));
+    waitFor(
+        () ->
+            assertTrue(
+                findAll(".toast").stream()
+                    .anyMatch(e -> e.getTextContent().contains("1 Current Slide Index"))));
   }
 
   @JSBody(

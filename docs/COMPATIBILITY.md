@@ -15,9 +15,9 @@ For implementation decisions, including the showcase's GWTP replacement, see
 |---|---|---|
 | Core and jQuery source compatibility | All 604 core and 72 jQuery Java sources compile | TeaVM compiles reachable code; uncalled public APIs still need runtime coverage |
 | Original showcase | 33 original catalogue views and UiBinder templates render on TeaVM; WebKit opens each twice. The navbar, sidebar and combined-tab galleries also open 18 full-page TeaVM patterns | Complete behaviour of every widget on those pages |
-| Addins | All original addins sources compile; 34 original views render, load local images and survive navigation away and back in Chrome and Firefox through Webapp Testkit, and in WebKit | Every configuration, real camera hardware, external document rendering or an upload backend |
-| Tables | All 189 Material Table Java sources compile. Six original table views render and remount under Webapp Testkit in Chrome and supplementary WebKit checks | Every table API, native touch gesture or frozen-column interaction |
-| Table interactions | Testkit scenarios cover 52-row paging, sorting events, dataset replacement and clearing, paged column visibility, selection with its original model, density changes, viewport expansion/restoration and scroll cleanup, category opening/closing and loading another bounded window of infinite rows | Remote sorting/filtering, server failure/retry, every locale, keyboard navigation and all configuration combinations |
+| Addins | All original addins sources compile; 34 original views render, load local images and survive navigation away and back in Chrome and Firefox through Webapp Testkit, and in WebKit. Focused scenarios also open and close a floating window and navigate the original carousel to its second slide. | Every configuration, real camera hardware, external document rendering or an upload backend |
+| Tables | All 189 Material Table Java sources compile. Six original table views render and remount under Webapp Testkit in Chrome and supplementary WebKit checks | Every table API or configuration |
+| Table interactions | Testkit scenarios cover 52-row paging, keyboard activation of the pager, sorting events, dataset replacement and clearing, paged column visibility, selection with its original model, density changes, viewport expansion/restoration and scroll cleanup, category opening/closing and loading another bounded window of infinite rows. WebKit also checks the pager with physical keyboard input, frozen-column geometry and touch selection. | Remote sorting/filtering, server failure/retry, every locale and all configuration combinations. In WebKit, pressing Space on the row's hidden checkbox does not select it; keyboard selection needs a visible focus path. |
 | Selected interactions | Original button click/double-click and disabled state, checkbox check-all, dialog opening/closing and overlay removal, collection clicks, timed panel loaders, tab selection/addition/resize/reset, and text-field value events, validation, reset, sensitivity, masks, combo boxes and time picking | Every value, validation, keyboard or lifecycle path |
 | Media | Original slider controls/fullscreen, image lightboxes and disposal; local iframe video playback, pause, seek and responsive sizing in WebKit | External video services, physical swipe gestures and complete media API parity |
 | Showcase theme | Light/dark switching, keyboard activation, saved preference after reload and full-page navigation, operation without browser storage, and dark table expansion | Every widget colour combination or complete upstream dark-theme parity |
@@ -67,7 +67,7 @@ and collapse of the mini sidebar. These checks do not establish every responsive
 layout, keyboard path or physical touch gesture.
 
 Addins interaction checks exercise rich-editor HTML set/read handlers, rating value
-events, step completion, signature drawing/export/clear, cropper export and local file queuing with the original added-file event. Page
+events, step completion, signature drawing/export/clear, cropper export, window controls, carousel navigation and local file queuing with the original added-file event. Page
 checks include navigation away and back, local image decoding and browser errors.
 Camera stream cleanup uses a controlled fixture; it does not certify physical
 camera access. File uploads are deliberately queued locally in the static showcase,
@@ -77,9 +77,9 @@ and Google Docs rendering depends on a public document and an external service.
 
 
 - Extend addins interaction coverage, including real uploads, camera capture, keyboard and touch input. Verify external document rendering separately from local page checks.
-- Expand widget behaviour coverage with Gherkin/Cucumber Tea, TeaVMTestRunner and
-  mockatcha-dom. Retain Java Playwright for WebKit and verify the wider browser
-  matrix. The existing checks do not resolve deferred Bootstrap step definitions.
+- Extend the Cucumber Tea and Webapp Testkit scenarios to keyboard, touch and
+  lifecycle behaviour. Retain Java Playwright for WebKit and verify the wider
+  browser matrix. The existing checks do not resolve deferred Bootstrap step definitions.
 - Exercise GWT-valued native fields, generic callback payloads and opaque `Object`
   arguments beyond the paths used by the current showcase.
 - Add locale property bundles and permutations where needed; generated string

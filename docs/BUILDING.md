@@ -33,11 +33,11 @@ jwebserver -b 127.0.0.1 -p 8098 -d "$PWD/showcase-teavm/target/site"
 ```
 
 Open the [local showcase](http://127.0.0.1:8098/). `showcase-tests` uses
-`io.instanto:webapp-testkit-app` and `teavm-rule-support` (both `0.1.0-SNAPSHOT`),
-with `TeaVMTestRunner`. Install those repositories locally first. Chrome must be
-available to the runner; use `-Dmaterial.test.browser=browser-firefox` for Firefox.
-The module stages the complete built application on the runner's resource server
-and checks original table interactions through its normal launcher. The
+Cucumber Tea, Webapp Testkit and TeaVMTestRunner. Install their current snapshot
+artifacts locally first. Chrome must be available to the runner; use
+`-Dmaterial.test.browser=browser-firefox` for Firefox. The module stages the
+complete built application on the runner's resource server and runs the feature
+scenarios in `showcase-tests/src/test/resources/features`. The
 `showcase-tests` profile also runs it at the end of the main reactor:
 `mvn -Pshowcase-tests verify`.
 

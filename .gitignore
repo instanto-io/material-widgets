@@ -5,5 +5,8 @@ __pycache__/
 upstream/archives/*.zip
 upstream/archives/*.sha256
 
+# Local extracts of pinned upstream sources; Maven reads target/intake instead.
+/gwt/
+
 # TeaVM writes compiled test pages beside the module, not under target/.
 material-compat-contracts/js/

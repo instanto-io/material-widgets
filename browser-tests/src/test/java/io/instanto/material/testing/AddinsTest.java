@@ -10,6 +10,40 @@ import org.junit.Test;
 /** Native browser checks supplement the TeaVM/Testkit scenarios. */
 public class AddinsTest {
   @Test
+  public void floatingWindowOpensAndCloses() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!addins-window",
+        page -> {
+          page.waitForSelector(
+              "body[data-showcase-page=addins-window][data-showcase-state=rendered]");
+          page.getByText("Open Window", new Page.GetByTextOptions().setExact(true)).click();
+          page.waitForSelector(".window.open");
+          page.locator(".window.open .window-action").first().click();
+          page.waitForFunction("() => document.querySelectorAll('.window.open').length === 0");
+          assertEquals(0, page.locator(".window.open").count());
+        });
+  }
+
+  @Test
+  public void carouselMethodButtonsChangeSlide() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!addins-carousel",
+        page -> {
+          page.waitForSelector(
+              "body[data-showcase-page=addins-carousel][data-showcase-state=rendered]");
+          page.getByText("Go to 2nd slide", new Page.GetByTextOptions().setExact(true)).click();
+          page.waitForSelector(".slick-slider .slick-current[data-slick-index='1']");
+          page.getByText("Get Current Slide Index", new Page.GetByTextOptions().setExact(true))
+              .click();
+          assertTrue(
+              page.locator(".toast").allTextContents().stream()
+                  .anyMatch(text -> text.contains("1 Current Slide Index")));
+        });
+  }
+
+  @Test
   public void allAddinsRenderAndRemount() throws Exception {
     BaselineTest.verify(
         "showcase-teavm",

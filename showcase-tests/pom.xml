@@ -7,15 +7,26 @@
   <properties>
     <!-- Not a published library. -->
     <maven.deploy.skip>true</maven.deploy.skip><material.test.browser>browser-chrome</material.test.browser></properties>
+  <repositories>
+    <repository><id>github-cucumber-tea</id><url>https://maven.pkg.github.com/instanto-io/cucumber-tea</url></repository>
+    <repository><id>github-webapp-testkit</id><url>https://maven.pkg.github.com/instanto-io/webapp-testkit</url></repository>
+  </repositories>
   <dependencies>
-    <!-- Rule support must precede TeaVM's JUnit runner on the classpath. -->
-    <dependency><groupId>io.instanto</groupId><artifactId>teavm-rule-support</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
     <dependency><groupId>io.instanto</groupId><artifactId>webapp-testkit-app</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
+    <dependency><groupId>io.instanto</groupId><artifactId>cucumber-tea</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
+    <dependency><groupId>io.instanto</groupId><artifactId>cucumber-tea-codegen</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
     <dependency><groupId>org.teavm</groupId><artifactId>teavm-junit</artifactId><version>${teavm.version}</version><scope>test</scope></dependency>
     <dependency><groupId>org.teavm</groupId><artifactId>teavm-classlib</artifactId><version>${teavm.version}</version><scope>test</scope></dependency>
     <dependency><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version><scope>test</scope></dependency>
   </dependencies>
   <build><plugins>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId>
+      <executions><execution><id>default-testCompile</id><configuration>
+        <proc>full</proc>
+        <annotationProcessors><annotationProcessor>io.instanto.cucumber.tea.codegen.CucumberTeaProcessor</annotationProcessor></annotationProcessors>
+        <compilerArgs><arg>-Acucumber.tea.runner=teavm</arg></compilerArgs>
+      </configuration></execution></executions>
+    </plugin>
     <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.6.3</version>
       <executions><execution><id>stage-showcase</id><phase>process-test-resources</phase><goals><goal>java</goal></goals>
         <configuration><mainClass>io.instanto.webapp.testkit.app.ApplicationFiles</mainClass><classpathScope>test</classpathScope>
@@ -24,7 +35,7 @@
       </execution></executions>
     </plugin>
     <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId>
-      <configuration><systemPropertyVariables>
+      <configuration><includes><include>**/*StepsTest.java</include></includes><systemPropertyVariables>
         <teavm.junit.target>${project.build.directory}/js-tests</teavm.junit.target>
         <teavm.junit.js.runner>${material.test.browser}</teavm.junit.js.runner>
       </systemPropertyVariables></configuration>
