@@ -145,6 +145,19 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
                     array,
                     "Object rawValues = getJsComboBox().val(); Object[] curVal = rawValues == null ? null : jsinterop.base.Js.asArrayLike(rawValues).asList().toArray();");
           }
+          if (relative.equals("gwt/material/design/addins/client/carousel/MaterialCarousel.java")) {
+            String current = "Integer.parseInt(currentSlide.toString())";
+            String next = "Integer.parseInt(nextSlide.toString())";
+            if (source.split(java.util.regex.Pattern.quote(current), -1).length != 3
+                || !source.contains(next))
+              throw new IllegalArgumentException("Changed carousel slide index conversion");
+            // Slick passes numeric indices. Java Double.toString() adds ".0", which
+            // Integer.parseInt rejects even though the browser value is an integer.
+            source =
+                source
+                    .replace(current, "((Number) currentSlide).intValue()")
+                    .replace(next, "((Number) nextSlide).intValue()");
+          }
           if (relative.equals("gwt/material/design/client/ui/MaterialSlider.java")) {
             var cu = com.github.javaparser.StaticJavaParser.parse(source);
             var method =
