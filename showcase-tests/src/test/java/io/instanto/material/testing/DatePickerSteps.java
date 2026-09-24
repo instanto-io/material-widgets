@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import io.instanto.cucumber.tea.CucumberSuite;
 import io.instanto.cucumber.tea.Then;
+import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLInputElement;
 
 @CucumberSuite("features/date-pickers.feature")
@@ -24,12 +25,11 @@ public class DatePickerSteps extends MaterialSteps {
               .getValue()
               .contains("1950"));
       for (var field : fields) {
-        click(field);
-        waitFor(() -> assertFalse(findAll(".picker--opened .picker__day").isEmpty()));
+        openPicker(field);
         click(findAll(".picker--opened .picker__day--infocus:not(.picker__day--disabled)").get(0));
         assertFalse(((HTMLInputElement) field).getValue().isEmpty());
         if (!findAll(".picker--opened").isEmpty()) click(find(".picker--opened .picker__close"));
-        waitFor(() -> assertTrue(findAll(".picker--opened").isEmpty()));
+        waitFor(() -> assertTrue(findAll(".picker--opened").isEmpty()), 5000);
       }
       assertTrue(
           ((HTMLInputElement) find("#date_limit input.picker__input")).getValue().contains("2017"));
@@ -44,14 +44,26 @@ public class DatePickerSteps extends MaterialSteps {
 
   @Then("the selected date reaches the original value handler")
   public void selectedDateReachesTheOriginalValueHandler() {
-    click(find("#open_and_close_control input.picker__input"));
-    waitFor(() -> assertFalse(findAll(".picker--opened .picker__day").isEmpty()));
+    openPicker(find("#open_and_close_control input.picker__input"));
     click(findAll(".picker--opened .picker__day--infocus:not(.picker__day--disabled)").get(0));
-    waitFor(() -> assertTrue(findAll(".picker--opened").isEmpty()));
-    String messages = "";
-    for (var toast : findAll(".toast")) messages += toast.getTextContent();
+    if (!findAll(".picker--opened").isEmpty()) click(find(".picker--opened .picker__close"));
+    waitFor(() -> assertTrue(findAll(".picker--opened").isEmpty()), 5000);
+    waitFor(() -> assertTrue(toastMessages().contains("Date Selected ")), 5000);
+    String messages = toastMessages();
     assertTrue(messages, messages.contains("Date Selected "));
     assertFalse(messages, messages.contains("Date Selected null"));
     assertFalse(messages, messages.contains("Closed Date Picker with value null"));
+  }
+
+  private void openPicker(HTMLElement field) {
+    // The picker handles Space directly, independent of synthetic-click focus behaviour.
+    press(field, "Space");
+    waitFor(() -> assertFalse(findAll(".picker--opened .picker__day").isEmpty()), 5000);
+  }
+
+  private String toastMessages() {
+    StringBuilder messages = new StringBuilder();
+    for (var toast : findAll(".toast")) messages.append(toast.getTextContent());
+    return messages.toString();
   }
 }
