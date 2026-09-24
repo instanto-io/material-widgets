@@ -22,8 +22,7 @@ or Gin and records source and asset changes.
 
 These pages retain their original Java event handlers and XML example content.
 Available means the page runs in the catalogue; it does not mean every interaction
-has been tested. The table describes this checkout; the published site may lag
-until the next deployment.
+has been tested.
 
 | Explore showcase | Examples | Compare upstream |
 |---|---|---|
@@ -122,16 +121,15 @@ for the distinction between rendered examples and tested interactions.
 
 ## Further showcase work
 
-All 33 original catalogue views and the 18 navigation patterns render on TeaVM.
-**Home** is upstream’s project dashboard; this catalogue opens Buttons instead.
-Remaining addins and deeper table and navigation behaviour coverage are later
-stages of the port.
+All 33 original catalogue views, 34 addins views, six table views and 18 navigation
+patterns render on TeaVM. **Home** is upstream’s project dashboard; this catalogue
+opens Buttons instead. Deeper interaction coverage remains for addins, tables and
+navigation, especially keyboard, touch and lifecycle behaviour.
 
 ## Addins
 
 The addins pages retain the original GWT Material demo views and handlers, adapted
-to TeaVM. They are included in this checkout and will appear on the published site
-after deployment. Compare their source with the
+to TeaVM. Compare their source with the
 [pinned upstream demo](https://github.com/GwtMaterialDesign/gwt-material-demo/tree/56687222967f45368ae5008357581d5b485cb0af/src/main/java/gwt/material/design/demo/client/application/addins).
 
 | Try the examples | What to explore |

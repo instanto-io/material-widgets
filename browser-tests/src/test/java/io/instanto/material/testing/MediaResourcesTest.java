@@ -31,7 +31,7 @@ public class MediaResourcesTest {
               "window.applicationClicks=0; $('#photo').on('click.application',()=>applicationClicks++)");
           for (int pass = 0; pass < 2; pass++) {
             page.locator("#photo").click();
-            page.waitForTimeout(350);
+            LightboxAssertions.awaitOpen(page, "#photo");
             page.keyboard().press("Escape");
             page.waitForFunction(
                 "!document.querySelector('#materialbox-overlay,.materialbox-caption')");

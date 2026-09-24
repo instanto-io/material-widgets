@@ -85,7 +85,7 @@ public class MediaTest {
                       .setFullPage(true));
             page.locator("#captions img").click();
             page.waitForSelector(".materialbox-caption:has-text('I love Material Design')");
-            page.waitForTimeout(350);
+            LightboxAssertions.awaitOpen(page, "#captions img");
             page.keyboard().press("Escape");
             page.waitForFunction("!document.querySelector('#materialbox-overlay')");
             page.locator("#material_box img").click();
