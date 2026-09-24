@@ -108,22 +108,36 @@ public class AddinsInteractionSteps extends MaterialSteps {
   }
 
   @Then("the editor clears and inserts text through its original controls")
-  public void richEditorClearsAndInsertsTextThroughOriginalHandlers() {
-    open("richeditor");
-    click(findByRole("button", "Reset"));
-    click(findByRole("button", "Get Value"));
-    waitFor(
-        () ->
-            assertTrue(
-                findAll(".toast").stream().anyMatch(e -> e.getTextContent().contains("Empty"))));
-    click(findByRole("button", "Insert Material Design"));
-    click(findByRole("button", "Get Value"));
-    waitFor(
-        () ->
-            assertTrue(
-                findAll(".toast").stream()
-                    .anyMatch(e -> e.getTextContent().contains("Material Design"))));
+  public void richEditorClearsAndInsertsTextThroughOriginalHandlers() throws Throwable {
+    String stage = "opening the editor";
+    try {
+      open("richeditor");
+      stage = "finding Reset";
+      HTMLElement reset = findByRole("button", "Reset");
+      stage = "clearing the editor";
+      click(reset);
+      waitFor(() -> assertTrue(editableForReset(reset).getTextContent().isBlank()));
+      stage = "inserting text";
+      click(findByRole("button", "Insert Material Design"));
+      waitFor(
+          () -> assertTrue(editableForReset(reset).getTextContent().contains("Material Design")));
+      stage = "reading the inserted text";
+      click(findByRole("button", "Get Value"));
+      waitFor(
+          () ->
+              assertTrue(
+                  findAll(".toast").stream()
+                      .anyMatch(e -> e.getTextContent().contains("Material Design"))));
+    } catch (Throwable failure) {
+      System.out.println("Material rich editor failed while " + stage + ": " + failure);
+      throw failure;
+    }
   }
+
+  @JSBody(
+      params = "resetButton",
+      script = "return resetButton.closest('.row').querySelector('.note-editable');")
+  private static native HTMLElement editableForReset(HTMLElement resetButton);
 
   @Then("the rating publishes its value event")
   public void ratingPublishesTheOriginalValueEvent() {
