@@ -110,14 +110,14 @@ public class AddinsInteractionSteps extends MaterialSteps {
   @Then("the editor clears and inserts text through its original controls")
   public void richEditorClearsAndInsertsTextThroughOriginalHandlers() {
     open("richeditor");
-    click(findByText("Reset"));
-    click(findByText("Get Value"));
+    click(findByRole("button", "Reset"));
+    click(findByRole("button", "Get Value"));
     waitFor(
         () ->
             assertTrue(
                 findAll(".toast").stream().anyMatch(e -> e.getTextContent().contains("Empty"))));
-    click(findByText("Insert Material Design"));
-    click(findByText("Get Value"));
+    click(findByRole("button", "Insert Material Design"));
+    click(findByRole("button", "Get Value"));
     waitFor(
         () ->
             assertTrue(
