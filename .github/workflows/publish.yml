@@ -30,3 +30,14 @@ jobs:
       maven-args: -DskipTests
       timeout-minutes: 30
     secrets: inherit
+
+  consumer:
+    name: Published Hello Material
+    needs: snapshots
+    uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
+    with:
+      name: Build Hello Material from published snapshots
+      goals: clean verify
+      maven-args: -f examples/hello-material/pom.xml -Dmaven.repo.local=$RUNNER_TEMP/material-consumer-m2
+      timeout-minutes: 30
+    secrets: inherit

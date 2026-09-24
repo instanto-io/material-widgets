@@ -271,6 +271,10 @@
       <modules><module>showcase-tests</module></modules>
     </profile>
     <profile>
+      <id>webkit-tests</id>
+      <modules><module>browser-tests</module></modules>
+    </profile>
+    <profile>
       <id>production</id>
       <properties>
         <teavm.optimization>ADVANCED</teavm.optimization>

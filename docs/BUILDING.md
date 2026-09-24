@@ -46,6 +46,9 @@ scenarios in `showcase-tests/src/test/resources/features`. The
 `browser-tests` retains Java Playwright for WebKit and requires that browser
 engine to be installed. It serves
 the built fixtures itself; the `jwebserver` command is for manual browsing.
+Run it within the main reactor with `mvn -Pwebkit-tests verify`. CI runs both
+browser suites against development and optimised builds, using Chrome and
+Firefox for the Cucumber Tea scenarios and WebKit for the Java Playwright suite.
 
 For optimised JavaScript, run `mvn -Pproduction verify`, then the same browser
 suite. See [port status](COMPATIBILITY.md) for what the checks establish.

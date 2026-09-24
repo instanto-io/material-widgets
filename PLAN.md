@@ -8,13 +8,6 @@ This is the remaining work plan. [Port status](docs/COMPATIBILITY.md) records wh
 is established, [design](docs/DESIGN.md) explains the adaptations, and the
 [showcase guide](docs/SHOWCASE.md) links to working examples and identifies further showcase work.
 
-## Simplify the repository
-
-Extend the Maven download approach used for addins to the remaining core, jQuery
-and showcase source archives, then remove those ZIPs from Git.
-Keep downloads cached for subsequent offline builds.
-Preserve source provenance, licences and the maintained TeaVM showcase shell.
-
 ## Complete application behaviour
 
 The core catalogue, all eighteen navigation patterns, six table views and the
@@ -63,4 +56,3 @@ retiring its existing wrappers.
 - [ ] Verify Chromium, Firefox and WebKit full matrix in shared TeaVMTestRunner and Webapp Testkit scenarios, including optimized-build checks.
 - [ ] Verify locale variants and less-used native callbacks/browser API paths that are still untested.
 - [ ] Verify first-release dependency chain publishing and a standalone application build from an empty Maven cache.
-- [ ] Verify upstream archives are no longer required in source control and are downloaded via Maven at their pinned revisions.

@@ -22,3 +22,21 @@ jobs:
       goals: clean verify
       timeout-minutes: 45
     secrets: inherit
+
+  browser-contracts:
+    needs: verify
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        mode: [ development, production ]
+        browser: [ chrome, firefox, webkit ]
+    uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
+    with:
+      name: ${{ matrix.mode }} ${{ matrix.browser }} showcase contracts
+      goals: clean verify
+      maven-args: >-
+        -P${{ matrix.browser == 'webkit' && 'webkit-tests' || 'showcase-tests' }}${{ matrix.mode == 'production' && ',production' || '' }}
+        ${{ matrix.browser == 'firefox' && '-Dmaterial.test.browser=browser-firefox' || '' }}
+      timeout-minutes: 60
+    secrets: inherit
