@@ -15,6 +15,9 @@ Feature: Material addin interactions on TeaVM
   Scenario: Set and read rich text
     Then the editor sets and reads the supplied HTML
 
+  Scenario: Clear and insert text in the rich editor
+    Then the editor clears and inserts text through its original controls
+
   Scenario: Publish the selected rating
     Then the rating publishes its value event
 

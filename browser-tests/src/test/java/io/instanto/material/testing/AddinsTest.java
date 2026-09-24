@@ -3,6 +3,7 @@ package io.instanto.material.testing;
 import static org.junit.Assert.*;
 
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.FilePayload;
 import java.nio.file.Path;
 import org.junit.Test;
@@ -40,6 +41,25 @@ public class AddinsTest {
           assertTrue(
               page.locator(".toast").allTextContents().stream()
                   .anyMatch(text -> text.contains("1 Current Slide Index")));
+        });
+  }
+
+  @Test
+  public void richEditorClearsAndInsertsText() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!addins-richeditor",
+        page -> {
+          page.waitForSelector(
+              "body[data-showcase-page=addins-richeditor][data-showcase-state=rendered]");
+          page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Reset")).click();
+          page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Get Value")).click();
+          page.waitForSelector(".toast:has-text('Empty')");
+          page.getByRole(
+                  AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Insert Material Design"))
+              .click();
+          page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Get Value")).click();
+          page.waitForSelector(".toast:has-text('Material Design')");
         });
   }
 

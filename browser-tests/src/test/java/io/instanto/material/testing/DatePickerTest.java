@@ -77,7 +77,13 @@ public class DatePickerTest {
               if (selectedYear != null) assertTrue(field.inputValue().contains(selectedYear));
               if (section.equals("date_limit")) assertTrue(field.inputValue().contains("2017"));
               if (page.locator(".picker--opened").count() > 0) {
-                page.locator(".picker--opened .picker__close").click();
+                try {
+                  page.locator(".picker--opened .picker__close")
+                      .click(new Locator.ClickOptions().setTimeout(1000));
+                } catch (com.microsoft.playwright.TimeoutError closedWhileClicking) {
+                  // Selecting a day can close the picker after the count check.
+                  page.waitForFunction("!document.querySelector('.picker--opened')");
+                }
               }
               page.waitForFunction("!document.querySelector('.picker--opened')");
               page.waitForFunction(

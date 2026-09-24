@@ -107,6 +107,24 @@ public class AddinsInteractionSteps extends MaterialSteps {
                     .anyMatch(e -> e.getTextContent().contains("TeaVM editor sample"))));
   }
 
+  @Then("the editor clears and inserts text through its original controls")
+  public void richEditorClearsAndInsertsTextThroughOriginalHandlers() {
+    open("richeditor");
+    click(findByText("Reset"));
+    click(findByText("Get Value"));
+    waitFor(
+        () ->
+            assertTrue(
+                findAll(".toast").stream().anyMatch(e -> e.getTextContent().contains("Empty"))));
+    click(findByText("Insert Material Design"));
+    click(findByText("Get Value"));
+    waitFor(
+        () ->
+            assertTrue(
+                findAll(".toast").stream()
+                    .anyMatch(e -> e.getTextContent().contains("Material Design"))));
+  }
+
   @Then("the rating publishes its value event")
   public void ratingPublishesTheOriginalValueEvent() {
     open("rating");
