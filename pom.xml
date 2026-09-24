@@ -77,10 +77,6 @@
       <id>github</id>
       <url>https://maven.pkg.github.com/instanto-io/material-widgets</url>
     </repository>
-    <snapshotRepository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/instanto-io/material-widgets</url>
-    </snapshotRepository>
   </distributionManagement>
   <build>
     <plugins>
@@ -276,10 +272,6 @@
           <id>artifacts</id>
           <url>https://artifacts.instanto.io/repository/maven-releases/</url>
         </repository>
-        <snapshotRepository>
-          <id>artifacts</id>
-          <url>https://artifacts.instanto.io/repository/maven-snapshots/</url>
-        </snapshotRepository>
       </distributionManagement>
     </profile>
     <profile>
