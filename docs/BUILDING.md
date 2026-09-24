@@ -8,10 +8,12 @@ build uses Maven plugins and Java adapters; it does not require Python or npm.
 Runtime and generation tools come from
 [Instanto-io/teavm-compat](https://github.com/instanto-io/teavm-compat), including
 `gwt-user-compat`, `jsinterop-binding-generator` and `gwt-uibinder-processor`.
-Configure a token with package-read access for Maven server
-`github-teavm-compat` when resolving published artifacts from GitHub Packages.
+The parent POM and these dependencies are published as development snapshots to
+packages.instanto.io. Configure Maven access using the
+[Instanto parent instructions](https://github.com/instanto-io/instanto-poms#use-a-parent).
 
-For unpublished changes, install the matching compatibility checkout first:
+For compatibility changes that are not yet published, install the matching
+checkout first:
 
 ```sh
 # In teavm-compat, using JDK 21

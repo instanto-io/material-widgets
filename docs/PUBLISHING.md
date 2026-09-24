@@ -28,9 +28,9 @@ commit the generated changes after the browser checks pass. GitHub Pages serves
 Only `main` is used during development. There is no separate showcase branch;
 release branches will be created when releases are made.
 
-No Java build workflow is installed on GitHub. The production build and browser
-checks can run on local infrastructure; Maven can run offline once its declared
-dependencies are cached.
+GitHub Actions runs the Java build on local infrastructure and publishes
+development snapshots to packages.instanto.io after CI passes. Maven can run
+offline once its declared dependencies are cached.
 
 The public [Material Widgets repository](https://github.com/instanto-io/material-widgets)
 hosts the [TeaVM showcase](https://instanto-io.github.io/material-widgets/) from
@@ -47,16 +47,8 @@ mvn -f browser-tests/pom.xml -Dtest=ShowcaseTest,TeaVmWidgetsTest \
 ## Working history and release snapshots
 
 Development history belongs in the private `cstainton/material-widgets`
-repository. In the working checkout, `origin` points there and `release` points
-to `instanto-io/material-widgets`.
-
-Commit and push the working history first. Publish the tested file tree to the
-Instanto repository as a single parentless commit, created with `git commit-tree`
-without a parent. Update release `main` using `--force-with-lease` against its
-previous exact commit. Verify that the private working repository contains the
-history before replacing the release snapshot. Never push development `main`
-directly to the release remote.
-
-The local `refs/releases/instanto-main` ref holds the public snapshot; the release
-remote's default push refspec points to that ref. Both repositories use `main`;
-release branches are reserved for future releases.
+repository. Commit and push there first. Then publish the tested file tree as a
+single new commit on top of Instanto-io `main`, preserving its existing public
+history. Check for incoming public changes before preparing that commit. Both
+repositories use `main` during development; release branches are reserved for
+future releases.

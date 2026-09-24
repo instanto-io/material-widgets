@@ -62,16 +62,8 @@
     <module>showcase-examples-teavm</module>
     <module>showcase-teavm</module>
   </modules>
-  <repositories>
-    <repository>
-      <id>github-teavm-compat</id>
-      <url>https://maven.pkg.github.com/instanto-io/teavm-compat</url>
-    </repository>
-  </repositories>
-
-  <!-- Where this reactor publishes. The default is the organisation's GitHub
-       Packages registry; -Partifacts sends the same build to the Nexus at
-       artifacts.instanto.io instead. -->
+  <!-- Fixed versions use this repository's GitHub Packages registry. Development
+       snapshots inherit packages.instanto.io from the organisation parent. -->
   <distributionManagement>
     <repository>
       <id>github</id>

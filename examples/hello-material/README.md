@@ -4,9 +4,9 @@ A standalone TeaVM application using the Material widget and asset JARs. It has
 no parent POM, reactor dependencies or source paths into another checkout. Copy
 this directory to start an application.
 
-For this unpublished preview, first install the `main`
-branch of `Instanto-io/teavm-compat` and then
-the Material repository with `mvn clean install` using JDK 21. From this directory:
+Use JDK 21 and configure Maven to read development snapshots from
+packages.instanto.io using the [Instanto parent instructions](https://github.com/instanto-io/instanto-poms#use-a-parent).
+The Material and compatibility snapshots are published there. From this directory:
 
 ```sh
 mvn clean verify

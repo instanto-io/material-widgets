@@ -10,7 +10,12 @@
     <teavm.version>0.15.0</teavm.version>
   </properties>
   <repositories>
-    <repository><id>github-teavm-compat</id><url>https://maven.pkg.github.com/instanto-io/teavm-compat</url></repository>
+    <repository>
+      <id>forgejo-instanto</id>
+      <url>https://packages.instanto.io/api/packages/instanto-io/maven</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
   </repositories>
   <dependencies>
     <dependency><groupId>io.instanto</groupId><artifactId>gwt-material-widgets-teavm</artifactId><version>${material.version}</version></dependency>

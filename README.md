@@ -2,7 +2,7 @@
 
 An independent TeaVM adaptation of [GWT Material Design](https://github.com/GwtMaterialDesign/gwt-material), preserving upstream Java packages and widget implementations.
 
-**Status: compatibility preview.** Original Material widgets now compile and run on TeaVM. The showcase uses upstream views, UiBinder templates, descriptions and event handlers. See [port status](docs/COMPATIBILITY.md) for coverage and limitations, and the [showcase guide](docs/SHOWCASE.md) for examples. No artifacts are published yet.
+**Status: compatibility preview.** Original Material widgets now compile and run on TeaVM. The showcase uses upstream views, UiBinder templates, descriptions and event handlers. See [port status](docs/COMPATIBILITY.md) for coverage and limitations, and the [showcase guide](docs/SHOWCASE.md) for examples. Development snapshots are published to [packages.instanto.io](https://packages.instanto.io); there is no fixed release yet.
 
 We use `io.instanto` coordinates to distinguish this adaptation from upstream and avoid confusion about ownership or endorsement. The build produces the TeaVM widget port.
 
@@ -10,7 +10,7 @@ We use `io.instanto` coordinates to distinguish this adaptation from upstream an
 
 [Explore the TeaVM showcase](https://instanto-io.github.io/material-widgets/), with original widget examples running on TeaVM. Upstream comparisons are in the [showcase guide](docs/SHOWCASE.md). To run it locally:
 
-Use JDK 21 and Maven, with the shared compatibility dependencies installed as
+Use JDK 21 and Maven, with access to the published development snapshots as
 described in [building locally](docs/BUILDING.md):
 
 ```sh
@@ -28,10 +28,12 @@ The [standalone Hello Material example](examples/hello-material) has a complete
 Maven build and host page. It consumes the widget and asset JARs without inheriting
 this repository's parent POM or reading any sibling source checkout.
 
-Start with JDK 21, Maven and a browser. For this unpublished preview, install
-`teavm-compat` first, then this repository with `mvn clean install`. Copy
-[`examples/hello-material`](examples/hello-material) for a standalone application:
-its POM configures TeaVM 0.15.0 and extracts the matching browser assets.
+Start with JDK 21, Maven and a browser. Configure Maven to read development
+snapshots from packages.instanto.io using the [Instanto parent instructions](https://github.com/instanto-io/instanto-poms#use-a-parent).
+Copy [`examples/hello-material`](examples/hello-material) for a standalone
+application: its POM configures TeaVM 0.15.0 and extracts the matching browser
+assets. Install a local `teavm-compat` checkout only when testing changes that
+have not yet been published.
 
 ### 1. Add the widget and asset dependencies
 
