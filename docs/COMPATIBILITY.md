@@ -88,7 +88,7 @@ and Google Docs rendering depends on a public document and an external service.
   implemented media properties. Controlled fixtures do not establish real
   location permissions, external media services or full document navigation.
 - Verify exact GWT scheduler event-turn ordering and physical touch interaction.
-- Complete release packaging and downstream framework adoption checks.
+- Complete release packaging and standalone application checks.
 
 ## Development dependencies
 

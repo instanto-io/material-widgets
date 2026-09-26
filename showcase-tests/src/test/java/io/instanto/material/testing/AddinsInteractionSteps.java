@@ -118,6 +118,8 @@ public class AddinsInteractionSteps extends MaterialSteps {
       click(reset);
       waitFor(() -> assertTrue(editableForReset(reset).getTextContent().isBlank()));
       stage = "inserting text";
+      // A programmatic button click does not place the cursor in the editor.
+      placeCaretAtEnd(editableForReset(reset));
       click(findByRole("button", "Insert Material Design"));
       waitFor(
           () -> assertTrue(editableForReset(reset).getTextContent().contains("Material Design")));
@@ -138,6 +140,21 @@ public class AddinsInteractionSteps extends MaterialSteps {
       params = "resetButton",
       script = "return resetButton.closest('.row').querySelector('.note-editable');")
   private static native HTMLElement editableForReset(HTMLElement resetButton);
+
+  @JSBody(
+      params = "editable",
+      script =
+          """
+          editable.focus();
+          var document = editable.ownerDocument;
+          var range = document.createRange();
+          range.selectNodeContents(editable);
+          range.collapse(false);
+          var selection = document.defaultView.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          """)
+  private static native void placeCaretAtEnd(HTMLElement editable);
 
   @Then("the rating publishes its value event")
   public void ratingPublishesTheOriginalValueEvent() {

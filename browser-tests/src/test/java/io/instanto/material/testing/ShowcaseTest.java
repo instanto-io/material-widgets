@@ -220,6 +220,8 @@ public class ShowcaseTest {
           page.locator("a[data-page=media]").click();
           page.waitForSelector("body[data-showcase-page=media][data-showcase-state=rendered]");
           assertEquals(0, page.locator(".pending-page").count());
+          page.waitForFunction(
+              "(() => { const frame = document.querySelector('#responsive_videos iframe'); const doc = frame && frame.contentDocument; return doc && doc.querySelector('video') && doc.readyState === 'complete'; })()");
           page.goBack();
           page.waitForSelector("body[data-showcase-page=button]");
         });
