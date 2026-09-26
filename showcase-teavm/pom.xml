@@ -114,26 +114,4 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>stage-pages</id>
-      <build><plugins><plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions><execution>
-          <id>stage-pages-on-main</id>
-          <phase>verify</phase>
-          <goals><goal>copy-resources</goal></goals>
-          <configuration>
-            <outputDirectory>${project.basedir}/../docs</outputDirectory>
-            <overwrite>true</overwrite>
-            <resources>
-              <resource><directory>${project.build.directory}/site</directory></resource>
-              <resource><directory>..</directory><includes><include>LICENSE</include><include>NOTICE</include></includes></resource>
-            </resources>
-          </configuration>
-        </execution></executions>
-      </plugin></plugins></build>
-    </profile>
-  </profiles>
 </project>

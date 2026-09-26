@@ -2,7 +2,11 @@
 
 An independent TeaVM adaptation of [GWT Material Design](https://github.com/GwtMaterialDesign/gwt-material), preserving upstream Java packages and widget implementations.
 
-**Status: compatibility preview.** Original Material widgets now compile and run on TeaVM. The showcase uses upstream views, UiBinder templates, descriptions and event handlers. See [port status](docs/COMPATIBILITY.md) for coverage and limitations, and the [showcase guide](docs/SHOWCASE.md) for examples. Development snapshots are published to [packages.instanto.io](https://packages.instanto.io); there is no fixed release yet.
+> **Early stage.** This is an early port of GWT Material Design to TeaVM. Many widgets work, but
+> coverage is incomplete and the API and packaging may still change. Check the
+> [port status](docs/COMPATIBILITY.md) before relying on a widget.
+
+Original Material widgets now compile and run on TeaVM. The showcase uses upstream views, UiBinder templates, descriptions and event handlers. See [port status](docs/COMPATIBILITY.md) for coverage and limitations, and the [showcase guide](docs/SHOWCASE.md) for examples. Development snapshots are published to [packages.instanto.io](https://packages.instanto.io); there is no fixed release yet.
 
 We use `io.instanto` coordinates to distinguish this adaptation from upstream and avoid confusion about ownership or endorsement. The build produces the TeaVM widget port.
 
@@ -187,7 +191,7 @@ uploads and external document viewers have additional requirements described the
 - [Showcase guide](docs/SHOWCASE.md): example links and upstream comparisons.
 - [Roadmap](PLAN.md): remaining implementation and release work.
 - [Migration](docs/MIGRATION.md): replacing the existing Verrai Material wrappers.
-- [Publishing](docs/PUBLISHING.md): local builds and GitHub Pages hosting from `main`.
+- [Publishing](docs/PUBLISHING.md): local builds and the GitHub Pages deploy.
 
 ## Upstream credits
 
@@ -218,6 +222,8 @@ using the PayPal Donate button under **Support Us** in the showcase footer.
 You can also [contribute fixes and improvements](https://github.com/GwtMaterialDesign/gwt-material/blob/master/CONTRIBUTING.md).
 
 Using the TeaVM port? Please [support TeaVM](https://github.com/sponsors/konsoletyper).
+
+Want to see this port and more TeaVM libraries maintained? Please [sponsor this port](https://github.com/sponsors/cstainton).
 
 ## Shared build parent
 

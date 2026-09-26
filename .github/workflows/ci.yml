@@ -39,4 +39,7 @@ jobs:
         -P${{ matrix.browser == 'webkit' && 'webkit-tests' || 'showcase-tests' }}${{ matrix.mode == 'production' && ',production' || '' }}
         ${{ matrix.browser == 'firefox' && '-Dmaterial.test.browser=browser-firefox' || '' }}
       timeout-minutes: 60
+      # The production Chrome run hands its tested site to the Pages workflow.
+      artifact-name: ${{ matrix.mode == 'production' && matrix.browser == 'chrome' && 'showcase-pages' || '' }}
+      artifact-path: showcase-teavm/target/site
     secrets: inherit

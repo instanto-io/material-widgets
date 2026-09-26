@@ -1,0 +1,66 @@
+name: Showcase Pages
+
+# Deploys the production showcase that CI built and tested. Nothing is compiled
+# here; the site comes from the CI run that triggered this workflow.
+
+on:
+  workflow_run:
+    workflows: [ CI ]
+    types: [ completed ]
+
+permissions:
+  actions: read
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy verified showcase
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.event != 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: [self-hosted, instanto-container]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download verified showcase site
+        uses: actions/download-artifact@v4
+        with:
+          name: showcase-pages
+          path: public
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Check out the licence files
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          path: source
+          sparse-checkout: |
+            LICENSE
+            NOTICE
+          sparse-checkout-cone-mode: false
+
+      - name: Add the licence files
+        run: cp source/LICENSE source/NOTICE public/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
