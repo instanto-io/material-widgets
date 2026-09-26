@@ -64,6 +64,31 @@ public class AddinsTest {
   }
 
   @Test
+  public void treeViewExpandsAndSelectsOriginalItems() throws Exception {
+    BaselineTest.verify(
+        "showcase-teavm",
+        "/#!addins-treeview",
+        page -> {
+          page.waitForSelector(
+              "body[data-showcase-page=addins-treeview][data-showcase-state=rendered]");
+          Locator tree = page.locator("#catalogue-content .tree");
+          int allItems = tree.locator(".tree-item").count();
+          assertTrue(allItems > 3);
+          page.locator("#catalogue-content [data-tooltip='Collapse']").click();
+          page.waitForFunction(
+              "total => Array.from(document.querySelectorAll('#catalogue-content .tree-item')).filter(item => item.getClientRects().length).length < total",
+              allItems);
+          page.locator("#catalogue-content [data-tooltip='Expand']").click();
+          page.waitForFunction(
+              "total => Array.from(document.querySelectorAll('#catalogue-content .tree-item')).filter(item => item.getClientRects().length).length === total",
+              allItems);
+          page.locator("#catalogue-content .tree > .tree-item:first-child > .tree-header").click();
+          page.waitForSelector(".toast:has-text('Selected : Documents')");
+          assertEquals(1, tree.locator(".tree-item.selected").count());
+        });
+  }
+
+  @Test
   public void allAddinsRenderAndRemount() throws Exception {
     BaselineTest.verify(
         "showcase-teavm",

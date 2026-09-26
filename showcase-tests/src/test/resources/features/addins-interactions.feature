@@ -32,3 +32,6 @@ Feature: Material addin interactions on TeaVM
 
   Scenario: Navigate the carousel with its method buttons
     Then the carousel moves to the requested slide
+
+  Scenario: Expand, collapse and select a tree item
+    Then the tree controls reveal and select its original items

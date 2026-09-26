@@ -6,11 +6,13 @@ dependency, `io.instanto:gwt-material-table-teavm`, so an application using only
 core widgets need not include it. `MaterialTable.onModuleLoad()` loads its original
 table CSS and JavaScript plugins after core Material initialisation.
 
-Maven downloads and verifies pinned archives for Material Table and
-`gmd-table-demo`. Revisions are in the [source lock](../upstream/assessment-lock.json);
-archive SHA-256 values are in the root POM. The generated artifacts retain source
-licences and input manifests. Upstream source trees and their GWT builds are not
-checked into this repository.
+The corrected Material Table source is included as
+[`upstream/gwt-material-table.zip`](../upstream/gwt-material-table.zip), so the build
+does not need access to its development fork. Maven downloads the pinned
+`gmd-table-demo` source. It checks both archives against the SHA-256 values in the
+root POM; their revisions are in the [source lock](../upstream/assessment-lock.json).
+The generated artifacts retain source licences and input manifests. Upstream
+source trees and their GWT builds are not checked into this repository.
 
 ## The original showcase views
 

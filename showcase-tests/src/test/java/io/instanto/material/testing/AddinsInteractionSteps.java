@@ -221,6 +221,31 @@ public class AddinsInteractionSteps extends MaterialSteps {
                     .anyMatch(e -> e.getTextContent().contains("1 Current Slide Index"))));
   }
 
+  @Then("the tree controls reveal and select its original items")
+  public void treeControlsRevealAndSelectOriginalItems() {
+    open("treeview");
+    HTMLElement tree = find("#catalogue-content .tree");
+    int allItems = findAll("#catalogue-content .tree-item").size();
+    assertTrue(allItems > 3);
+    click(find("#catalogue-content [data-tooltip='Collapse']"));
+    waitFor(() -> assertTrue(visibleTreeItems(tree) < allItems));
+    click(find("#catalogue-content [data-tooltip='Expand']"));
+    waitFor(() -> assertEquals(allItems, visibleTreeItems(tree)));
+    click(find("#catalogue-content .tree > .tree-item:first-child > .tree-header"));
+    waitFor(
+        () ->
+            assertTrue(
+                findAll(".toast").stream()
+                    .anyMatch(e -> e.getTextContent().contains("Selected : Documents"))));
+    assertEquals(1, findAll("#catalogue-content .tree-item.selected").size());
+  }
+
+  @JSBody(
+      params = "tree",
+      script =
+          "return Array.from(tree.querySelectorAll('.tree-item')).filter(item => item.getClientRects().length > 0).length;")
+  private static native int visibleTreeItems(HTMLElement tree);
+
   @JSBody(
       params = "canvas",
       script =
