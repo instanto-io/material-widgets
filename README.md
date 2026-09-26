@@ -223,7 +223,7 @@ You can also [contribute fixes and improvements](https://github.com/GwtMaterialD
 
 Using the TeaVM port? Please [support TeaVM](https://github.com/sponsors/konsoletyper).
 
-Want to see this port and more TeaVM libraries maintained? Please [sponsor this port](https://github.com/sponsors/cstainton).
+Want to see this port and more TeaVM libraries maintained? Please [sponsor this port](https://github.com/sponsors/instanto-io).
 
 ## Shared build parent
 
