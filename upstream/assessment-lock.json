@@ -4,7 +4,7 @@
     "gwt-material": {"url": "https://github.com/GwtMaterialDesign/gwt-material", "commit": "d79f6edb813b263d2d97f51814abe6f1a8c88a2a"},
     "gwt-material-jquery": {"url": "https://github.com/GwtMaterialDesign/gwt-material-jquery", "commit": "a9a3755722a9552d86d90f322948867776286b16"},
     "gwt-material-addins": {"url": "https://github.com/GwtMaterialDesign/gwt-material-addins", "commit": "568eb3f92aa4317504887994cfb5dacebf850931"},
-    "gwt-material-table": {"url": "https://github.com/cstainton/gwt-material-table", "commit": "a26ad6df1ad702e2e63b776070bf2cdf15d3e816", "upstream": "https://github.com/GwtMaterialDesign/gwt-material-table", "upstreamCommit": "7cbce43861de205d7fc7f4bd742b88b0eb13934b", "carries": "column toggle ids after reindexing; body scrollbar restored when a stretched table is removed"},
+    "gwt-material-table": {"archive": "upstream/gwt-material-table.zip", "commit": "a26ad6df1ad702e2e63b776070bf2cdf15d3e816", "upstream": "https://github.com/GwtMaterialDesign/gwt-material-table", "upstreamCommit": "7cbce43861de205d7fc7f4bd742b88b0eb13934b", "carries": "column toggle ids after reindexing; body scrollbar restored when a stretched table is removed"},
     "gmd-table-demo": {"url": "https://github.com/GwtMaterialDesign/gmd-table-demo", "commit": "d5b7288cd7061f923a3d38469a4d69cb9505f58a"},
     "gwt-material-patterns": {"url": "https://github.com/GwtMaterialDesign/gwt-material-patterns", "commit": "08f63dd686f72c27b06d2c7ef3abcb25b82308e1"},
     "gmd-core-demo": {"url": "https://github.com/GwtMaterialDesign/gmd-core-demo", "commit": "63528c811e5e91a6bdbd5b523748d47251cc89f9"},

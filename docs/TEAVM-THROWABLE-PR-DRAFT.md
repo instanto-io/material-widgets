@@ -34,5 +34,5 @@ Thanks again for your work on TeaVM and for reviewing our contributions.
 
 ---
 
-Submitted as [TeaVM PR #1252](https://github.com/konsoletyper/teavm/pull/1252)
-from `cstainton:fix-throwable-suppressed`, commit `559ec1a`.
+Submitted as [TeaVM PR #1252](https://github.com/konsoletyper/teavm/pull/1252),
+commit `559ec1a`.

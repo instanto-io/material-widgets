@@ -46,6 +46,7 @@
        column toggle ids after reindexing, and restoring the body scrollbar when a
        stretched table is removed. -->
   <material-table.revision>a26ad6df1ad702e2e63b776070bf2cdf15d3e816</material-table.revision>
+  <material-table.sha256>5c35cee99c2093100f03404d3a3beddc24663b39a1ae8101e314e6dbbffb05c6</material-table.sha256>
   <material-table-demo.revision>d5b7288cd7061f923a3d38469a4d69cb9505f58a</material-table-demo.revision>
   <material-patterns.revision>08f63dd686f72c27b06d2c7ef3abcb25b82308e1</material-patterns.revision>
 </properties>
@@ -133,15 +134,6 @@
           </configuration>
         </execution>
 <execution>
-          <id>fetch-pinned-table</id><phase>initialize</phase><goals><goal>wget</goal></goals>
-          <configuration>
-            <uri>https://codeload.github.com/cstainton/gwt-material-table/zip/${material-table.revision}</uri>
-            <outputDirectory>${project.build.directory}/upstream</outputDirectory>
-            <outputFileName>gwt-material-table.zip</outputFileName>
-            <readTimeOut>30000</readTimeOut>
-          </configuration>
-        </execution>
-<execution>
           <id>fetch-pinned-table-demo</id><phase>initialize</phase><goals><goal>wget</goal></goals>
           <configuration>
             <uri>https://codeload.github.com/GwtMaterialDesign/gmd-table-demo/zip/${material-table-demo.revision}</uri>
@@ -172,7 +164,12 @@
             <configuration>
               <target>
                 <delete dir='${project.build.directory}/intake'/>
-<unzip src='${project.build.directory}/upstream/gwt-material-table.zip' dest='${project.build.directory}/intake/table'>
+<!-- The corrected table source is committed in upstream/, not downloaded. -->
+<checksum file='${project.basedir}/upstream/gwt-material-table.zip' algorithm='SHA-256' property='${material-table.sha256}' verifyProperty='material-table.verified'/>
+<fail message='upstream/gwt-material-table.zip does not match material-table.sha256'>
+  <condition><isfalse value='${material-table.verified}'/></condition>
+</fail>
+<unzip src='${project.basedir}/upstream/gwt-material-table.zip' dest='${project.build.directory}/intake/table'>
   <mapper type='glob' from='gwt-material-table-${material-table.revision}/*' to='*'/>
 </unzip>
 <unzip src='${project.build.directory}/upstream/gmd-table-demo.zip' dest='${project.build.directory}/intake/table-demo'>

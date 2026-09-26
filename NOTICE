@@ -28,7 +28,8 @@ The video iframe substitutes an original silent sample. Material slider and
 lightbox lifecycle resources are adapted for disposal.
 See docs/MEDIA-ASSETS.md and docs/DESIGN.md for provenance and changes.
 
-Table widgets come from GwtMaterialDesign/gwt-material-table. The six table
+Table widgets come from GwtMaterialDesign/gwt-material-table; the corrected
+source used here is committed as upstream/gwt-material-table.zip. The six table
 showcase views, UiBinder templates, descriptions, data generators and asynchronous
 fixture service come from GwtMaterialDesign/gmd-table-demo, under Apache 2.0.
 Their source revisions are recorded in upstream/assessment-lock.json. The table

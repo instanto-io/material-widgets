@@ -1,11 +1,8 @@
 # Publish the TeaVM showcase
 
-Refined source is transferred from private development into Instanto-io before
-a versioned library release begins. Run that release from the Instanto-io
-checkout using `instanto-poms/RELEASING.md`: create the version branch, publish
-its artifacts, then advance main to the next snapshot. Preserve release branches
-and the current development version when transferring later source updates.
-The showcase procedure below remains separate from Maven artifact publication.
+Versioned library releases follow `instanto-poms/RELEASING.md`: create the version
+branch, publish its artifacts, then advance main to the next snapshot. The showcase
+procedure below remains separate from Maven artifact publication.
 
 Build and test locally with JDK 21 after installing the shared compatibility
 integration described in [the build notes](BUILDING.md):
@@ -43,12 +40,3 @@ checks used locally:
 mvn -f browser-tests/pom.xml -Dtest=ShowcaseTest,TeaVmWidgetsTest \
   -Dmaterial.browser.baseUrl=https://instanto-io.github.io/material-widgets/ test
 ```
-
-## Working history and release snapshots
-
-Development history belongs in the private `cstainton/material-widgets`
-repository. Commit and push there first. Then publish the tested file tree as a
-single new commit on top of Instanto-io `main`, preserving its existing public
-history. Check for incoming public changes before preparing that commit. Both
-repositories use `main` during development; release branches are reserved for
-future releases.
