@@ -189,8 +189,6 @@ uploads and external document viewers have additional requirements described the
 - [Table design](docs/TABLE-DESIGN.md): retained views, local fixtures and shared compatibility changes.
 - [Port status](docs/COMPATIBILITY.md): verified behaviour and remaining limitations.
 - [Showcase guide](docs/SHOWCASE.md): example links and upstream comparisons.
-- [Roadmap](PLAN.md): remaining implementation and release work.
-- [Migration](docs/MIGRATION.md): replacing the existing Verrai Material wrappers.
 - [Publishing](docs/PUBLISHING.md): local builds and the GitHub Pages deploy.
 
 ## Upstream credits

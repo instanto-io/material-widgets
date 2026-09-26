@@ -9,8 +9,7 @@ separate application shell so the original examples can run without GWTP or Gin.
 
 This document explains those changes. [Port status](COMPATIBILITY.md) records
 verified behaviour and limitations; the [showcase guide](SHOWCASE.md) links to
-available examples and their upstream equivalents. Future work belongs in the
-[roadmap](../PLAN.md).
+available examples and their upstream equivalents.
 
 ## What changes from upstream
 
