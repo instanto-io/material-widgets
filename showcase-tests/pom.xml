@@ -7,10 +7,6 @@
   <properties>
     <!-- Not a published library. -->
     <maven.deploy.skip>true</maven.deploy.skip><material.test.browser>browser-chrome</material.test.browser></properties>
-  <repositories>
-    <repository><id>github-cucumber-tea</id><url>https://maven.pkg.github.com/instanto-io/cucumber-tea</url></repository>
-    <repository><id>github-webapp-testkit</id><url>https://maven.pkg.github.com/instanto-io/webapp-testkit</url></repository>
-  </repositories>
   <dependencies>
     <dependency><groupId>io.instanto</groupId><artifactId>webapp-testkit-app</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
     <dependency><groupId>io.instanto</groupId><artifactId>cucumber-tea</artifactId><version>0.1.0-SNAPSHOT</version><scope>test</scope></dependency>
