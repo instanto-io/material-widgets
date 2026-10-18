@@ -38,6 +38,8 @@ jobs:
     with:
       name: Build Hello Material from published snapshots
       goals: clean verify
+      # The main verification job owns the repository quality gate.
+      sonar: false
       maven-args: -f examples/hello-material/pom.xml -Dmaven.repo.local=$RUNNER_TEMP/material-consumer-m2
       timeout-minutes: 30
     secrets: inherit

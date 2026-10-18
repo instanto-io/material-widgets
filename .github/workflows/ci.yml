@@ -19,6 +19,7 @@ jobs:
     uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
     with:
       name: Build the port and run its tests
+      sonar: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
       goals: clean verify
       timeout-minutes: 45
     secrets: inherit
@@ -35,6 +36,8 @@ jobs:
     with:
       name: ${{ matrix.mode }} ${{ matrix.browser }} showcase contracts
       goals: clean verify
+      # Report once from verify; browser variants must not overwrite it.
+      sonar: false
       maven-args: >-
         -P${{ matrix.browser == 'webkit' && 'webkit-tests' || 'showcase-tests' }}${{ matrix.mode == 'production' && ',production' || '' }}
         ${{ matrix.browser == 'firefox' && '-Dmaterial.test.browser=browser-firefox' || '' }}
