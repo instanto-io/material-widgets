@@ -33,7 +33,6 @@
     <gwt-uibinder-processor.version>${teavm-compat.version}</gwt-uibinder-processor.version>
     <gwt-user-compat.version>${teavm-compat.version}</gwt-user-compat.version>
     <teavm.optimization>SIMPLE</teavm.optimization>
-    <teavm.minify>false</teavm.minify>
     <!-- The libraries publish. Showcases, probes and audits set this back to
          true in their own POMs. -->
     <maven.deploy.skip>false</maven.deploy.skip>
@@ -275,7 +274,6 @@
       <id>production</id>
       <properties>
         <teavm.optimization>ADVANCED</teavm.optimization>
-        <teavm.minify>true</teavm.minify>
       </properties>
     </profile>
     <profile>

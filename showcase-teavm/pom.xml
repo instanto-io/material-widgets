@@ -7,6 +7,9 @@
   </parent>
 
   <properties>
+    <instanto.terser.phase>prepare-package</instanto.terser.phase>
+    <instanto.terser.directory>${project.build.directory}/site</instanto.terser.directory>
+    <instanto.terser.file>showcase.js</instanto.terser.file>
     <!-- Not a published library. -->
     <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
@@ -54,8 +57,12 @@
           <targetDirectory>${project.build.directory}/site</targetDirectory>
           <targetFileName>showcase.js</targetFileName>
           <optimizationLevel>${teavm.optimization}</optimizationLevel>
-          <minifying>${teavm.minify}</minifying>
+          <minifying>false</minifying>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

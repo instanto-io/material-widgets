@@ -4,6 +4,12 @@
   <artifactId>hello-material</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
+    <instanto.terser.phase>prepare-package</instanto.terser.phase>
+    <instanto.terser.directory>${project.build.directory}/site</instanto.terser.directory>
+    <instanto.terser.file>app.js</instanto.terser.file>
+    <instanto.terser.version>5.51.2</instanto.terser.version>
+    <instanto.terser.executable>npx</instanto.terser.executable>
+    <instanto.terser.skip>false</instanto.terser.skip>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <material.version>0.1.0-SNAPSHOT</material.version>
@@ -30,8 +36,40 @@
       <configuration>
         <mainClass>io.instanto.material.example.HelloMaterial</mainClass>
         <targetDirectory>${project.build.directory}/site</targetDirectory><targetFileName>app.js</targetFileName>
-        <optimizationLevel>ADVANCED</optimizationLevel><minifying>true</minifying>
+        <optimizationLevel>ADVANCED</optimizationLevel><minifying>false</minifying>
+          <sourceMapsGenerated>true</sourceMapsGenerated>
+          <sourceFilesCopied>true</sourceFilesCopied>
       </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>3.6.3</version>
+      <executions>
+        <execution>
+          <id>minify-teavm-js</id>
+          <phase>${instanto.terser.phase}</phase>
+          <goals><goal>exec</goal></goals>
+          <configuration combine.self="override">
+            <skip>${instanto.terser.skip}</skip>
+            <executable>${instanto.terser.executable}</executable>
+            <workingDirectory>${instanto.terser.directory}</workingDirectory>
+            <arguments>
+              <argument>--yes</argument>
+              <argument>--package=terser@${instanto.terser.version}</argument>
+              <argument>--</argument>
+              <argument>terser</argument>
+              <argument>${instanto.terser.file}</argument>
+              <argument>--compress</argument>
+              <argument>--mangle</argument>
+              <argument>--source-map</argument>
+              <argument>content='${instanto.terser.file}.map',url='${instanto.terser.file}.map'</argument>
+              <argument>--output</argument>
+              <argument>${instanto.terser.file}</argument>
+            </arguments>
+          </configuration>
+        </execution>
+      </executions>
     </plugin>
     <plugin>
       <groupId>org.apache.maven.plugins</groupId><artifactId>maven-resources-plugin</artifactId><version>3.3.1</version>
