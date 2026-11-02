@@ -214,6 +214,68 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
                     before,
                     "reader = java.nio.file.Files.newBufferedReader(ijmap.toPath(), java.nio.charset.StandardCharsets.UTF_8);");
           }
+          if (relative.equals("gwt/material/design/addins/client/avatar/MaterialAvatar.java")) {
+            String before = "    @Override\n    public void load() {";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed avatar load lifecycle");
+            // Configure the global jdenticon overlay from a static helper: a widget
+            // instance still applies the option, but the write itself is not per-instance.
+            source =
+                source.replace(
+                    before,
+                    "    private static void applyConfig(AvatarOptions options) {\n"
+                        + "        JsAvatar.config = options;\n"
+                        + "    }\n\n"
+                        + before);
+            String assignment = "            JsAvatar.config = options;";
+            if (!source.contains(assignment))
+              throw new IllegalArgumentException("Review changed avatar configuration");
+            source = source.replace(assignment, "            applyConfig(options);");
+          }
+          if (relative.equals("gwt/material/design/addins/client/dnd/event/InteractCommonEvent.java")) {
+            String before =
+                "    /**\n     * The element that is being interacted with\n     */\n    @JsProperty\n    public Element target;\n\n";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed interact event target");
+            // Event already declares the same target field; the redeclaration only masks it.
+            source = source.replace(before, "");
+          }
+          if (relative.equals("gwt/material/design/client/data/infinite/InfiniteDataView.java")) {
+            String before = "(int) Math.ceil(tableBody.scrollTop() / getCalculatedRowHeight())";
+            String after =
+                "(int) Math.ceil((double) tableBody.scrollTop() / getCalculatedRowHeight())";
+            if (source.split(java.util.regex.Pattern.quote(before), -1).length != 3)
+              throw new IllegalArgumentException("Review changed infinite view row index");
+            // Both operands are ints, so the division must be promoted before rounding.
+            source = source.replace(before, after);
+          }
+          if (relative.equals("gwt/material/design/client/ui/pager/MaterialDataPager.java")) {
+            String before = "(isExcess() & isLastPage())";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed pager boundary label");
+            source = source.replace(before, "(isExcess() && isLastPage())");
+          }
+          if (relative.equals("gwt/material/design/client/ui/table/TableSubHeader.java")) {
+            String before = "Integer.valueOf(String.valueOf($this().data(\"pos\")))";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed table subheader scroll position");
+            source =
+                source.replace(before, "Integer.parseInt(String.valueOf($this().data(\"pos\")))");
+          }
+          if (relative.equals("gwt/material/design/client/ui/table/cell/Column.java")) {
+            String before = "Integer.valueOf(width.substring(0, width.indexOf(\"px\")))";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed column pixel width");
+            source =
+                source.replace(before, "Integer.parseInt(width.substring(0, width.indexOf(\"px\")))");
+          }
+          if (relative.equals("gwt/material/design/client/data/HasColumns.java")) {
+            String before = "{@link ##addColumn(Column)}";
+            if (source.split(java.util.regex.Pattern.quote(before), -1).length != 3)
+              throw new IllegalArgumentException("Review changed HasColumns Javadoc links");
+            // Upstream doubled the reference marker, which makes Javadoc reject the label.
+            source = source.replace(before, "{@link #addColumn(Column)}");
+          }
           // GWT overlays allow window to be typed as Element. This view is passed straight
           // back to native jQuery; the shared boundary unwraps it to the actual window.
           if (relative.equals("gwt/material/design/jquery/client/api/JQuery.java")) {
@@ -233,6 +295,12 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
           // Native constructors need the DOM node, rather than its GWT Java wrapper.
           if (relative.endsWith("/camera/MaterialCameraCapture.java")) {
             source = CameraSourceAdapter.adapt(source);
+            String before = "if (overlayPanel == null && overlayPanel.isAttached()) {";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed camera overlay lifecycle");
+            // The upstream guard dereferences the panel it is about to create, so the
+            // first overlay always failed with a null pointer.
+            source = source.replace(before, "if (overlayPanel == null) {");
           }
           if (relative.endsWith("/signature/js/SignaturePad.java")
               || relative.endsWith("/fileuploader/js/Dropzone.java")) {

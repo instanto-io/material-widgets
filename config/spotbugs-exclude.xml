@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
   <!--
-    The jQuery and jscore modules are generated from the upstream GWT Material
-    intake. Their clone() methods are JavaScript API calls, not Object.clone(),
-    so the Cloneable marker does not describe them. Exclude only those two
-    generated upstream types; repository code keeps the High-priority gate.
+    These generated upstream overlays declare clone() for a JavaScript API, not
+    Object.clone(), so the Cloneable marker does not describe them. Exclusions
+    name the exact upstream type and bug pattern; repository code keeps the
+    High-priority gate.
   -->
   <Match>
     <Class name="gwt.material.design.jquery.client.api.JQueryElement" />
@@ -13,6 +13,18 @@
   <Match>
     <Class name="gwt.material.design.jscore.client.api.media.MediaStream" />
     <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.addins.client.moment.option.Duration" />
+    <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE" />
+  </Match>
+  <!--
+    The table port keeps the upstream public type name. Renaming it would break
+    code that imports gwt.material.design.client.ui.table.cell.DateCell.
+  -->
+  <Match>
+    <Class name="gwt.material.design.client.ui.table.cell.DateCell" />
+    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
   </Match>
   <!--
     These fields are part of the upstream GWT Material API surface. Making them
