@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <!--
+    The jQuery and jscore modules are generated from the upstream GWT Material
+    intake. Their clone() methods are JavaScript API calls, not Object.clone(),
+    so the Cloneable marker does not describe them. Exclude only those two
+    generated upstream types; repository code keeps the High-priority gate.
+  -->
+  <Match>
+    <Class name="gwt.material.design.jquery.client.api.JQueryElement" />
+    <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.jscore.client.api.media.MediaStream" />
+    <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE" />
+  </Match>
+</FindBugsFilter>
