@@ -188,6 +188,32 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
                     before,
                     "public void unload() { io.instanto.material.client.TabLifecycle.unload(getElement()); }");
           }
+          if (relative.equals("gwt/material/design/client/ui/MaterialChipContainer.java")) {
+            String before = "chipList.remove(w);";
+            if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
+              throw new IllegalArgumentException("Review changed chip container removal");
+            // chipList is keyed by the chip's generated DOM id, not by the widget instance.
+            source = source.replace(before, "chipList.remove(((MaterialChip) w).getId());");
+          }
+          if (relative.equals(
+              "gwt/material/design/client/base/validator/DecimalMaxValidator.java")) {
+            String before = "return Double.valueOf(value.toString()) <= maxValue.doubleValue();";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed decimal max validation");
+            source =
+                source.replace(
+                    before, "return Double.parseDouble(value.toString()) <= maxValue.doubleValue();");
+          }
+          if (relative.equals("gwt/material/design/gen/IconTypeGenerator.java")) {
+            String before = "reader = new BufferedReader(new FileReader(ijmap));";
+            if (!source.contains(before))
+              throw new IllegalArgumentException("Review changed icon generator encoding");
+            // Read the upstream ijmap as UTF-8 rather than the platform default.
+            source =
+                source.replace(
+                    before,
+                    "reader = java.nio.file.Files.newBufferedReader(ijmap.toPath(), java.nio.charset.StandardCharsets.UTF_8);");
+          }
           // GWT overlays allow window to be typed as Element. This view is passed straight
           // back to native jQuery; the shared boundary unwraps it to the actual window.
           if (relative.equals("gwt/material/design/jquery/client/api/JQuery.java")) {

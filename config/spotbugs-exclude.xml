@@ -14,4 +14,38 @@
     <Class name="gwt.material.design.jscore.client.api.media.MediaStream" />
     <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE" />
   </Match>
+  <!--
+    These fields are part of the upstream GWT Material API surface. Making them
+    final or replacing the reserved-word array would change source compatibility
+    for ports that still assign the fields, so they stay as published upstream.
+    Runtime findings in this port remain blocking at High priority.
+  -->
+  <Match>
+    <Class name="gwt.material.design.client.api.ApiRegistry" />
+    <Bug pattern="MS_SHOULD_BE_FINAL" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.client.font.OpenSansFont" />
+    <Bug pattern="MS_SHOULD_BE_FINAL" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.client.js.Navigator" />
+    <Bug pattern="MS_SHOULD_BE_FINAL" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.client.sanitizer.Keywords" />
+    <Bug pattern="MS_MUTABLE_ARRAY" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.client.sanitizer.ValueSanitizerRegistry" />
+    <Bug pattern="MS_SHOULD_BE_FINAL" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.client.sanitizer.ValueSanitizerTester" />
+    <Bug pattern="MS_SHOULD_BE_FINAL" />
+  </Match>
+  <Match>
+    <Class name="gwt.material.design.client.ui.MaterialSymbol" />
+    <Bug pattern="MS_SHOULD_BE_FINAL" />
+  </Match>
 </FindBugsFilter>
