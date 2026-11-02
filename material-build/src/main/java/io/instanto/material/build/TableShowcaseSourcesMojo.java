@@ -154,6 +154,18 @@ public final class TableShowcaseSourcesMojo extends AbstractMojo {
                                         .toPath()
                                         .getParent()
                                         .resolve("showcase-teavm/src/site/tables/avatar.svg"))));
+          if (rel.endsWith("generator/product/ProductGenerator.java")) {
+            String type = "public class ProductGenerator {";
+            String usage = "double random = new Random().nextDouble();";
+            if (!source.contains(type) || !source.contains(usage))
+              throw new IllegalArgumentException("Review changed table product generator");
+            // Reuse one generator; a fresh Random per row discarded its state.
+            source =
+                source
+                    .replace(
+                        type, type + "\n\n    private static final Random RANDOM = new Random();")
+                    .replace(usage, "double random = RANDOM.nextDouble();");
+          }
           if (rel.endsWith("DataGenerator.java"))
             source =
                 source
