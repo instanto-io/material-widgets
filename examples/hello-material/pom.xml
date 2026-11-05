@@ -4,6 +4,7 @@
   <artifactId>hello-material</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
+    <instanto.repository>material-widgets</instanto.repository>
     <instanto.terser.phase>prepare-package</instanto.terser.phase>
     <instanto.terser.directory>${project.build.directory}/site</instanto.terser.directory>
     <instanto.terser.file>app.js</instanto.terser.file>

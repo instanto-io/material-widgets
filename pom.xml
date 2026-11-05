@@ -26,6 +26,7 @@
     </license>
   </licenses>
   <properties>
+    <instanto.repository>material-widgets</instanto.repository>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.outputTimestamp>2026-09-08T10:00:00Z</project.build.outputTimestamp>
