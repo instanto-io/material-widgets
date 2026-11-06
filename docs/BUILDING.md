@@ -50,6 +50,11 @@ Run it within the main reactor with `mvn -Pwebkit-tests verify`. CI runs both
 browser suites against development and optimised builds, using Chrome and
 Firefox for the Cucumber Tea scenarios and WebKit for the Java Playwright suite.
 
+The focused button touch regression uses touchscreen taps and checks the original
+toast, navigation, disabled state, invalid gestures and duplicate event delivery:
+`mvn -f browser-tests/pom.xml -Dtest=ButtonTouchTest test`. It defaults to WebKit;
+add `-Dmaterial.browser.engine=chromium` to check the same interactions in Chromium.
+
 For optimised JavaScript, run `mvn -Pproduction verify`, then the same browser
 suite. See [port status](COMPATIBILITY.md) for what the checks establish.
 

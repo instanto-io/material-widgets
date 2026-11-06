@@ -94,6 +94,13 @@ The Material adapter also makes these specific source adjustments:
   `ServiceWorkerLifecycle`; this does not provide RequestFactory support.
 - `MaterialTab.unload()` releases the tabs plugin’s owned handlers and indicators,
   as described below.
+- `MaterialWidget.addDoubleClickHandler()` also recognises two nearby touch taps
+  within 400 ms. The touch bridge calls the original double-click handler, rejects
+  drags, long presses, cancelled gestures and multi-touch, and avoids duplicate
+  delivery when a browser emits its own `dblclick`. Registrations share one
+  recognizer per element; removing the last registration releases its listeners.
+  Attach/detach resets gesture state. Widgets with the default `touch-action` use
+  `manipulation` while registered, preserving scrolling and pinch zoom.
 - Imports of legacy `com.google.gwt.user.client.Element` use
   `com.google.gwt.dom.client.Element` consistently.
 

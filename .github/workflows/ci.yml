@@ -38,6 +38,7 @@ jobs:
       goals: clean verify
       # Report once from verify; browser variants must not overwrite it.
       sonar: false
+      install-playwright: ${{ matrix.browser == 'webkit' }}
       maven-args: >-
         -P${{ matrix.browser == 'webkit' && 'webkit-tests' || 'showcase-tests' }}${{ matrix.mode == 'production' && ',production' || '' }}
         ${{ matrix.browser == 'firefox' && '-Dmaterial.test.browser=browser-firefox' || '' }}

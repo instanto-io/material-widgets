@@ -50,6 +50,30 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
         for (Path file : files.filter(p -> p.toString().endsWith(".java")).sorted().toList()) {
           String original = Files.readString(file), source = original;
           String relative = root.relativize(file).toString();
+          if (relative.equals("gwt/material/design/client/base/MaterialWidget.java")) {
+            String before =
+                """
+                public HandlerRegistration addDoubleClickHandler(final DoubleClickHandler handler) {
+                        return addDomHandler(event -> {
+                            if (isEnabled()) {
+                                handler.onDoubleClick(event);
+                            }
+                        }, DoubleClickEvent.getType());
+                    }
+                """
+                    .strip();
+            if (!source.contains(before))
+              throw new IllegalArgumentException(
+                  "Review changed Material double-click registration");
+            source =
+                source.replace(
+                    before,
+                    before
+                        .replace(
+                            "return addDomHandler(",
+                            "return io.instanto.material.client.TouchDoubleClick.register(this, addDomHandler(")
+                        .replace("DoubleClickEvent.getType());", "DoubleClickEvent.getType()));"));
+          }
           if (relative.equals("gwt/material/design/addins/client/rating/MaterialRating.java")) {
             source = source.replace("import com.gargoylesoftware.htmlunit.Page;", "");
           }
@@ -63,6 +87,14 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
             if (!source.contains(selected))
               throw new IllegalArgumentException("Review changed date picker value conversion");
             source = source.replace(selected, "getPicker().get(\"select\").getDateObject()");
+          }
+          if (relative.equals("gwt/material/design/client/ui/MaterialListValueBox.java")) {
+            String before = "return listBox.getElement().cast();";
+            if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
+              throw new IllegalArgumentException(
+                  "Review changed list value box element conversion");
+            // GWT overlay casts do not construct the typed Java wrapper required by TeaVM.
+            source = source.replace(before, "return SelectElement.as(listBox.getElement());");
           }
           if (relative.equals("gwt/material/design/client/js/JsMaterialElement.java")) {
             String before = "@JsProperty\n    public JsDate obj;";
@@ -202,7 +234,8 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
               throw new IllegalArgumentException("Review changed decimal max validation");
             source =
                 source.replace(
-                    before, "return Double.parseDouble(value.toString()) <= maxValue.doubleValue();");
+                    before,
+                    "return Double.parseDouble(value.toString()) <= maxValue.doubleValue();");
           }
           if (relative.equals("gwt/material/design/gen/IconTypeGenerator.java")) {
             String before = "reader = new BufferedReader(new FileReader(ijmap));";
@@ -232,7 +265,8 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
               throw new IllegalArgumentException("Review changed avatar configuration");
             source = source.replace(assignment, "            applyConfig(options);");
           }
-          if (relative.equals("gwt/material/design/addins/client/dnd/event/InteractCommonEvent.java")) {
+          if (relative.equals(
+              "gwt/material/design/addins/client/dnd/event/InteractCommonEvent.java")) {
             String before =
                 "    /**\n     * The element that is being interacted with\n     */\n    @JsProperty\n    public Element target;\n\n";
             if (!source.contains(before))
@@ -267,7 +301,8 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
             if (!source.contains(before))
               throw new IllegalArgumentException("Review changed column pixel width");
             source =
-                source.replace(before, "Integer.parseInt(width.substring(0, width.indexOf(\"px\")))");
+                source.replace(
+                    before, "Integer.parseInt(width.substring(0, width.indexOf(\"px\")))");
           }
           if (relative.equals("gwt/material/design/client/data/HasColumns.java")) {
             String before = "{@link ##addColumn(Column)}";
@@ -313,10 +348,16 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
                     .replace("Dropzone(Element e,", "Dropzone(HTMLElement e,");
           }
           if (relative.endsWith("/signature/MaterialSignaturePad.java")) {
+            String before = "CanvasElement element = getElement().cast();";
+            if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
+              throw new IllegalArgumentException(
+                  "Review changed signature canvas element conversion");
             source =
-                source.replace(
-                    "new SignaturePad(getElement(), options)",
-                    "new SignaturePad(getElement().unwrap(), options)");
+                source
+                    .replace(before, "CanvasElement element = CanvasElement.as(getElement());")
+                    .replace(
+                        "new SignaturePad(getElement(), options)",
+                        "new SignaturePad(getElement().unwrap(), options)");
           }
           if (relative.endsWith("/fileuploader/MaterialFileUploader.java")) {
             source =

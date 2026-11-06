@@ -92,7 +92,7 @@ public class BaselineTest {
         });
     server.start();
     try (Playwright playwright = Playwright.create();
-        Browser browser = playwright.webkit().launch()) {
+        Browser browser = browserType(playwright).launch()) {
       Page page =
           browser.newPage(
               new Browser.NewPageOptions().setViewportSize(1280, 900).setHasTouch(hasTouch));
@@ -122,5 +122,14 @@ public class BaselineTest {
     } finally {
       server.stop(0);
     }
+  }
+
+  private static BrowserType browserType(Playwright playwright) {
+    return switch (System.getProperty("material.browser.engine", "webkit")) {
+      case "webkit" -> playwright.webkit();
+      case "chromium" -> playwright.chromium();
+      case "firefox" -> playwright.firefox();
+      default -> throw new IllegalArgumentException("Unknown material.browser.engine");
+    };
   }
 }
