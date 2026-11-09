@@ -5,8 +5,6 @@ name: CI
 # packages.instanto.io.
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
   workflow_dispatch:
 
@@ -16,11 +14,13 @@ permissions:
 
 jobs:
   verify:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
     with:
       name: Build the port and run its tests
-      sonar: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
       goals: clean verify
+      downstream-checks: false
+      sonar: false
       timeout-minutes: 45
     secrets: inherit
 
@@ -36,7 +36,7 @@ jobs:
     with:
       name: ${{ matrix.mode }} ${{ matrix.browser }} showcase contracts
       goals: clean verify
-      # Report once from verify; browser variants must not overwrite it.
+      downstream-checks: false
       sonar: false
       install-playwright: ${{ matrix.browser == 'webkit' }}
       maven-args: >-

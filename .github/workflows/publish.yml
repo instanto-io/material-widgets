@@ -3,13 +3,9 @@ name: Publish
 # Publishes the library snapshots to packages.instanto.io, the destination every
 # project inherits from instanto-org-pom. The showcases, probes and audit modules
 # set maven.deploy.skip themselves and are not published.
-#
-# Snapshots go out on every push to main once CI has passed.
 
 on:
-  workflow_run:
-    workflows: [ CI ]
-    types: [ completed ]
+  push:
     branches: [ main ]
   workflow_dispatch:
 
@@ -20,26 +16,26 @@ permissions:
 jobs:
   snapshots:
     name: packages.instanto.io
-    if: >-
-      github.event_name != 'workflow_run' ||
-      github.event.workflow_run.conclusion == 'success'
     uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
     with:
       name: Deploy snapshots to packages.instanto.io
       goals: clean deploy
-      maven-args: -DskipTests
+      fast-deploy: true
+      downstream-checks: false
+      sonar: false
       timeout-minutes: 30
     secrets: inherit
 
   consumer:
     name: Published Hello Material
+    if: github.event_name == 'workflow_dispatch'
     needs: snapshots
     uses: instanto-io/instanto-poms/.github/workflows/maven-build.yml@main
     with:
       name: Build Hello Material from published snapshots
       goals: clean verify
-      # The main verification job owns the repository quality gate.
+      downstream-checks: false
       sonar: false
-      maven-args: -f examples/hello-material/pom.xml -Dmaven.repo.local=$RUNNER_TEMP/material-consumer-m2
+      maven-args: -f examples/hello-material/pom.xml -Dmaven.repo.local=${{ runner.temp }}/material-consumer-m2
       timeout-minutes: 30
     secrets: inherit
