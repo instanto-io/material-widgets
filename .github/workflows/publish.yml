@@ -36,6 +36,6 @@ jobs:
       goals: clean verify
       downstream-checks: false
       sonar: false
-      maven-args: -f examples/hello-material/pom.xml -Dmaven.repo.local=${{ runner.temp }}/material-consumer-m2
+      maven-args: -f examples/hello-material/pom.xml -Dmaven.repo.local=$RUNNER_TEMP/material-consumer-m2
       timeout-minutes: 30
     secrets: inherit
