@@ -14,6 +14,8 @@ import org.apache.maven.project.MavenProject;
 /** Retains original examples, replacing only the GWTP/Gin construction boundary. */
 @Mojo(name = "showcase-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public final class ShowcaseSourcesMojo extends AbstractMojo {
+  private static final String VIEW_JAVA = "View.java";
+
   @Parameter(required = true)
   private File input;
 
@@ -161,7 +163,7 @@ public final class ShowcaseSourcesMojo extends AbstractMojo {
           boolean page =
               rel.startsWith(base + "page/")
                   && PAGES.contains(file.getParent().getFileName().toString())
-                  && (rel.endsWith("View.java") || rel.endsWith("View.ui.xml"));
+                  && (rel.endsWith(VIEW_JAVA) || rel.endsWith("View.ui.xml"));
           boolean helper =
               Set.of(
                       base + "widget/CodeSection.java",
@@ -190,7 +192,7 @@ public final class ShowcaseSourcesMojo extends AbstractMojo {
           Path destination = out.resolve(rel);
           Files.createDirectories(destination.getParent());
           String source = Files.readString(file);
-          if (page && rel.endsWith("View.java")) {
+          if (page && rel.endsWith(VIEW_JAVA)) {
             source = adaptView(source);
             String qualified = rel.substring(0, rel.length() - 5).replace('/', '.');
             String token = file.getParent().getFileName().toString();
@@ -200,7 +202,7 @@ public final class ShowcaseSourcesMojo extends AbstractMojo {
             if (Set.of("navbar", "sidenavs").contains(token)) {
               Path presenter =
                   file.resolveSibling(
-                      file.getFileName().toString().replace("View.java", "Presenter.java"));
+                      file.getFileName().toString().replace(VIEW_JAVA, "Presenter.java"));
               String originalPresenter = Files.readString(presenter);
               verifyGalleryPresenter(originalPresenter);
               hashes
