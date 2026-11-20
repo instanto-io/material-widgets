@@ -18,6 +18,9 @@ import org.apache.maven.project.MavenProject;
     defaultPhase = LifecyclePhase.GENERATE_SOURCES,
     threadSafe = true)
 public final class AddinsShowcaseSourcesMojo extends AbstractMojo {
+  private static final String VIEW_JAVA = "View.java";
+  private static final String WEBP_SUFFIX = ".webp";
+
   @Parameter(required = true)
   private File input;
 
@@ -50,7 +53,7 @@ public final class AddinsShowcaseSourcesMojo extends AbstractMojo {
           String rel = root.relativize(file).toString();
           boolean page =
               rel.startsWith(base + "application/addins/")
-                  && (rel.endsWith("View.java") || rel.endsWith("View.ui.xml"));
+                  && (rel.endsWith(VIEW_JAVA) || rel.endsWith("View.ui.xml"));
           boolean helper =
               (rel.startsWith(base + "application/dto/")
                   || rel.startsWith(base + "application/addins/autocomplete/base/")
@@ -62,7 +65,7 @@ public final class AddinsShowcaseSourcesMojo extends AbstractMojo {
                   || rel.equals(base + "resources/MaterialResources.java"));
           if (!page && !helper) continue;
           String original = Files.readString(file), source = original;
-          if (page && rel.endsWith("View.java")) {
+          if (page && rel.endsWith(VIEW_JAVA)) {
             source =
                 ShowcaseSourcesMojo.adaptView(
                     source.replace(
@@ -74,12 +77,12 @@ public final class AddinsShowcaseSourcesMojo extends AbstractMojo {
                 .getMethods()
                 .forEach(m -> m.getAnnotationByName("Override").ifPresent(a -> a.remove()));
             source = cu.toString();
-            String name = file.getFileName().toString().replace("View.java", ""),
+            String name = file.getFileName().toString().replace(VIEW_JAVA, ""),
                 route = "addins-" + file.getParent().getFileName();
             String qualified = rel.substring(0, rel.length() - 5).replace('/', '.');
             Path presenter =
                 file.resolveSibling(
-                    file.getFileName().toString().replace("View.java", "Presenter.java"));
+                    file.getFileName().toString().replace(VIEW_JAVA, "Presenter.java"));
             if (name.equals("Tree")) presenter = file.resolveSibling("TreeViewPresenter.java");
             var presenterCode = StaticJavaParser.parse(Files.readString(presenter));
             hashes
@@ -263,19 +266,24 @@ public final class AddinsShowcaseSourcesMojo extends AbstractMojo {
     var result = new StringBuffer();
     Path images = input.resolve("src/main/resources/gwt/material/design/demo/client/resources/img");
     while (urls.find()) {
-      String url = urls.group(), name = url.substring(url.lastIndexOf('/') + 1);
-      if (!Files.isRegularFile(images.resolve(name)) && name.endsWith(".webp")) {
-        String stem = name.substring(0, name.length() - 5);
-        name = Files.isRegularFile(images.resolve(stem + ".png")) ? stem + ".png" : stem + ".jpg";
-      }
-      if (!Files.isRegularFile(images.resolve(name)))
-        name =
-            url.contains("webp/gallery")
-                ? "logo" + (url.endsWith(".webp") ? ".webp" : ".png")
-                : "profile.jpg";
+      String name = localAssetName(images, urls.group());
       urls.appendReplacement(
           result, java.util.regex.Matcher.quoteReplacement("addins/images/" + name));
     }
     return urls.appendTail(result).toString();
+  }
+
+  private static String localAssetName(Path images, String url) {
+    String name = url.substring(url.lastIndexOf('/') + 1);
+    if (!Files.isRegularFile(images.resolve(name)) && name.endsWith(WEBP_SUFFIX)) {
+      String stem = name.substring(0, name.length() - 5);
+      name = Files.isRegularFile(images.resolve(stem + ".png")) ? stem + ".png" : stem + ".jpg";
+    }
+    if (!Files.isRegularFile(images.resolve(name)))
+      name =
+          url.contains("webp/gallery")
+              ? "logo" + (url.endsWith(WEBP_SUFFIX) ? WEBP_SUFFIX : ".png")
+              : "profile.jpg";
+    return name;
   }
 }
