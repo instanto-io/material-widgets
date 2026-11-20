@@ -2,6 +2,7 @@ package io.instanto.material.build;
 
 import com.github.javaparser.StaticJavaParser;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.*;
 import java.security.MessageDigest;
 import java.util.*;
@@ -58,13 +59,7 @@ public final class PatternSourcesMojo extends AbstractMojo {
       Path site = siteOutput.toPath().toAbsolutePath().normalize();
       Path build = Path.of(project.getBuild().getDirectory()).toAbsolutePath().normalize();
       for (Path directory : List.of(out, site)) {
-        if (!directory.startsWith(build) || directory.equals(build))
-          throw new IllegalArgumentException("Output must be below the build directory");
-        Files.createDirectories(directory);
-        try (var files = Files.walk(directory)) {
-          for (Path file : files.sorted(Comparator.reverseOrder()).toList())
-            if (!file.equals(directory)) Files.delete(file);
-        }
+        clearGeneratedOutput(directory, build);
       }
       StringBuilder cases = new StringBuilder(), hashes = new StringBuilder();
       String imageUrl =
@@ -127,6 +122,16 @@ public final class PatternSourcesMojo extends AbstractMojo {
       project.addCompileSourceRoot(out.toString());
     } catch (Exception e) {
       throw new MojoExecutionException("Unable to adapt navigation patterns", e);
+    }
+  }
+
+  private static void clearGeneratedOutput(Path directory, Path build) throws IOException {
+    if (!directory.startsWith(build) || directory.equals(build))
+      throw new IllegalArgumentException("Output must be below the build directory");
+    Files.createDirectories(directory);
+    try (var files = Files.walk(directory)) {
+      for (Path file : files.sorted(Comparator.reverseOrder()).toList())
+        if (!file.equals(directory)) Files.delete(file);
     }
   }
 
