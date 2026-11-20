@@ -19,6 +19,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 /** Browser services used by original Material widgets, without framework-specific adapters. */
 public final class MaterialBrowserContracts {
+  private static final String SESSION_VALUE = "session-value";
+  private static final String DATA_ROOT_VIEW = "data-root-view";
+  private static final String STYLE_ATTRIBUTE = "style";
+
   private MaterialBrowserContracts() {}
 
   public static void locationAndNavigatorReadTheHostWindow() {
@@ -110,12 +114,12 @@ public final class MaterialBrowserContracts {
     String key = "instanto-material-contract-" + Document.get().createUniqueId();
     try {
       local.setItem(key, "local-value");
-      session.setItem(key, "session-value");
+      session.setItem(key, SESSION_VALUE);
       equal("local-value", local.getItem(key), "local round trip");
-      equal("session-value", session.getItem(key), "stores remain independent");
+      equal(SESSION_VALUE, session.getItem(key), "stores remain independent");
       local.removeItem(key);
       equal(null, local.getItem(key), "local removal");
-      equal("session-value", session.getItem(key), "local removal preserves session value");
+      equal(SESSION_VALUE, session.getItem(key), "local removal preserves session value");
     } finally {
       local.removeItem(key);
       session.removeItem(key);
@@ -137,12 +141,12 @@ public final class MaterialBrowserContracts {
     equal("fieldset", fieldset.getTagName().toLowerCase(), "legacy fieldset factory");
     fieldset.setPropertyBoolean("disabled", true);
     isTrue(fieldset.hasAttribute("disabled"), "fieldset uses native reflected disabled property");
-    RootPanel.getBodyElement().setAttribute("data-root-view", "shared");
+    RootPanel.getBodyElement().setAttribute(DATA_ROOT_VIEW, "shared");
     equal(
         "shared",
-        Document.get().getBody().getAttribute("data-root-view"),
+        Document.get().getBody().getAttribute(DATA_ROOT_VIEW),
         "legacy body view shares host body");
-    Document.get().getBody().removeAttribute("data-root-view");
+    Document.get().getBody().removeAttribute(DATA_ROOT_VIEW);
   }
 
   public static void widgetCoordinatesAccountForScrolledContainers() {
@@ -150,13 +154,13 @@ public final class MaterialBrowserContracts {
     outer
         .getElement()
         .setAttribute(
-            "style",
+            STYLE_ATTRIBUTE,
             "position:absolute;left:101px;top:137px;width:100px;height:100px;overflow:scroll;border:0;padding:0;");
     Element extent = Document.get().createDivElement();
-    extent.setAttribute("style", "width:500px;height:500px;");
+    extent.setAttribute(STYLE_ATTRIBUTE, "width:500px;height:500px;");
     outer.getElement().appendChild(extent);
     Label child = new Label("coordinates");
-    child.getElement().setAttribute("style", "position:absolute;left:23px;top:29px;");
+    child.getElement().setAttribute(STYLE_ATTRIBUTE, "position:absolute;left:23px;top:29px;");
     outer.add(child);
     RootPanel.get().add(outer);
     try {
@@ -224,7 +228,7 @@ public final class MaterialBrowserContracts {
 
     void start() {
       extent.setAttribute(
-          "style",
+          STYLE_ATTRIBUTE,
           "position:absolute;left:0;top:0;width:5000px;height:5000px;pointer-events:none;");
       Document.get().getBody().appendChild(extent);
       registration =
