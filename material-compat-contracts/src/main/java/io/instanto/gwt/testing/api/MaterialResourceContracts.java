@@ -15,6 +15,10 @@ import com.google.gwt.user.client.Timer;
 
 /** Resource loading contracts shared by the native GWT and TeaVM runtimes. */
 public final class MaterialResourceContracts {
+  private static final String DATA_RESOURCE_INLINE = "data-resource-inline";
+  private static final String SCRIPT = "script";
+  private static final String DATA_RESOURCE_ASYNC = "data-resource-async";
+
   public static final String INVALID_SCRIPT_URL = "data:text/javascript;base64,%%%";
 
   private MaterialResourceContracts() {}
@@ -134,7 +138,7 @@ public final class MaterialResourceContracts {
   public static void inlineScriptsExecuteImmediatelyAndRespectRemoval() {
     Document document = Document.get();
     Element body = document.getBody();
-    body.removeAttribute("data-resource-inline");
+    body.removeAttribute(DATA_RESOURCE_INLINE);
     JavaScriptObject removed =
         ScriptInjector.fromString("document.body.setAttribute('data-resource-inline','executed');")
             .setWindow(ScriptInjector.TOP_WINDOW)
@@ -142,11 +146,11 @@ public final class MaterialResourceContracts {
     isTrue(removed != null, "inline injection returns a script handle");
     equal(
         "executed",
-        body.getAttribute("data-resource-inline"),
+        body.getAttribute(DATA_RESOURCE_INLINE),
         "inline script executes before returning");
     String scriptText =
         "/* instanto-retained-script */ document.body.setAttribute('data-resource-inline','retained');";
-    NodeList<Element> scripts = document.getElementsByTagName("script");
+    NodeList<Element> scripts = document.getElementsByTagName(SCRIPT);
     int initial = scripts.getLength();
     JavaScriptObject retainedHandle =
         ScriptInjector.fromString(scriptText)
@@ -161,16 +165,16 @@ public final class MaterialResourceContracts {
         .setWindow(ScriptInjector.TOP_WINDOW)
         .inject();
     equal(initial, scripts.getLength(), "default inline injection removes its tag");
-    body.removeAttribute("data-resource-inline");
+    body.removeAttribute(DATA_RESOURCE_INLINE);
   }
 
   public static void scriptNoncesPropagateFromTheTargetDocument() {
     Element head = Document.get().getElementsByTagName("head").getItem(0);
-    Element seed = Document.get().createElement("script");
+    Element seed = Document.get().createElement(SCRIPT);
     seed.setAttribute("type", "application/json");
     seed.setAttribute("nonce", "instanto-resource-nonce");
     head.insertBefore(seed, head.getFirstChild());
-    NodeList<Element> scripts = Document.get().getElementsByTagName("script");
+    NodeList<Element> scripts = Document.get().getElementsByTagName(SCRIPT);
     Element added = null;
     try {
       JavaScriptObject nonceHandle =
@@ -191,8 +195,8 @@ public final class MaterialResourceContracts {
 
   public static void externalScriptCompletesAfterExecution(Callback<Void, Throwable> completion) {
     Element body = Document.get().getBody();
-    body.removeAttribute("data-resource-async");
-    int count = Document.get().getElementsByTagName("script").getLength();
+    body.removeAttribute(DATA_RESOURCE_ASYNC);
+    int count = Document.get().getElementsByTagName(SCRIPT).getLength();
     Completion guard = new Completion(completion);
     ScriptInjector.fromUrl(
             "data:text/javascript,document.body.setAttribute('data-resource-async','loaded');")
@@ -211,13 +215,13 @@ public final class MaterialResourceContracts {
                     () -> {
                       equal(
                           "loaded",
-                          body.getAttribute("data-resource-async"),
+                          body.getAttribute(DATA_RESOURCE_ASYNC),
                           "success runs after evaluation");
                       equal(
                           count,
-                          Document.get().getElementsByTagName("script").getLength(),
+                          Document.get().getElementsByTagName(SCRIPT).getLength(),
                           "tag removed before callback");
-                      body.removeAttribute("data-resource-async");
+                      body.removeAttribute(DATA_RESOURCE_ASYNC);
                     });
               }
             })
@@ -225,7 +229,7 @@ public final class MaterialResourceContracts {
   }
 
   public static void failedScriptReportsDownloadException(Callback<Void, Throwable> completion) {
-    int count = Document.get().getElementsByTagName("script").getLength();
+    int count = Document.get().getElementsByTagName(SCRIPT).getLength();
     Completion guard = new Completion(completion);
     ScriptInjector.fromUrl(INVALID_SCRIPT_URL)
         .setWindow(ScriptInjector.TOP_WINDOW)
@@ -245,7 +249,7 @@ public final class MaterialResourceContracts {
                           "download reason");
                       equal(
                           count,
-                          Document.get().getElementsByTagName("script").getLength(),
+                          Document.get().getElementsByTagName(SCRIPT).getLength(),
                           "failed tag removed before callback");
                     });
               }
