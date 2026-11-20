@@ -13,6 +13,8 @@ import org.apache.maven.plugins.annotations.*;
     defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
     threadSafe = true)
 public final class MaterialResourcesMojo extends AbstractMojo {
+  private static final String MIN_JS_SUFFIX = ".min.js";
+
   @Parameter(required = true)
   private File resourceInput;
 
@@ -37,44 +39,47 @@ public final class MaterialResourcesMojo extends AbstractMojo {
       }
       try (var files = Files.walk(root)) {
         for (Path file : files.filter(Files::isRegularFile).toList()) {
-          Path dest = out.resolve(root.relativize(file));
-          Files.createDirectories(dest.getParent());
-          String name = file.getFileName().toString();
-          if (name.equals("materialize-0.97.5.js") || name.equals("materialize-0.97.5.min.js")) {
-            boolean minified = name.endsWith(".min.js");
-            Files.writeString(
-                dest,
-                adaptDatePicker(
-                    adaptMedia(adapt(Files.readString(file), minified), minified), minified));
-          } else if (name.equals("timepicker.js") || name.equals("timepicker.min.js")) {
-            Files.writeString(dest, adaptClock(Files.readString(file), name.endsWith(".min.js")));
-          } else if (name.equals("croppie.js") || name.equals("croppie.min.js")) {
-            Files.writeString(dest, adaptCropper(Files.readString(file), name.endsWith(".min.js")));
-          } else if (root.relativize(file)
-              .toString()
-              .matches("gwt/material/design/client/resources/css/style(\\.min)?\\.css")) {
-            // The table's expand action needs viewport positioning independently of its host
-            // layout.
-            Files.writeString(
-                dest,
-                Files.readString(file)
-                    + """
-
-                .table-container.stretch {
-                  position: fixed; inset: 0; z-index: 10000; margin: 0;
-                  display: flex; flex-direction: column; background: #fff;
-                }
-                .table-container.stretch > .table-body {
-                  flex: 1; min-height: 0; height: auto !important; overflow: auto;
-                }
-                """);
-          } else {
-            Files.copy(file, dest);
-          }
+          copyResource(root, out, file);
         }
       }
     } catch (Exception e) {
       throw new MojoExecutionException("Unable to adapt Materialize resources", e);
+    }
+  }
+
+  private static void copyResource(Path root, Path out, Path file) throws java.io.IOException {
+    Path dest = out.resolve(root.relativize(file));
+    Files.createDirectories(dest.getParent());
+    String name = file.getFileName().toString();
+    if (name.equals("materialize-0.97.5.js") || name.equals("materialize-0.97.5.min.js")) {
+      boolean minified = name.endsWith(MIN_JS_SUFFIX);
+      Files.writeString(
+          dest,
+          adaptDatePicker(adaptMedia(adapt(Files.readString(file), minified), minified), minified));
+    } else if (name.equals("timepicker.js") || name.equals("timepicker.min.js")) {
+      Files.writeString(dest, adaptClock(Files.readString(file), name.endsWith(MIN_JS_SUFFIX)));
+    } else if (name.equals("croppie.js") || name.equals("croppie.min.js")) {
+      Files.writeString(dest, adaptCropper(Files.readString(file), name.endsWith(MIN_JS_SUFFIX)));
+    } else if (root.relativize(file)
+        .toString()
+        .matches("gwt/material/design/client/resources/css/style(\\.min)?\\.css")) {
+      // The table's expand action needs viewport positioning independently of its host
+      // layout.
+      Files.writeString(
+          dest,
+          Files.readString(file)
+              + """
+
+          .table-container.stretch {
+            position: fixed; inset: 0; z-index: 10000; margin: 0;
+            display: flex; flex-direction: column; background: #fff;
+          }
+          .table-container.stretch > .table-body {
+            flex: 1; min-height: 0; height: auto !important; overflow: auto;
+          }
+          """);
+    } else {
+      Files.copy(file, dest);
     }
   }
 
@@ -151,7 +156,7 @@ public final class MaterialResourcesMojo extends AbstractMojo {
     return replaceOnce(source, before, after);
   }
 
-  static String adaptMedia(String source, boolean minified) {
+  private static String adaptSlider(String source, boolean minified) {
     String slider = minified ? "o" : "$this";
     for (String event : new String[] {"sliderPause", "sliderStart", "sliderNext", "sliderPrev"}) {
       String quote = minified ? "\"" : "'";
@@ -177,6 +182,11 @@ public final class MaterialResourcesMojo extends AbstractMojo {
                 + (minified ? "t" : "e")
                 + ")");
 
+    return source;
+  }
+
+  static String adaptMedia(String source, boolean minified) {
+    source = adaptSlider(source, minified);
     String image = minified ? "r" : "origin";
     String jq = minified ? "t" : "$";
     String ancestors = minified ? "e" : "ancestorsChanged";
