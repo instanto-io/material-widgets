@@ -12,6 +12,10 @@ import org.teavm.jso.dom.html.HTMLElement;
 
 /** Exercises the original Material jQuery declarations through generated TeaVM bridges. */
 public final class InteropProbe {
+  private static final String DISABLED_ATTRIBUTE = "disabled";
+  private static final String MATERIAL_STRING = "materialString";
+  private static final String CLICK_EVENT = "click";
+
   public static void main(String[] args) {
     Element element = Document.get().createDivElement();
     element.setId("interop-node");
@@ -51,20 +55,21 @@ public final class InteropProbe {
         value instanceof String && ((String) value).length() == 4,
         "Object return becomes a Java String");
     require(query.prop("nodeType") instanceof Number, "Object number return is boxed");
-    require(inputQuery.prop("disabled") instanceof Boolean, "Object boolean return is boxed");
+    require(
+        inputQuery.prop(DISABLED_ATTRIBUTE) instanceof Boolean, "Object boolean return is boxed");
     inputQuery.prop("materialNumber", (Object) Integer.valueOf(42));
-    inputQuery.prop("disabled", (Object) Boolean.TRUE);
+    inputQuery.prop(DISABLED_ATTRIBUTE, (Object) Boolean.TRUE);
     inputQuery.prop("materialBoolean", (Object) Boolean.FALSE);
-    inputQuery.prop("materialString", (Object) "native text");
+    inputQuery.prop(MATERIAL_STRING, (Object) "native text");
     require(nativeObjectArguments(input.unwrap()), "Object arguments have native primitive types");
     require(
-        Boolean.TRUE.equals(inputQuery.prop("disabled")),
+        Boolean.TRUE.equals(inputQuery.prop(DISABLED_ATTRIBUTE)),
         "Object boolean argument becomes a native boolean");
     require(
-        "native text".equals(inputQuery.prop("materialString")),
+        "native text".equals(inputQuery.prop(MATERIAL_STRING)),
         "Object string argument becomes native text");
-    inputQuery.prop("materialString", (Object) null);
-    require(inputQuery.prop("materialString") == null, "Object null argument stays null");
+    inputQuery.prop(MATERIAL_STRING, (Object) null);
+    require(inputQuery.prop(MATERIAL_STRING) == null, "Object null argument stays null");
     require(query.prop("missingMaterialProperty") == null, "undefined Object return becomes null");
     require(
         same(jsinterop.base.Js.asAny(query.prop("ownerDocument")), HTMLDocument.current()),
@@ -73,16 +78,16 @@ public final class InteropProbe {
     EventFunc handler =
         event -> {
           require(same(target(event), element.unwrap()), "native event target identity");
-          require(event.getType().equals("click"), "original event property getter");
+          require(event.getType().equals(CLICK_EVENT), "original event property getter");
           calls[0]++;
           event.preventDefault();
           return null;
         };
     query.on("click.material-probe", handler);
-    query.trigger("click", new Object[0]);
+    query.trigger(CLICK_EVENT, new Object[0]);
     require(calls[0] == 1, "native event callback reaches Java");
     query.off("click.material-probe", handler);
-    query.trigger("click", new Object[0]);
+    query.trigger(CLICK_EVENT, new Object[0]);
     require(calls[0] == 1, "the same callback removes its listener");
     gwt.material.design.jquery.client.api.Functions.EventFunc1<Object> generic =
         (event, payload) -> {
