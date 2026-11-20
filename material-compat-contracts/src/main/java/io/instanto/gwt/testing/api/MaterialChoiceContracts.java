@@ -19,31 +19,38 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 /** Selection and directional labels used by Material's original form controls. */
 public final class MaterialChoiceContracts {
+  private static final String FIRST = "First";
+  private static final String MIDDLE = "middle";
+  private static final String CHANGED = "Changed";
+  private static final String HELLO = "Hello";
+  private static final String BOLD_HEBREW_TEXT = "<b>שלום</b>";
+  private static final String CHOICES = "choices";
+
   private MaterialChoiceContracts() {}
 
   public static void listInsertionAndSelectionPreserveTextAndValues() {
     ListBox list = new ListBox(true);
     isTrue(list.isMultipleSelect(), "multiple selection constructor");
     list.addItem("Last", "last");
-    list.insertItem("First", 0);
-    list.insertItem("Middle", Direction.LTR, "middle", 1);
+    list.insertItem(FIRST, 0);
+    list.insertItem("Middle", Direction.LTR, MIDDLE, 1);
     list.insertItem("Appended", 99);
     equal(4, list.getItemCount(), "insertion count");
-    equal("First", list.getItemText(0), "insert before existing option");
-    equal("First", list.getValue(0), "default submitted value");
-    equal("middle", list.getValue(1), "explicit submitted value");
+    equal(FIRST, list.getItemText(0), "insert before existing option");
+    equal(FIRST, list.getValue(0), "default submitted value");
+    equal(MIDDLE, list.getValue(1), "explicit submitted value");
     equal("Appended", list.getItemText(3), "out of range insertion appends");
     list.setItemSelected(0, true);
     list.setItemSelected(2, true);
     isTrue(list.isItemSelected(0) && list.isItemSelected(2), "multiple selections retained");
     list.setSelectedIndex(1);
     equal("Middle", list.getSelectedItemText(), "selected text");
-    equal("middle", list.getSelectedValue(), "selected value");
-    list.setItemText(1, "Changed");
-    equal("Changed", list.getSelectedItemText(), "text replacement");
-    equal("middle", list.getSelectedValue(), "text replacement preserves value");
+    equal(MIDDLE, list.getSelectedValue(), "selected value");
+    list.setItemText(1, CHANGED);
+    equal(CHANGED, list.getSelectedItemText(), "text replacement");
+    equal(MIDDLE, list.getSelectedValue(), "text replacement preserves value");
     list.removeItem(0);
-    equal("Changed", list.getItemText(0), "removal shifts indexes");
+    equal(CHANGED, list.getItemText(0), "removal shifts indexes");
     list.clear();
     equal(0, list.getItemCount(), "clear removes options");
     equal(null, list.getSelectedItemText(), "empty selected text");
@@ -72,8 +79,8 @@ public final class MaterialChoiceContracts {
     equal("\u202Bשלום\u202C", option.getText(), "RTL option wrapped in default LTR locale");
     equal("שלום", list.getItemText(0), "wrapping hidden from API");
     equal("he", list.getValue(0), "wrapping excluded from submitted value");
-    list.setItemText(0, "Hello", Direction.LTR);
-    equal("Hello", option.getText(), "same direction needs no wrapper");
+    list.setItemText(0, HELLO, Direction.LTR);
+    equal(HELLO, option.getText(), "same direction needs no wrapper");
     isTrue(!option.hasAttribute("bidiwrapped"), "obsolete wrapper marker removed");
     list.setDirectionEstimator(true);
     list.addItem("שלום");
@@ -91,7 +98,7 @@ public final class MaterialChoiceContracts {
     equal(
         "\u202AHello\u202C",
         BidiFormatter.getInstance(Direction.RTL)
-            .unicodeWrapWithKnownDir(Direction.LTR, "Hello", false, false),
+            .unicodeWrapWithKnownDir(Direction.LTR, HELLO, false, false),
         "explicit RTL context supports LTR embedding");
   }
 
@@ -107,10 +114,10 @@ public final class MaterialChoiceContracts {
     equal("ltr", element.getAttribute("dir"), "inline context retained");
     helper.setDirectionEstimator(true);
     equal(Direction.RTL, helper.getTextDirection(), "explicit direction survives estimator change");
-    helper.setText("Hello");
+    helper.setText(HELLO);
     equal(Direction.LTR, helper.getTextDirection(), "next implicit content uses estimator");
-    helper.setHtml(SafeHtmlUtils.fromSafeConstant("<b>שלום</b>"));
-    equal("<b>שלום</b>", helper.getHtml(), "safe HTML excludes helper wrapper");
+    helper.setHtml(SafeHtmlUtils.fromSafeConstant(BOLD_HEBREW_TEXT));
+    equal(BOLD_HEBREW_TEXT, helper.getHtml(), "safe HTML excludes helper wrapper");
     equal(Direction.RTL, helper.getTextDirection(), "HTML direction ignores tags");
     helper.setDirectionEstimator(false);
     equal(
@@ -126,26 +133,26 @@ public final class MaterialChoiceContracts {
   }
 
   public static void radioConstructorsPreserveSafeHtmlAndDirection() {
-    SafeHtml markup = SafeHtmlUtils.fromSafeConstant("<b>שלום</b>");
-    RadioButton plain = new RadioButton("choices", "<b>plain</b>", false);
+    SafeHtml markup = SafeHtmlUtils.fromSafeConstant(BOLD_HEBREW_TEXT);
+    RadioButton plain = new RadioButton(CHOICES, "<b>plain</b>", false);
     equal("<b>plain</b>", plain.getText(), "plain constructor escapes markup");
     equal("&lt;b&gt;plain&lt;/b&gt;", plain.getHTML(), "escaped label HTML");
-    RadioButton html = new RadioButton("choices", "<b>bold</b>", true);
+    RadioButton html = new RadioButton(CHOICES, "<b>bold</b>", true);
     equal("bold", html.getText(), "HTML constructor renders markup");
-    RadioButton safe = new RadioButton("choices", markup);
-    equal("<b>שלום</b>", safe.getHTML(), "safe HTML constructor");
-    RadioButton directed = new RadioButton("choices", markup, Direction.RTL);
+    RadioButton safe = new RadioButton(CHOICES, markup);
+    equal(BOLD_HEBREW_TEXT, safe.getHTML(), "safe HTML constructor");
+    RadioButton directed = new RadioButton(CHOICES, markup, Direction.RTL);
     equal(Direction.RTL, directed.getTextDirection(), "safe HTML explicit direction");
     equal("שלום", directed.getText(), "directional wrapper excluded from label");
-    RadioButton estimated = new RadioButton("choices", markup, WordCountDirectionEstimator.get());
+    RadioButton estimated = new RadioButton(CHOICES, markup, WordCountDirectionEstimator.get());
     equal(Direction.RTL, estimated.getTextDirection(), "safe HTML estimated direction");
     equal(
         Direction.RTL,
-        new RadioButton("choices", "Hello", Direction.RTL).getTextDirection(),
+        new RadioButton(CHOICES, HELLO, Direction.RTL).getTextDirection(),
         "explicit plain direction");
     equal(
         Direction.RTL,
-        new RadioButton("choices", "שלום", WordCountDirectionEstimator.get()).getTextDirection(),
+        new RadioButton(CHOICES, "שלום", WordCountDirectionEstimator.get()).getTextDirection(),
         "estimated plain direction");
     HasSafeHtml api = directed;
     api.setHTML(SafeHtmlUtils.fromSafeConstant("<i>Changed</i>"));
@@ -156,7 +163,7 @@ public final class MaterialChoiceContracts {
       plain.setValue(true);
       html.setValue(true);
       isTrue(!plain.getValue() && html.getValue(), "native radio group exclusivity");
-      equal("choices", html.getName(), "radio group name");
+      equal(CHOICES, html.getName(), "radio group name");
     } finally {
       plain.removeFromParent();
       html.removeFromParent();
