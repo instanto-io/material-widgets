@@ -92,7 +92,9 @@ public final class MaterialTextFieldContracts {
       }
 
       @Override
-      public void hideSuggestions() {}
+      public void hideSuggestions() {
+        // This display captures callbacks without creating a popup.
+      }
 
       @Override
       public boolean isSuggestionListShowing() {
