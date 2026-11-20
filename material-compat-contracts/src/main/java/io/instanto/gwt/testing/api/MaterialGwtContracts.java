@@ -25,6 +25,9 @@ import java.util.List;
 
 /** GWT API behavior used by Material, shared unchanged between both compilers. */
 public final class MaterialGwtContracts {
+  private static final String MARGIN_TOP = "marginTop";
+  private static final String DIALOG = "dialog";
+
   private MaterialGwtContracts() {}
 
   public static void typedValuesReportErrorsAndRecover() {
@@ -44,7 +47,9 @@ public final class MaterialGwtContracts {
             errors.add(message);
           }
 
-          public void setDirty(boolean dirty) {}
+          public void setDirty(boolean dirty) {
+            // This delegate only records parse errors.
+          }
 
           public HandlerRegistration subscribe() {
             return () -> {};
@@ -183,10 +188,10 @@ public final class MaterialGwtContracts {
     equal("", style.getVisibility(), "cleared visibility");
     equal("", style.getProperty("cssFloat"), "cleared float");
     equal("bold", style.getFontWeight(), "unrelated style survives clearing");
-    style.setProperty("marginTop", "12px");
-    equal("12px", style.getProperty("marginTop"), "camel case CSS name");
-    style.clearProperty("marginTop");
-    equal("", style.getProperty("marginTop"), "camel case CSS clearing");
+    style.setProperty(MARGIN_TOP, "12px");
+    equal("12px", style.getProperty(MARGIN_TOP), "camel case CSS name");
+    style.clearProperty(MARGIN_TOP);
+    equal("", style.getProperty(MARGIN_TOP), "camel case CSS clearing");
     style.setHeight(100, Style.Unit.PCT);
     style.setZIndex(9999);
     style.setBottom(0, Style.Unit.PX);
@@ -237,20 +242,20 @@ public final class MaterialGwtContracts {
         widget.addOpenHandler(
             event -> {
               same(widget, event.getSource(), "open event source");
-              equal("dialog", event.getTarget(), "open event target");
+              equal(DIALOG, event.getTarget(), "open event target");
               calls.add("open");
             });
     widget.addCloseHandler(
         event -> {
           same(widget, event.getSource(), "close event source");
-          equal("dialog", event.getTarget(), "close event target");
+          equal(DIALOG, event.getTarget(), "close event target");
           calls.add(event.isAutoClosed() ? "auto" : "close");
         });
-    OpenEvent.fire(widget, "dialog");
-    CloseEvent.fire(widget, "dialog");
-    CloseEvent.fire(widget, "dialog", true);
+    OpenEvent.fire(widget, DIALOG);
+    CloseEvent.fire(widget, DIALOG);
+    CloseEvent.fire(widget, DIALOG, true);
     opened.removeHandler();
-    OpenEvent.fire(widget, "dialog");
+    OpenEvent.fire(widget, DIALOG);
     equal("[open, close, auto]", calls.toString(), "ordered event delivery and removal");
   }
 
