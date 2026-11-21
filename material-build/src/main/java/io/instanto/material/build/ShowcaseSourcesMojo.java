@@ -156,130 +156,7 @@ public final class ShowcaseSourcesMojo extends AbstractMojo {
       StringBuilder hashes = new StringBuilder("# SHA-256 of original pinned showcase inputs\n");
       StringBuilder cases = new StringBuilder();
       StringBuilder paths = new StringBuilder();
-      try (var files = Files.walk(root)) {
-        for (Path file : files.filter(Files::isRegularFile).sorted().toList()) {
-          String rel = root.relativize(file).toString();
-          String base = "gmd/core/demo/client/application/";
-          boolean page =
-              rel.startsWith(base + "page/")
-                  && PAGES.contains(file.getParent().getFileName().toString())
-                  && (rel.endsWith(VIEW_JAVA) || rel.endsWith("View.ui.xml"));
-          boolean helper =
-              Set.of(
-                      base + "widget/CodeSection.java",
-                      base + "navigation/Component.java",
-                      base + "navigation/NavigationService.java",
-                      base + "navigation/DataService.java",
-                      base + "model/DataHelper.java",
-                      base + "model/Hero.java",
-                      base + "model/FieldState.java",
-                      base + "model/User.java",
-                      base + "model/UserOracle.java",
-                      base + "model/UserSuggestion.java",
-                      base + "model/DemoImageDTO.java",
-                      base + "model/DemoImagePanel.java",
-                      base + "page/errors/EmailValidator.java",
-                      "gmd/core/demo/client/place/NameTokens.java")
-                  .contains(rel);
-          if (!page && !helper) continue;
-          byte[] original = Files.readAllBytes(file);
-          hashes
-              .append(
-                  HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(original)))
-              .append("  ")
-              .append(rel)
-              .append('\n');
-          Path destination = out.resolve(rel);
-          Files.createDirectories(destination.getParent());
-          String source = Files.readString(file);
-          if (page && rel.endsWith(VIEW_JAVA)) {
-            source = adaptView(source);
-            String qualified = rel.substring(0, rel.length() - 5).replace('/', '.');
-            String token = file.getParent().getFileName().toString();
-            if (token.equals("datepicker")) token = "datePicker";
-            if (token.equals("radiobutton")) token = "radioButton";
-            cases.append("case \"").append(token).append("\": ");
-            if (Set.of("navbar", "sidenavs").contains(token)) {
-              Path presenter =
-                  file.resolveSibling(
-                      file.getFileName().toString().replace(VIEW_JAVA, "Presenter.java"));
-              String originalPresenter = Files.readString(presenter);
-              verifyGalleryPresenter(originalPresenter);
-              hashes
-                  .append(
-                      HexFormat.of()
-                          .formatHex(
-                              MessageDigest.getInstance("SHA-256")
-                                  .digest(Files.readAllBytes(presenter))))
-                  .append("  ")
-                  .append(root.relativize(presenter))
-                  .append('\n');
-              cases
-                  .append("{ var view = new ")
-                  .append(qualified)
-                  .append("(); view.buildPanel(); return view; }\n");
-              source =
-                  source
-                      .replace(
-                          "https://gwtmaterialdesign.github.io/gwt-material-patterns/snapshot/#",
-                          "?pattern=")
-                      .replace(
-                          "https://github.com/GwtMaterialDesign/gwt-material-patterns/tree/release_2.0/src/main/java/com/github/gwtmaterialdesign/client/application/",
-                          "pattern-sources/")
-                      .replace("navbartab/TabNavBarView.ui.xml", "navbartabs/TabNavBarView.ui.xml");
-            } else {
-              cases.append("return new ").append(qualified).append("();\n");
-            }
-            paths
-                .append("case \"")
-                .append(token)
-                .append("\": return \"")
-                .append(rel.substring(0, rel.length() - 5))
-                .append("\";\n");
-          }
-          if (rel.endsWith("model/DemoImagePanel.java")) {
-            source = source.replace("image.setUrl(dto.getUrl());", "image.setVisible(false);");
-          }
-          if (rel.endsWith("animation/AnimationView.ui.xml")) {
-            source =
-                source.replace(
-                    "https://www.topofandroid.com/wp-content/uploads/2015/05/Android-L-Material-Design-Wallpapers-5.png",
-                    "images/animations-banner.png");
-          }
-          if (rel.endsWith("media/MediaView.ui.xml")) {
-            source =
-                source
-                    .replace(
-                        "https://gwtmaterialdesign.github.io/gwt-material-demo/images/",
-                        "media/images/")
-                    .replace(
-                        "https://www.youtube.com/embed/Q8TXgCzxEnw?rel=0", "media/player.html");
-          }
-          if (rel.endsWith("tabs/TabsView.ui.xml")) {
-            for (String fragment :
-                List.of(
-                    "<m:MaterialAnchorButton text=\"Source\" textColor=\"BLACK\" backgroundColor=\"WHITE\" target=\"_blank\" href=\"https://github.com/GwtMaterialDesign/gwt-material-patterns/tree/release_2.0/src/main/java/com/github/gwtmaterialdesign/client/application/navbartabspush\" />",
-                    "<m:MaterialAnchorButton text=\"Demo\" target=\"_blank\" href=\"https://gwtmaterialdesign.github.io/gwt-material-patterns/snapshot/#navbar_tab_push\" />",
-                    "<m:MaterialImage marginTop=\"20\" url=\"https://gwtmaterialdesign.github.io/gwt-material-demo/images/tab.gif\" />")) {
-              if (!source.contains(fragment))
-                throw new IllegalArgumentException("Changed external tabs pattern preview");
-              source =
-                  source.replace(
-                      fragment,
-                      fragment.startsWith("<m:MaterialImage")
-                          ? ""
-                          : fragment
-                              .replace(
-                                  "https://gwtmaterialdesign.github.io/gwt-material-patterns/snapshot/#navbar_tab_push",
-                                  "?pattern=navbar_tab_push")
-                              .replace(
-                                  "https://github.com/GwtMaterialDesign/gwt-material-patterns/tree/release_2.0/src/main/java/com/github/gwtmaterialdesign/client/application/navbartabspush",
-                                  "pattern-sources/navbartabspush/TabPushNavBarView.ui.xml"));
-            }
-          }
-          Files.writeString(destination, source);
-        }
-      }
+      writeSources(root, out, hashes, cases, paths);
       String generated =
           "package io.instanto.material.showcase;\n"
               + "import com.google.gwt.user.client.ui.Widget;\npublic final class OriginalPages {\n"
@@ -299,5 +176,147 @@ public final class ShowcaseSourcesMojo extends AbstractMojo {
     } catch (Exception e) {
       throw new MojoExecutionException("Unable to prepare original showcase sources", e);
     }
+  }
+
+  private static void writeSources(
+      Path root, Path out, StringBuilder hashes, StringBuilder cases, StringBuilder paths)
+      throws Exception {
+    try (var files = Files.walk(root)) {
+      for (Path file : files.filter(Files::isRegularFile).sorted().toList()) {
+        String rel = root.relativize(file).toString();
+        String base = "gmd/core/demo/client/application/";
+        boolean page =
+            rel.startsWith(base + "page/")
+                && PAGES.contains(file.getParent().getFileName().toString())
+                && (rel.endsWith(VIEW_JAVA) || rel.endsWith("View.ui.xml"));
+        boolean helper =
+            Set.of(
+                    base + "widget/CodeSection.java",
+                    base + "navigation/Component.java",
+                    base + "navigation/NavigationService.java",
+                    base + "navigation/DataService.java",
+                    base + "model/DataHelper.java",
+                    base + "model/Hero.java",
+                    base + "model/FieldState.java",
+                    base + "model/User.java",
+                    base + "model/UserOracle.java",
+                    base + "model/UserSuggestion.java",
+                    base + "model/DemoImageDTO.java",
+                    base + "model/DemoImagePanel.java",
+                    base + "page/errors/EmailValidator.java",
+                    "gmd/core/demo/client/place/NameTokens.java")
+                .contains(rel);
+        if (!page && !helper) continue;
+        byte[] original = Files.readAllBytes(file);
+        hashes
+            .append(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(original)))
+            .append("  ")
+            .append(rel)
+            .append('\n');
+        Path destination = out.resolve(rel);
+        Files.createDirectories(destination.getParent());
+        String source = Files.readString(file);
+        if (page && rel.endsWith(VIEW_JAVA)) {
+          source = adaptPage(root, file, rel, source, cases, paths, hashes);
+        }
+        source = adaptLocalAssets(rel, source);
+        Files.writeString(destination, source);
+      }
+    }
+  }
+
+  private static String adaptPage(
+      Path root,
+      Path file,
+      String rel,
+      String source,
+      StringBuilder cases,
+      StringBuilder paths,
+      StringBuilder hashes)
+      throws Exception {
+    source = adaptView(source);
+    String qualified = rel.substring(0, rel.length() - 5).replace('/', '.');
+    String token = file.getParent().getFileName().toString();
+    if (token.equals("datepicker")) token = "datePicker";
+    if (token.equals("radiobutton")) token = "radioButton";
+    cases.append("case \"").append(token).append("\": ");
+    if (Set.of("navbar", "sidenavs").contains(token)) {
+      Path presenter =
+          file.resolveSibling(file.getFileName().toString().replace(VIEW_JAVA, "Presenter.java"));
+      String originalPresenter = Files.readString(presenter);
+      verifyGalleryPresenter(originalPresenter);
+      hashes
+          .append(
+              HexFormat.of()
+                  .formatHex(
+                      MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(presenter))))
+          .append("  ")
+          .append(root.relativize(presenter))
+          .append('\n');
+      cases
+          .append("{ var view = new ")
+          .append(qualified)
+          .append("(); view.buildPanel(); return view; }\n");
+      source =
+          source
+              .replace(
+                  "https://gwtmaterialdesign.github.io/gwt-material-patterns/snapshot/#",
+                  "?pattern=")
+              .replace(
+                  "https://github.com/GwtMaterialDesign/gwt-material-patterns/tree/release_2.0/src/main/java/com/github/gwtmaterialdesign/client/application/",
+                  "pattern-sources/")
+              .replace("navbartab/TabNavBarView.ui.xml", "navbartabs/TabNavBarView.ui.xml");
+    } else {
+      cases.append("return new ").append(qualified).append("();\n");
+    }
+    paths
+        .append("case \"")
+        .append(token)
+        .append("\": return \"")
+        .append(rel.substring(0, rel.length() - 5))
+        .append("\";\n");
+    return source;
+  }
+
+  private static String adaptLocalAssets(String rel, String source) {
+    if (rel.endsWith("model/DemoImagePanel.java")) {
+      source = source.replace("image.setUrl(dto.getUrl());", "image.setVisible(false);");
+    }
+    if (rel.endsWith("animation/AnimationView.ui.xml")) {
+      source =
+          source.replace(
+              "https://www.topofandroid.com/wp-content/uploads/2015/05/Android-L-Material-Design-Wallpapers-5.png",
+              "images/animations-banner.png");
+    }
+    if (rel.endsWith("media/MediaView.ui.xml")) {
+      source =
+          source
+              .replace(
+                  "https://gwtmaterialdesign.github.io/gwt-material-demo/images/", "media/images/")
+              .replace("https://www.youtube.com/embed/Q8TXgCzxEnw?rel=0", "media/player.html");
+    }
+    if (rel.endsWith("tabs/TabsView.ui.xml")) {
+      for (String fragment :
+          List.of(
+              "<m:MaterialAnchorButton text=\"Source\" textColor=\"BLACK\" backgroundColor=\"WHITE\" target=\"_blank\" href=\"https://github.com/GwtMaterialDesign/gwt-material-patterns/tree/release_2.0/src/main/java/com/github/gwtmaterialdesign/client/application/navbartabspush\" />",
+              "<m:MaterialAnchorButton text=\"Demo\" target=\"_blank\" href=\"https://gwtmaterialdesign.github.io/gwt-material-patterns/snapshot/#navbar_tab_push\" />",
+              "<m:MaterialImage marginTop=\"20\" url=\"https://gwtmaterialdesign.github.io/gwt-material-demo/images/tab.gif\" />")) {
+        if (!source.contains(fragment))
+          throw new IllegalArgumentException("Changed external tabs pattern preview");
+        source =
+            source.replace(
+                fragment,
+                fragment.startsWith("<m:MaterialImage")
+                    ? ""
+                    : fragment
+                        .replace(
+                            "https://gwtmaterialdesign.github.io/gwt-material-patterns/snapshot/#navbar_tab_push",
+                            "?pattern=navbar_tab_push")
+                        .replace(
+                            "https://github.com/GwtMaterialDesign/gwt-material-patterns/tree/release_2.0/src/main/java/com/github/gwtmaterialdesign/client/application/navbartabspush",
+                            "pattern-sources/navbartabspush/TabPushNavBarView.ui.xml"));
+      }
+    }
+    return source;
   }
 }
