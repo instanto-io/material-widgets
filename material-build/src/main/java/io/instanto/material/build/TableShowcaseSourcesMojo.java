@@ -64,124 +64,7 @@ public final class TableShowcaseSourcesMojo extends AbstractMojo {
           cases = new StringBuilder(),
           components = new StringBuilder();
       String base = "gmd/datatable/demo/client/";
-      try (var files = Files.walk(root)) {
-        for (Path file : files.filter(Files::isRegularFile).sorted().toList()) {
-          String rel = root.relativize(file).toString();
-          boolean page =
-              PAGES.stream().anyMatch(p -> rel.startsWith(base + "application/" + p + "/"));
-          if (!(page
-              || rel.startsWith(base + "generator/")
-              || rel.equals(base + "resources/AppResources.java")
-              || rel.equals(base + "application/widget/CodeSection.java"))) continue;
-          if (!(rel.endsWith(".java") || rel.endsWith(".ui.xml"))) continue;
-          if (rel.endsWith("Module.java") || rel.endsWith("/UserService.java")) continue;
-          String source = Files.readString(file);
-          hashes
-              .append(
-                  HexFormat.of()
-                      .formatHex(
-                          MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(file))))
-              .append("  ")
-              .append(rel)
-              .append('\n');
-          if (rel.endsWith("Presenter.java")) {
-            var type = StaticJavaParser.parse(source).getType(0).asClassOrInterfaceDeclaration();
-            String token = file.getParent().getFileName().toString();
-            String viewClass = rel.replace('/', '.').replace("Presenter.java", "View");
-            var bind = type.getMethodsByName("onBind").get(0).getBody().orElseThrow();
-            var reveal = type.getMethodsByName("onReveal").get(0).getBody().orElseThrow();
-            var header =
-                reveal.findAll(MethodCallExpr.class).stream()
-                    .filter(c -> c.getNameAsString().equals("setHeaderTitle"))
-                    .findFirst()
-                    .orElseThrow();
-            components
-                .append("new gmd.core.demo.client.application.navigation.Component(")
-                .append(header.getArgument(0))
-                .append(",")
-                .append(header.getArgument(1))
-                .append(",\"table-")
-                .append(token)
-                .append("\"),\n");
-            StringBuilder init = new StringBuilder(), data = new StringBuilder();
-            for (var stmt : bind.getStatements()) {
-              if (stmt.toString().trim().equals("super.onBind();")) continue;
-              if (!stmt.toString().startsWith("getView()."))
-                throw new IllegalArgumentException("Changed table bind lifecycle");
-              init.append(stmt.toString().replace("getView()", "view"));
-            }
-            for (var stmt : reveal.getStatements()) {
-              if (stmt.toString().trim().equals("super.onReveal();")
-                  || stmt.toString().startsWith("setHeaderTitle(")) continue;
-              if (!stmt.toString().startsWith("getView()."))
-                throw new IllegalArgumentException("Changed table reveal lifecycle");
-              data.append(stmt.toString().replace("getView()", "view"));
-            }
-            cases
-                .append("case \"table-")
-                .append(token)
-                .append("\": { var view=new ")
-                .append(viewClass)
-                .append("(); ")
-                .append(init)
-                .append("view.addAttachHandler(event -> { if(event.isAttached()) { ")
-                .append(data)
-                .append(" } }); return view; }\n");
-            continue;
-          }
-          if (rel.endsWith("View.java")) source = adaptView(source);
-          if (rel.endsWith(".ui.xml")) {
-            // Keep comparisons in documentation, not in the running TeaVM examples.
-            source =
-                source.replaceAll(
-                    "(?s)<m:MaterialLink\\b[^>]*href=\"https://github.com/GwtMaterialDesign/[^\"]*\"[^>]*/>",
-                    "");
-            source =
-                source.replace(
-                    "For the java classes, you can browse theme from the Java Source above",
-                    "The original examples below run locally on TeaVM.");
-          }
-          if (rel.endsWith("UserGenerator.java"))
-            source =
-                source.replace(
-                    "https://i.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png",
-                    "data:image/svg+xml;base64,"
-                        + java.util.Base64.getEncoder()
-                            .encodeToString(
-                                Files.readAllBytes(
-                                    project
-                                        .getBasedir()
-                                        .toPath()
-                                        .getParent()
-                                        .resolve("showcase-teavm/src/site/tables/avatar.svg"))));
-          if (rel.endsWith("generator/product/ProductGenerator.java")) {
-            String type = "public class ProductGenerator {";
-            String usage = "double random = new Random().nextDouble();";
-            if (!source.contains(type) || !source.contains(usage))
-              throw new IllegalArgumentException("Review changed table product generator");
-            // Reuse one generator; a fresh Random per row discarded its state.
-            source =
-                source
-                    .replace(
-                        type, type + "\n\n    private static final Random RANDOM = new Random();")
-                    .replace(usage, "double random = RANDOM.nextDouble();");
-          }
-          if (rel.endsWith("DataGenerator.java"))
-            source =
-                source
-                    .replace(
-                        "MaterialDesign.injectJs(AppResources.INSTANCE.fakerJs());",
-                        "MaterialDesign.injectJs(AppResources.INSTANCE.fakerJs()); seed();")
-                    .replace(
-                        "public class DataGenerator {",
-                        "public class DataGenerator { @org.teavm.jso.JSBody(script=\"window.faker.seed(1729);\") private static native void seed();");
-          if (rel.endsWith(".java"))
-            source = GenerateBindings.transform(LegacyNativeBodies.transform(source));
-          Path dest = out.resolve(rel);
-          Files.createDirectories(dest.getParent());
-          Files.writeString(dest, source);
-        }
-      }
+      writeSources(root, out, base, hashes, cases, components);
       Path registry = out.resolve("io/instanto/material/showcase/OriginalTables.java");
       Files.createDirectories(registry.getParent());
       Files.writeString(
@@ -198,5 +81,148 @@ public final class TableShowcaseSourcesMojo extends AbstractMojo {
     } catch (Exception e) {
       throw new MojoExecutionException("Unable to adapt original table showcase", e);
     }
+  }
+
+  private void writeSources(
+      Path root,
+      Path out,
+      String base,
+      StringBuilder hashes,
+      StringBuilder cases,
+      StringBuilder components)
+      throws Exception {
+    try (var files = Files.walk(root)) {
+      for (Path file : files.filter(Files::isRegularFile).sorted().toList()) {
+        String rel = root.relativize(file).toString();
+        if (!isSource(base, rel)) continue;
+        String source = Files.readString(file);
+        hashes
+            .append(
+                HexFormat.of()
+                    .formatHex(
+                        MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(file))))
+            .append("  ")
+            .append(rel)
+            .append('\n');
+        if (rel.endsWith("Presenter.java")) {
+          addPresenter(file, rel, source, cases, components);
+          continue;
+        }
+        source = adaptSource(rel, source);
+        Path dest = out.resolve(rel);
+        Files.createDirectories(dest.getParent());
+        Files.writeString(dest, source);
+      }
+    }
+  }
+
+  private static boolean isSource(String base, String rel) {
+    boolean page = PAGES.stream().anyMatch(p -> rel.startsWith(base + "application/" + p + "/"));
+    boolean included =
+        page
+            || rel.startsWith(base + "generator/")
+            || rel.equals(base + "resources/AppResources.java")
+            || rel.equals(base + "application/widget/CodeSection.java");
+    return included
+        && (rel.endsWith(".java") || rel.endsWith(".ui.xml"))
+        && !rel.endsWith("Module.java")
+        && !rel.endsWith("/UserService.java");
+  }
+
+  private static void addPresenter(
+      Path file, String rel, String source, StringBuilder cases, StringBuilder components) {
+    var type = StaticJavaParser.parse(source).getType(0).asClassOrInterfaceDeclaration();
+    String token = file.getParent().getFileName().toString();
+    String viewClass = rel.replace('/', '.').replace("Presenter.java", "View");
+    var bind = type.getMethodsByName("onBind").get(0).getBody().orElseThrow();
+    var reveal = type.getMethodsByName("onReveal").get(0).getBody().orElseThrow();
+    var header =
+        reveal.findAll(MethodCallExpr.class).stream()
+            .filter(c -> c.getNameAsString().equals("setHeaderTitle"))
+            .findFirst()
+            .orElseThrow();
+    components
+        .append("new gmd.core.demo.client.application.navigation.Component(")
+        .append(header.getArgument(0))
+        .append(",")
+        .append(header.getArgument(1))
+        .append(",\"table-")
+        .append(token)
+        .append("\"),\n");
+    StringBuilder init = new StringBuilder(), data = new StringBuilder();
+    for (var stmt : bind.getStatements()) {
+      if (stmt.toString().trim().equals("super.onBind();")) continue;
+      if (!stmt.toString().startsWith("getView()."))
+        throw new IllegalArgumentException("Changed table bind lifecycle");
+      init.append(stmt.toString().replace("getView()", "view"));
+    }
+    for (var stmt : reveal.getStatements()) {
+      if (stmt.toString().trim().equals("super.onReveal();")
+          || stmt.toString().startsWith("setHeaderTitle(")) continue;
+      if (!stmt.toString().startsWith("getView()."))
+        throw new IllegalArgumentException("Changed table reveal lifecycle");
+      data.append(stmt.toString().replace("getView()", "view"));
+    }
+    cases
+        .append("case \"table-")
+        .append(token)
+        .append("\": { var view=new ")
+        .append(viewClass)
+        .append("(); ")
+        .append(init)
+        .append("view.addAttachHandler(event -> { if(event.isAttached()) { ")
+        .append(data)
+        .append(" } }); return view; }\n");
+  }
+
+  private String adaptSource(String rel, String source) throws java.io.IOException {
+    if (rel.endsWith("View.java")) source = adaptView(source);
+    if (rel.endsWith(".ui.xml")) {
+      // Keep comparisons in documentation, not in the running TeaVM examples.
+      source =
+          source.replaceAll(
+              "(?s)<m:MaterialLink\\b[^>]*href=\"https://github.com/GwtMaterialDesign/[^\"]*\"[^>]*/>",
+              "");
+      source =
+          source.replace(
+              "For the java classes, you can browse theme from the Java Source above",
+              "The original examples below run locally on TeaVM.");
+    }
+    if (rel.endsWith("UserGenerator.java"))
+      source =
+          source.replace(
+              "https://i.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png",
+              "data:image/svg+xml;base64,"
+                  + java.util.Base64.getEncoder()
+                      .encodeToString(
+                          Files.readAllBytes(
+                              project
+                                  .getBasedir()
+                                  .toPath()
+                                  .getParent()
+                                  .resolve("showcase-teavm/src/site/tables/avatar.svg"))));
+    if (rel.endsWith("generator/product/ProductGenerator.java")) {
+      String type = "public class ProductGenerator {";
+      String usage = "double random = new Random().nextDouble();";
+      if (!source.contains(type) || !source.contains(usage))
+        throw new IllegalArgumentException("Review changed table product generator");
+      // Reuse one generator; a fresh Random per row discarded its state.
+      source =
+          source
+              .replace(type, type + "\n\n    private static final Random RANDOM = new Random();")
+              .replace(usage, "double random = RANDOM.nextDouble();");
+    }
+    if (rel.endsWith("DataGenerator.java"))
+      source =
+          source
+              .replace(
+                  "MaterialDesign.injectJs(AppResources.INSTANCE.fakerJs());",
+                  "MaterialDesign.injectJs(AppResources.INSTANCE.fakerJs()); seed();")
+              .replace(
+                  "public class DataGenerator {",
+                  "public class DataGenerator { @org.teavm.jso.JSBody(script=\"window.faker.seed(1729);\") private static native void seed();");
+    if (rel.endsWith(".java"))
+      source = GenerateBindings.transform(LegacyNativeBodies.transform(source));
+    return source;
   }
 }
