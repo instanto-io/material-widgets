@@ -50,326 +50,8 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
         for (Path file : files.filter(p -> p.toString().endsWith(".java")).sorted().toList()) {
           String original = Files.readString(file), source = original;
           String relative = root.relativize(file).toString();
-          if (relative.equals("gwt/material/design/client/base/MaterialWidget.java")) {
-            String before =
-                """
-                public HandlerRegistration addDoubleClickHandler(final DoubleClickHandler handler) {
-                        return addDomHandler(event -> {
-                            if (isEnabled()) {
-                                handler.onDoubleClick(event);
-                            }
-                        }, DoubleClickEvent.getType());
-                    }
-                """
-                    .strip();
-            if (!source.contains(before))
-              throw new IllegalArgumentException(
-                  "Review changed Material double-click registration");
-            source =
-                source.replace(
-                    before,
-                    before
-                        .replace(
-                            "return addDomHandler(",
-                            "return io.instanto.material.client.TouchDoubleClick.register(this, addDomHandler(")
-                        .replace("DoubleClickEvent.getType());", "DoubleClickEvent.getType()));"));
-          }
-          if (relative.equals("gwt/material/design/addins/client/rating/MaterialRating.java")) {
-            source = source.replace("import com.gargoylesoftware.htmlunit.Page;", "");
-          }
-          if (relative.equals("gwt/material/design/client/ui/MaterialDatePicker.java")) {
-            String before = "picker.off(\"close\");";
-            if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
-              throw new IllegalArgumentException("Review changed date picker disposal lifecycle");
-            // Release body-attached popups, document listeners and scroll locks on detach/reload.
-            source = source.replace(before, before + "\n            picker.stop();");
-            String selected = "getPicker().get(\"select\").obj";
-            if (!source.contains(selected))
-              throw new IllegalArgumentException("Review changed date picker value conversion");
-            source = source.replace(selected, "getPicker().get(\"select\").getDateObject()");
-          }
-          if (relative.equals("gwt/material/design/client/ui/MaterialListValueBox.java")) {
-            String before = "return listBox.getElement().cast();";
-            if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
-              throw new IllegalArgumentException(
-                  "Review changed list value box element conversion");
-            // GWT overlay casts do not construct the typed Java wrapper required by TeaVM.
-            source = source.replace(before, "return SelectElement.as(listBox.getElement());");
-          }
-          if (relative.equals("gwt/material/design/client/js/JsMaterialElement.java")) {
-            String before = "@JsProperty\n    public JsDate obj;";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed native date picker property");
-            // The shared native method boundary wraps the browser Date in GWT's JsDate.
-            source =
-                source.replace(
-                    before, "@JsProperty(name = \"obj\") public native JsDate getDateObject();");
-            String setter = "public native JsMaterialElement set(String key, Object value);";
-            if (!source.contains(setter))
-              throw new IllegalArgumentException("Review changed native date picker setter");
-            // Keep date arguments typed so the same shared boundary unwraps them before jQuery.
-            source =
-                source.replace(
-                    setter,
-                    setter
-                        + """
-
-                @JsMethod(name = "set")
-                public native JsMaterialElement set(String key, JsDate value);
-                @JsMethod(name = "set")
-                public native JsMaterialElement set(String key, JsDate value, Functions.Func function);
-                """);
-          }
-          if (relative.equals("gwt/material/design/client/ui/table/MaterialDataTable.java")) {
-            // Both of these come from the table fork the pom pins. Check they are
-            // still there, so a revision bump that drops them is caught here rather
-            // than in a browser.
-            if (!source.contains("((Number) index).intValue() + colOffset"))
-              throw new IllegalArgumentException(
-                  "Table fork no longer fixes the column index conversion");
-            if (!source.contains("void onUnload()"))
-              throw new IllegalArgumentException(
-                  "Table fork no longer restores the scrollbar on disposal");
-          }
-          if (relative.equals("gwt/material/design/client/js/StickyTableOptions.java")) {
-            if (!source.contains("extends JavaScriptObject")
-                || !source.contains("JavaScriptObject.createObject().cast()"))
-              throw new IllegalArgumentException("Changed sticky table options overlay");
-            source =
-                source
-                    .replace(
-                        "import com.google.gwt.core.client.JavaScriptObject;",
-                        "import jsinterop.annotations.*;")
-                    .replace(
-                        "public class StickyTableOptions extends JavaScriptObject",
-                        "@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = \"Object\") public class StickyTableOptions")
-                    .replace("JavaScriptObject.createObject().cast()", "new StickyTableOptions()")
-                    .replace(
-                        "public native final void setScrollableArea(JQueryElement scrollableArea) /*-{\n        this.scrollableArea = scrollableArea;\n    }-*/;",
-                        "@JsProperty public native void setScrollableArea(JQueryElement scrollableArea);")
-                    .replace(
-                        "public native final void setMarginTop(int marginTop) /*-{\n        this.marginTop = marginTop;\n    }-*/;",
-                        "@JsProperty public native void setMarginTop(int marginTop);");
-          }
-          if (relative.equals("gwt/material/design/client/js/Js.java")) {
-            String before =
-                "public static native <T> List<T> asList(JavaScriptObject o) /*-{\n        var l = @java.util.ArrayList::new()();\n        l.@java.util.ArrayList::array = o;\n        return l;\n    }-*/;";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Changed table ArrayList internals bridge");
-            source =
-                source.replace(
-                    before,
-                    "public static <T> List<T> asList(JavaScriptObject o) { return (List<T>) (List<?>) jsinterop.base.Js.asArrayLike(o.unwrap()).asList(); }");
-          }
-          if (relative.equals("gwt/material/design/addins/client/combobox/MaterialComboBox.java")) {
-            String before = "return Integer.parseInt(o.toString());";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Changed combo box index conversion");
-            source =
-                source.replace(
-                    before,
-                    "return o instanceof Number ? ((Number) o).intValue() : Integer.parseInt(o.toString());");
-            String array = "Object[] curVal = (Object[]) getJsComboBox().val();";
-            if (!source.contains(array))
-              throw new IllegalArgumentException("Changed combo box selection array");
-            source =
-                source.replace(
-                    array,
-                    "Object rawValues = getJsComboBox().val(); Object[] curVal = rawValues == null ? null : jsinterop.base.Js.asArrayLike(rawValues).asList().toArray();");
-          }
-          if (relative.equals("gwt/material/design/addins/client/carousel/MaterialCarousel.java")) {
-            String current = "Integer.parseInt(currentSlide.toString())";
-            String next = "Integer.parseInt(nextSlide.toString())";
-            if (source.split(java.util.regex.Pattern.quote(current), -1).length != 3
-                || !source.contains(next))
-              throw new IllegalArgumentException("Changed carousel slide index conversion");
-            // Slick passes numeric indices. Java Double.toString() adds ".0", which
-            // Integer.parseInt rejects even though the browser value is an integer.
-            source =
-                source
-                    .replace(current, "((Number) currentSlide).intValue()")
-                    .replace(next, "((Number) nextSlide).intValue()");
-          }
-          if (relative.equals("gwt/material/design/client/ui/MaterialSlider.java")) {
-            var cu = com.github.javaparser.StaticJavaParser.parse(source);
-            var method =
-                cu.getType(0).asClassOrInterfaceDeclaration().getMethodsByName("unload").get(0);
-            if (!method.getBody().orElseThrow().getStatements().isEmpty())
-              throw new IllegalArgumentException("Changed slider unload lifecycle");
-            method.setBody(
-                com.github.javaparser.StaticJavaParser.parseBlock(
-                    "{ io.instanto.material.client.MediaLifecycle.unloadSlider(getElement()); }"));
-            source = cu.toString();
-          }
-          if (relative.equals("gwt/material/design/client/ui/MaterialImage.java")) {
-            var cu = com.github.javaparser.StaticJavaParser.parse(source);
-            var type = cu.getType(0).asClassOrInterfaceDeclaration();
-            if (!type.getMethodsByName("onUnload").isEmpty())
-              throw new IllegalArgumentException("Changed image unload lifecycle");
-            type.addMember(
-                com.github.javaparser.StaticJavaParser.parseBodyDeclaration(
-                    "@Override protected void onUnload() { io.instanto.material.client.MediaLifecycle.unloadImage(getElement()); super.onUnload(); }"));
-            source = cu.toString();
-          }
-          if (relative.equals("gwt/material/design/client/ui/MaterialTab.java")) {
-            String before = "public void unload() {\n        clearAllIndicators();\n    }";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Changed tab unload lifecycle");
-            source =
-                source.replace(
-                    before,
-                    "public void unload() { io.instanto.material.client.TabLifecycle.unload(getElement()); }");
-          }
-          if (relative.equals("gwt/material/design/client/ui/MaterialChipContainer.java")) {
-            String before = "chipList.remove(w);";
-            if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
-              throw new IllegalArgumentException("Review changed chip container removal");
-            // chipList is keyed by the chip's generated DOM id, not by the widget instance.
-            source = source.replace(before, "chipList.remove(((MaterialChip) w).getId());");
-          }
-          if (relative.equals(
-              "gwt/material/design/client/base/validator/DecimalMaxValidator.java")) {
-            String before = "return Double.valueOf(value.toString()) <= maxValue.doubleValue();";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed decimal max validation");
-            source =
-                source.replace(
-                    before,
-                    "return Double.parseDouble(value.toString()) <= maxValue.doubleValue();");
-          }
-          if (relative.equals("gwt/material/design/gen/IconTypeGenerator.java")) {
-            String before = "reader = new BufferedReader(new FileReader(ijmap));";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed icon generator encoding");
-            // Read the upstream ijmap as UTF-8 rather than the platform default.
-            source =
-                source.replace(
-                    before,
-                    "reader = java.nio.file.Files.newBufferedReader(ijmap.toPath(), java.nio.charset.StandardCharsets.UTF_8);");
-          }
-          if (relative.equals("gwt/material/design/addins/client/avatar/MaterialAvatar.java")) {
-            String before = "    @Override\n    public void load() {";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed avatar load lifecycle");
-            // Configure the global jdenticon overlay from a static helper: a widget
-            // instance still applies the option, but the write itself is not per-instance.
-            source =
-                source.replace(
-                    before,
-                    "    private static void applyConfig(AvatarOptions options) {\n"
-                        + "        JsAvatar.config = options;\n"
-                        + "    }\n\n"
-                        + before);
-            String assignment = "            JsAvatar.config = options;";
-            if (!source.contains(assignment))
-              throw new IllegalArgumentException("Review changed avatar configuration");
-            source = source.replace(assignment, "            applyConfig(options);");
-          }
-          if (relative.equals(
-              "gwt/material/design/addins/client/dnd/event/InteractCommonEvent.java")) {
-            String before =
-                "    /**\n     * The element that is being interacted with\n     */\n    @JsProperty\n    public Element target;\n\n";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed interact event target");
-            // Event already declares the same target field; the redeclaration only masks it.
-            source = source.replace(before, "");
-          }
-          if (relative.equals("gwt/material/design/client/data/infinite/InfiniteDataView.java")) {
-            String before = "(int) Math.ceil(tableBody.scrollTop() / getCalculatedRowHeight())";
-            String after =
-                "(int) Math.ceil((double) tableBody.scrollTop() / getCalculatedRowHeight())";
-            if (source.split(java.util.regex.Pattern.quote(before), -1).length != 3)
-              throw new IllegalArgumentException("Review changed infinite view row index");
-            // Both operands are ints, so the division must be promoted before rounding.
-            source = source.replace(before, after);
-          }
-          if (relative.equals("gwt/material/design/client/ui/pager/MaterialDataPager.java")) {
-            String before = "(isExcess() & isLastPage())";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed pager boundary label");
-            source = source.replace(before, "(isExcess() && isLastPage())");
-          }
-          if (relative.equals("gwt/material/design/client/ui/table/TableSubHeader.java")) {
-            String before = "Integer.valueOf(String.valueOf($this().data(\"pos\")))";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed table subheader scroll position");
-            source =
-                source.replace(before, "Integer.parseInt(String.valueOf($this().data(\"pos\")))");
-          }
-          if (relative.equals("gwt/material/design/client/ui/table/cell/Column.java")) {
-            String before = "Integer.valueOf(width.substring(0, width.indexOf(\"px\")))";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed column pixel width");
-            source =
-                source.replace(
-                    before, "Integer.parseInt(width.substring(0, width.indexOf(\"px\")))");
-          }
-          if (relative.equals("gwt/material/design/client/data/HasColumns.java")) {
-            String before = "{@link ##addColumn(Column)}";
-            if (source.split(java.util.regex.Pattern.quote(before), -1).length != 3)
-              throw new IllegalArgumentException("Review changed HasColumns Javadoc links");
-            // Upstream doubled the reference marker, which makes Javadoc reject the label.
-            source = source.replace(before, "{@link #addColumn(Column)}");
-          }
-          // GWT overlays allow window to be typed as Element. This view is passed straight
-          // back to native jQuery; the shared boundary unwraps it to the actual window.
-          if (relative.equals("gwt/material/design/jquery/client/api/JQuery.java")) {
-            String before = "return ScriptInjector.TOP_WINDOW.cast();";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Changed JQuery.window overlay");
-            source =
-                source.replace(
-                    before,
-                    "return new Element((org.teavm.jso.dom.html.HTMLElement) ScriptInjector.TOP_WINDOW.unwrap());");
-          }
-          if (relative.equals(
-              "gwt/material/design/client/pwa/serviceworker/ServiceWorkerLifecycle.java")) {
-            source =
-                source.replace("import com.google.web.bindery.requestfactory.shared.Service;", "");
-          }
-          // Native constructors need the DOM node, rather than its GWT Java wrapper.
-          if (relative.endsWith("/camera/MaterialCameraCapture.java")) {
-            source = CameraSourceAdapter.adapt(source);
-            String before = "if (overlayPanel == null && overlayPanel.isAttached()) {";
-            if (!source.contains(before))
-              throw new IllegalArgumentException("Review changed camera overlay lifecycle");
-            // The upstream guard dereferences the panel it is about to create, so the
-            // first overlay always failed with a null pointer.
-            source = source.replace(before, "if (overlayPanel == null) {");
-          }
-          if (relative.endsWith("/signature/js/SignaturePad.java")
-              || relative.endsWith("/fileuploader/js/Dropzone.java")) {
-            source =
-                source
-                    .replace(
-                        "import com.google.gwt.dom.client.Element;",
-                        "import org.teavm.jso.dom.html.HTMLElement;")
-                    .replace("SignaturePad(Element element", "SignaturePad(HTMLElement element")
-                    .replace("Dropzone(Element e,", "Dropzone(HTMLElement e,");
-          }
-          if (relative.endsWith("/signature/MaterialSignaturePad.java")) {
-            String before = "CanvasElement element = getElement().cast();";
-            if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
-              throw new IllegalArgumentException(
-                  "Review changed signature canvas element conversion");
-            source =
-                source
-                    .replace(before, "CanvasElement element = CanvasElement.as(getElement());")
-                    .replace(
-                        "new SignaturePad(getElement(), options)",
-                        "new SignaturePad(getElement().unwrap(), options)");
-          }
-          if (relative.endsWith("/fileuploader/MaterialFileUploader.java")) {
-            source =
-                source.replace("new Dropzone(e, options)", "new Dropzone(e.unwrap(), options)");
-            source = UploadSourceAdapter.adapt(source);
-          }
-          if (relative.endsWith("/richeditor/base/ToolBarManager.java")) {
-            source =
-                source.replace(
-                    "Object[][] toolbar = new Object[][]{};",
-                    "Object[][] toolbar = new Object[8][];");
-          }
+          source = adaptNamedSource(relative, source);
+          source = adaptAddinSources(relative, source);
           // Legacy GWT Element and dom.Element denote the same native element. The
           // compatibility API exposes the current dom package consistently.
           source =
@@ -397,5 +79,394 @@ public final class TeaVmSourcesMojo extends AbstractMojo {
     } catch (Exception e) {
       throw new MojoExecutionException("Unable to adapt original sources for TeaVM", e);
     }
+  }
+
+  private static String adaptNamedSource(String relative, String source) {
+    return switch (relative) {
+      case "gwt/material/design/client/base/MaterialWidget.java" -> adaptDoubleClickHandler(source);
+      case "gwt/material/design/addins/client/rating/MaterialRating.java" ->
+          source.replace("import com.gargoylesoftware.htmlunit.Page;", "");
+      case "gwt/material/design/client/ui/MaterialDatePicker.java" -> adaptDatePickerEvents(source);
+      case "gwt/material/design/client/ui/MaterialListValueBox.java" -> adaptListBoxElement(source);
+      case "gwt/material/design/client/js/JsMaterialElement.java" ->
+          adaptMaterialElementProperties(source);
+      case "gwt/material/design/client/ui/table/MaterialDataTable.java" ->
+          adaptDataTableLifecycle(source);
+      case "gwt/material/design/client/js/StickyTableOptions.java" ->
+          adaptStickyTableOptions(source);
+      case "gwt/material/design/client/js/Js.java" -> adaptJsElementConversion(source);
+      case "gwt/material/design/addins/client/combobox/MaterialComboBox.java" ->
+          adaptComboBoxValues(source);
+      case "gwt/material/design/addins/client/carousel/MaterialCarousel.java" ->
+          adaptCarouselIndices(source);
+      case "gwt/material/design/client/ui/MaterialSlider.java" -> adaptSliderUnload(source);
+      case "gwt/material/design/client/ui/MaterialImage.java" -> adaptImageUnload(source);
+      case "gwt/material/design/client/ui/MaterialTab.java" -> adaptTabUnload(source);
+      case "gwt/material/design/client/ui/MaterialChipContainer.java" ->
+          useChipIdForRemoval(source);
+      case "gwt/material/design/client/base/validator/DecimalMaxValidator.java" ->
+          compareDecimalMaximum(source);
+      case "gwt/material/design/gen/IconTypeGenerator.java" -> resolveIconMappingPath(source);
+      case "gwt/material/design/addins/client/avatar/MaterialAvatar.java" ->
+          adaptAvatarOptions(source);
+      case "gwt/material/design/addins/client/dnd/event/InteractCommonEvent.java" ->
+          adaptInteractEvent(source);
+      case "gwt/material/design/client/data/infinite/InfiniteDataView.java" ->
+          adaptInfiniteViewLifecycle(source);
+      case "gwt/material/design/client/ui/pager/MaterialDataPager.java" -> adaptPagerBounds(source);
+      case "gwt/material/design/client/ui/table/TableSubHeader.java" -> adaptTableSubHeader(source);
+      case "gwt/material/design/client/ui/table/cell/Column.java" -> adaptColumn(source);
+      case "gwt/material/design/client/data/HasColumns.java" -> correctColumnJavadocLinks(source);
+      case "gwt/material/design/jquery/client/api/JQuery.java" -> adaptNativeJQueryWindow(source);
+      case "gwt/material/design/client/pwa/serviceworker/ServiceWorkerLifecycle.java" ->
+          source.replace("import com.google.web.bindery.requestfactory.shared.Service;", "");
+      default -> source;
+    };
+  }
+
+  private static String adaptAddinSources(String relative, String source) {
+    // Native constructors need the DOM node, rather than its GWT Java wrapper.
+    if (relative.endsWith("/camera/MaterialCameraCapture.java")) {
+      source = CameraSourceAdapter.adapt(source);
+      String before = "if (overlayPanel == null && overlayPanel.isAttached()) {";
+      if (!source.contains(before))
+        throw new IllegalArgumentException("Review changed camera overlay lifecycle");
+      // The upstream guard dereferences the panel it is about to create, so the
+      // first overlay always failed with a null pointer.
+      source = source.replace(before, "if (overlayPanel == null) {");
+    }
+    if (relative.endsWith("/signature/js/SignaturePad.java")
+        || relative.endsWith("/fileuploader/js/Dropzone.java")) {
+      source =
+          source
+              .replace(
+                  "import com.google.gwt.dom.client.Element;",
+                  "import org.teavm.jso.dom.html.HTMLElement;")
+              .replace("SignaturePad(Element element", "SignaturePad(HTMLElement element")
+              .replace("Dropzone(Element e,", "Dropzone(HTMLElement e,");
+    }
+    if (relative.endsWith("/signature/MaterialSignaturePad.java")) {
+      String before = "CanvasElement element = getElement().cast();";
+      if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
+        throw new IllegalArgumentException("Review changed signature canvas element conversion");
+      source =
+          source
+              .replace(before, "CanvasElement element = CanvasElement.as(getElement());")
+              .replace(
+                  "new SignaturePad(getElement(), options)",
+                  "new SignaturePad(getElement().unwrap(), options)");
+    }
+    if (relative.endsWith("/fileuploader/MaterialFileUploader.java")) {
+      source = source.replace("new Dropzone(e, options)", "new Dropzone(e.unwrap(), options)");
+      source = UploadSourceAdapter.adapt(source);
+    }
+    if (relative.endsWith("/richeditor/base/ToolBarManager.java")) {
+      source =
+          source.replace(
+              "Object[][] toolbar = new Object[][]{};", "Object[][] toolbar = new Object[8][];");
+    }
+    return source;
+  }
+
+  private static String adaptDoubleClickHandler(String source) {
+    String before =
+        """
+        public HandlerRegistration addDoubleClickHandler(final DoubleClickHandler handler) {
+                return addDomHandler(event -> {
+                    if (isEnabled()) {
+                        handler.onDoubleClick(event);
+                    }
+                }, DoubleClickEvent.getType());
+            }
+        """
+            .strip();
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed Material double-click registration");
+    source =
+        source.replace(
+            before,
+            before
+                .replace(
+                    "return addDomHandler(",
+                    "return io.instanto.material.client.TouchDoubleClick.register(this, addDomHandler(")
+                .replace("DoubleClickEvent.getType());", "DoubleClickEvent.getType()));"));
+    return source;
+  }
+
+  private static String adaptDatePickerEvents(String source) {
+    String before = "picker.off(\"close\");";
+    if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
+      throw new IllegalArgumentException("Review changed date picker disposal lifecycle");
+    // Release body-attached popups, document listeners and scroll locks on detach/reload.
+    source = source.replace(before, before + "\n            picker.stop();");
+    String selected = "getPicker().get(\"select\").obj";
+    if (!source.contains(selected))
+      throw new IllegalArgumentException("Review changed date picker value conversion");
+    source = source.replace(selected, "getPicker().get(\"select\").getDateObject()");
+    return source;
+  }
+
+  private static String adaptListBoxElement(String source) {
+    String before = "return listBox.getElement().cast();";
+    if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
+      throw new IllegalArgumentException("Review changed list value box element conversion");
+    // GWT overlay casts do not construct the typed Java wrapper required by TeaVM.
+    source = source.replace(before, "return SelectElement.as(listBox.getElement());");
+    return source;
+  }
+
+  private static String adaptMaterialElementProperties(String source) {
+    String before = "@JsProperty\n    public JsDate obj;";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed native date picker property");
+    // The shared native method boundary wraps the browser Date in GWT's JsDate.
+    source =
+        source.replace(before, "@JsProperty(name = \"obj\") public native JsDate getDateObject();");
+    String setter = "public native JsMaterialElement set(String key, Object value);";
+    if (!source.contains(setter))
+      throw new IllegalArgumentException("Review changed native date picker setter");
+    // Keep date arguments typed so the same shared boundary unwraps them before jQuery.
+    source =
+        source.replace(
+            setter,
+            setter
+                + """
+
+        @JsMethod(name = "set")
+        public native JsMaterialElement set(String key, JsDate value);
+        @JsMethod(name = "set")
+        public native JsMaterialElement set(String key, JsDate value, Functions.Func function);
+        """);
+    return source;
+  }
+
+  private static String adaptDataTableLifecycle(String source) {
+    // Both of these come from the table fork the pom pins. Check they are
+    // still there, so a revision bump that drops them is caught here rather
+    // than in a browser.
+    if (!source.contains("((Number) index).intValue() + colOffset"))
+      throw new IllegalArgumentException("Table fork no longer fixes the column index conversion");
+    if (!source.contains("void onUnload()"))
+      throw new IllegalArgumentException("Table fork no longer restores the scrollbar on disposal");
+    return source;
+  }
+
+  private static String adaptStickyTableOptions(String source) {
+    if (!source.contains("extends JavaScriptObject")
+        || !source.contains("JavaScriptObject.createObject().cast()"))
+      throw new IllegalArgumentException("Changed sticky table options overlay");
+    source =
+        source
+            .replace(
+                "import com.google.gwt.core.client.JavaScriptObject;",
+                "import jsinterop.annotations.*;")
+            .replace(
+                "public class StickyTableOptions extends JavaScriptObject",
+                "@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = \"Object\") public class StickyTableOptions")
+            .replace("JavaScriptObject.createObject().cast()", "new StickyTableOptions()")
+            .replace(
+                "public native final void setScrollableArea(JQueryElement scrollableArea) /*-{\n        this.scrollableArea = scrollableArea;\n    }-*/;",
+                "@JsProperty public native void setScrollableArea(JQueryElement scrollableArea);")
+            .replace(
+                "public native final void setMarginTop(int marginTop) /*-{\n        this.marginTop = marginTop;\n    }-*/;",
+                "@JsProperty public native void setMarginTop(int marginTop);");
+    return source;
+  }
+
+  private static String adaptJsElementConversion(String source) {
+    String before =
+        "public static native <T> List<T> asList(JavaScriptObject o) /*-{\n        var l = @java.util.ArrayList::new()();\n        l.@java.util.ArrayList::array = o;\n        return l;\n    }-*/;";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Changed table ArrayList internals bridge");
+    source =
+        source.replace(
+            before,
+            "public static <T> List<T> asList(JavaScriptObject o) { return (List<T>) (List<?>) jsinterop.base.Js.asArrayLike(o.unwrap()).asList(); }");
+    return source;
+  }
+
+  private static String adaptComboBoxValues(String source) {
+    String before = "return Integer.parseInt(o.toString());";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Changed combo box index conversion");
+    source =
+        source.replace(
+            before,
+            "return o instanceof Number ? ((Number) o).intValue() : Integer.parseInt(o.toString());");
+    String array = "Object[] curVal = (Object[]) getJsComboBox().val();";
+    if (!source.contains(array))
+      throw new IllegalArgumentException("Changed combo box selection array");
+    source =
+        source.replace(
+            array,
+            "Object rawValues = getJsComboBox().val(); Object[] curVal = rawValues == null ? null : jsinterop.base.Js.asArrayLike(rawValues).asList().toArray();");
+    return source;
+  }
+
+  private static String adaptCarouselIndices(String source) {
+    String current = "Integer.parseInt(currentSlide.toString())";
+    String next = "Integer.parseInt(nextSlide.toString())";
+    if (source.split(java.util.regex.Pattern.quote(current), -1).length != 3
+        || !source.contains(next))
+      throw new IllegalArgumentException("Changed carousel slide index conversion");
+    // Slick passes numeric indices. Java Double.toString() adds ".0", which
+    // Integer.parseInt rejects even though the browser value is an integer.
+    source =
+        source
+            .replace(current, "((Number) currentSlide).intValue()")
+            .replace(next, "((Number) nextSlide).intValue()");
+    return source;
+  }
+
+  private static String adaptSliderUnload(String source) {
+    var cu = com.github.javaparser.StaticJavaParser.parse(source);
+    var method = cu.getType(0).asClassOrInterfaceDeclaration().getMethodsByName("unload").get(0);
+    if (!method.getBody().orElseThrow().getStatements().isEmpty())
+      throw new IllegalArgumentException("Changed slider unload lifecycle");
+    method.setBody(
+        com.github.javaparser.StaticJavaParser.parseBlock(
+            "{ io.instanto.material.client.MediaLifecycle.unloadSlider(getElement()); }"));
+    source = cu.toString();
+    return source;
+  }
+
+  private static String adaptImageUnload(String source) {
+    var cu = com.github.javaparser.StaticJavaParser.parse(source);
+    var type = cu.getType(0).asClassOrInterfaceDeclaration();
+    if (!type.getMethodsByName("onUnload").isEmpty())
+      throw new IllegalArgumentException("Changed image unload lifecycle");
+    type.addMember(
+        com.github.javaparser.StaticJavaParser.parseBodyDeclaration(
+            "@Override protected void onUnload() { io.instanto.material.client.MediaLifecycle.unloadImage(getElement()); super.onUnload(); }"));
+    source = cu.toString();
+    return source;
+  }
+
+  private static String adaptTabUnload(String source) {
+    String before = "public void unload() {\n        clearAllIndicators();\n    }";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Changed tab unload lifecycle");
+    source =
+        source.replace(
+            before,
+            "public void unload() { io.instanto.material.client.TabLifecycle.unload(getElement()); }");
+    return source;
+  }
+
+  private static String useChipIdForRemoval(String source) {
+    String before = "chipList.remove(w);";
+    if (!source.contains(before) || source.indexOf(before) != source.lastIndexOf(before))
+      throw new IllegalArgumentException("Review changed chip container removal");
+    // chipList is keyed by the chip's generated DOM id, not by the widget instance.
+    source = source.replace(before, "chipList.remove(((MaterialChip) w).getId());");
+    return source;
+  }
+
+  private static String compareDecimalMaximum(String source) {
+    String before = "return Double.valueOf(value.toString()) <= maxValue.doubleValue();";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed decimal max validation");
+    source =
+        source.replace(
+            before, "return Double.parseDouble(value.toString()) <= maxValue.doubleValue();");
+    return source;
+  }
+
+  private static String resolveIconMappingPath(String source) {
+    String before = "reader = new BufferedReader(new FileReader(ijmap));";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed icon generator encoding");
+    // Read the upstream ijmap as UTF-8 rather than the platform default.
+    source =
+        source.replace(
+            before,
+            "reader = java.nio.file.Files.newBufferedReader(ijmap.toPath(), java.nio.charset.StandardCharsets.UTF_8);");
+    return source;
+  }
+
+  private static String adaptAvatarOptions(String source) {
+    String before = "    @Override\n    public void load() {";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed avatar load lifecycle");
+    // Configure the global jdenticon overlay from a static helper: a widget
+    // instance still applies the option, but the write itself is not per-instance.
+    source =
+        source.replace(
+            before,
+            "    private static void applyConfig(AvatarOptions options) {\n"
+                + "        JsAvatar.config = options;\n"
+                + "    }\n\n"
+                + before);
+    String assignment = "            JsAvatar.config = options;";
+    if (!source.contains(assignment))
+      throw new IllegalArgumentException("Review changed avatar configuration");
+    source = source.replace(assignment, "            applyConfig(options);");
+    return source;
+  }
+
+  private static String adaptInteractEvent(String source) {
+    String before =
+        "    /**\n     * The element that is being interacted with\n     */\n    @JsProperty\n    public Element target;\n\n";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed interact event target");
+    // Event already declares the same target field; the redeclaration only masks it.
+    source = source.replace(before, "");
+    return source;
+  }
+
+  private static String adaptInfiniteViewLifecycle(String source) {
+    String before = "(int) Math.ceil(tableBody.scrollTop() / getCalculatedRowHeight())";
+    String after = "(int) Math.ceil((double) tableBody.scrollTop() / getCalculatedRowHeight())";
+    if (source.split(java.util.regex.Pattern.quote(before), -1).length != 3)
+      throw new IllegalArgumentException("Review changed infinite view row index");
+    // Both operands are ints, so the division must be promoted before rounding.
+    source = source.replace(before, after);
+    return source;
+  }
+
+  private static String adaptPagerBounds(String source) {
+    String before = "(isExcess() & isLastPage())";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed pager boundary label");
+    source = source.replace(before, "(isExcess() && isLastPage())");
+    return source;
+  }
+
+  private static String adaptTableSubHeader(String source) {
+    String before = "Integer.valueOf(String.valueOf($this().data(\"pos\")))";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed table subheader scroll position");
+    source = source.replace(before, "Integer.parseInt(String.valueOf($this().data(\"pos\")))");
+    return source;
+  }
+
+  private static String adaptColumn(String source) {
+    String before = "Integer.valueOf(width.substring(0, width.indexOf(\"px\")))";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Review changed column pixel width");
+    source = source.replace(before, "Integer.parseInt(width.substring(0, width.indexOf(\"px\")))");
+    return source;
+  }
+
+  private static String correctColumnJavadocLinks(String source) {
+    String before = "{@link ##addColumn(Column)}";
+    if (source.split(java.util.regex.Pattern.quote(before), -1).length != 3)
+      throw new IllegalArgumentException("Review changed HasColumns Javadoc links");
+    // Upstream doubled the reference marker, which makes Javadoc reject the label.
+    source = source.replace(before, "{@link #addColumn(Column)}");
+    return source;
+  }
+
+  // GWT overlays allow window to be typed as Element. This view is passed straight
+  // back to native jQuery; the shared boundary unwraps it to the actual window.
+  private static String adaptNativeJQueryWindow(String source) {
+    String before = "return ScriptInjector.TOP_WINDOW.cast();";
+    if (!source.contains(before))
+      throw new IllegalArgumentException("Changed JQuery.window overlay");
+    source =
+        source.replace(
+            before,
+            "return new Element((org.teavm.jso.dom.html.HTMLElement) ScriptInjector.TOP_WINDOW.unwrap());");
+    return source;
   }
 }
